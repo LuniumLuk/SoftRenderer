@@ -50,6 +50,20 @@ Vector3 Vector3::cross(const Vector3 & other) {
         x * other.y - y * other.z );
     return vec;
 }
+float Vector3::length() {
+    return sqrtf(x * x + y * y + z * z);
+}
+Vector3 Vector3::normalized() {
+    float len = length();
+    assert(len != 0);
+    Vector3 vec(
+        x / len,
+        y / len,
+        z / len
+    );
+    return vec;
+}
+
 Vector3 Vector3::lerp(const Vector3 & from, const Vector3 & to, float alpha) {
     alpha = clamp(alpha, 0.0, 1.0);
     Vector3 vec(

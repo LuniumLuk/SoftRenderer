@@ -36,7 +36,7 @@ public:
     Vector3 operator/ (const float divisor);
     float dot(const Vector3 & other);
     Vector3 cross(const Vector3 & other);
-    Vector3 length();
+    float length();
     Vector3 normalized();
 
     /* Static Functions */
