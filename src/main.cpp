@@ -4,14 +4,6 @@
 
 using namespace Lurdr;
 
-/**
- * Compile and Run in Windows
- * PowerShell:
- *      mingw32-make; .\viewer.exe
- * Command Promot:
- *      mingw32-make && .\viewer.exe 
- */
-
 int main() {
     vec3 a(1, 0, 0);
     vec3 b(0, -4, 0);
@@ -19,6 +11,8 @@ int main() {
     vec3 aa = vec3::UNIT_X;
     vec3 ab = vec3::ZERO;
     vec3 ac = vec3::UNIT_Y;
+
+    int dhh = 0;
 
     a = -a;
     vec3 c = a + b + ab;
