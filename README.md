@@ -1,5 +1,11 @@
 # Lu Renderer
 
+A Tiny Renderer relying on minimum dependencies
+
+## Content
+
+- basic linear algebra
+
 ## Compile and Run
 
 ### Windows:
