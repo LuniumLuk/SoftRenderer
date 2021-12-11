@@ -17,3 +17,5 @@ Command Promot: `mingw32-make && .\viewer.exe `
 ### MacOS:
 
 ZSH: `make; ./viewer`
+
+macos window: `clang src/macos.m -o viewer -framework Cocoa; ./viewer`
