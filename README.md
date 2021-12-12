@@ -5,6 +5,9 @@ A Tiny Renderer relying on minimum dependencies
 ## Content
 
 - basic linear algebra
+  - vector
+  - quaternion
+  - matrix
 
 ## Compile and Run
 
