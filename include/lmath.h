@@ -1,11 +1,10 @@
-#ifndef __IMATH_H__
-#define __IMATH_H__
+#ifndef __LMATH_H__
+#define __LMATH_H__
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
-#include <string>
 
 #define min(a,b) ((a)<(b)?(a):(b))
 #define max(a,b) ((a)>(b)?(a):(b))

@@ -23,7 +23,7 @@ viewer : $(OBJECTS)
 
 lmath.o : src/lmath.cpp include/lmath.h
 	$(CC) $(CFLAGS) -c src/lmath.cpp
-main.o : src/main.cpp include/lmath.h
+main.o : src/main.cpp include/lmath.h include/limage.h
 	$(CC) $(CFLAGS) -c $(SRCS)
 
 .PHONY : clean

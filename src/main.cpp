@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "../include/lmath.h"
+#include <string.h>
 #include <time.h>
+#include "../include/lmath.h"
+#include "../include/limage.h"
 
 using namespace Lurdr;
 
@@ -22,7 +24,7 @@ void test_vec_alloc() {
 
     end = clock();
     dur = (double)(end - start);
-    printf("Vector3 Class Use Time:%f\n", (dur / CLOCKS_PER_SEC));
+    printf("Vector3 Class Use Time: %fs\n", (dur / CLOCKS_PER_SEC));
     start = clock();
 
     vec3s* vec3s_array = new vec3s[iter_times];
@@ -34,7 +36,7 @@ void test_vec_alloc() {
 
     end = clock();
     dur = (double)(end - start);
-    printf("Vector3 Struct Use Time:%f\n", (dur / CLOCKS_PER_SEC));
+    printf("Vector3 Struct Use Time: %fs\n", (dur / CLOCKS_PER_SEC));
 }
 
 void test_quat() {
@@ -68,21 +70,51 @@ void test_rotate() {
     printf("%d\n", vec.rotated(a1) == vec.rotated(a2));
 }
 
-int main() {
+typedef struct TestStruct {
+    float a;
+    float b;
+    unsigned char c;
+} tests;
 
+void buffer_test() {
+size_t len = 10000;
+    unsigned char * buffer = new unsigned char[len];
+    for (int i = 0; i < len; i++) {
+        buffer[i] = (unsigned char)(i % 256);
+    }
+
+    unsigned char * buffer2 = new unsigned char[len];
+    memcpy(buffer2, buffer, len * sizeof(unsigned char));
+
+    for (int i = 1100; i < 1120; i++) {
+        printf("=%u=", buffer[i]);
+    }
+    printf("\n");
+
+    delete[] buffer;
+    delete[] buffer2;
+
+    printf("%p\n", buffer);
+    printf("%p\n", buffer2);
+
+    printf("%u\n", buffer[257]); // still access the correct data, <Undefined Behavior>
+}
+
+int main() {
     double dur;
     clock_t start, end;
     start = clock();
 
-    int iter_times = 100000000;
-    float* array = new float[iter_times];
+    int iter_times = 10000;
     for (int i = 1; i < iter_times; i++) {
-        array[i] = 1.0f;
+        BMPImage image("test/lenna.bmp");
+        // image.printImageInfo();
+        // image.writeImage("test/test.bmp");
     }
 
     end = clock();
     dur = (double)(end - start);
-    printf("Vector3 Class Use Time:%f\n", (dur / CLOCKS_PER_SEC));
+    printf("Read %d 512 * 512 Images Use Time: %fs\n", iter_times, (dur / CLOCKS_PER_SEC));
 
     return 0;
 }
