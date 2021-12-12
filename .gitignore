@@ -33,3 +33,6 @@
 
 # Target
 viewer
+
+# VS Code
+.vscode
