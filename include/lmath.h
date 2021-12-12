@@ -7,8 +7,8 @@
 #include <math.h>
 #include <string>
 
-#define min(a,b) (a)<(b)?(a):(b)
-#define max(a,b) (a)>(b)?(a):(b)
+#define min(a,b) ((a)<(b)?(a):(b))
+#define max(a,b) ((a)>(b)?(a):(b))
 #define clamp(a,b,c) min(max((a),(b)),(c))
 
 #define PI 3.14159265358979323846264338327950288f
@@ -18,6 +18,7 @@ namespace Lurdr {
 
 typedef class Vector2 vec2;
 typedef class Vector3 vec3;
+typedef class Vector4 vec4;
 typedef class Quaternion quat;
 
 /**
@@ -95,6 +96,43 @@ public:
     static Vector3 lerp(const Vector3 & from, const Vector3 & to, float alpha);
 };
 
+/**
+ * Vector4
+ */
+class Vector4 {
+public:
+    float x, y, z, w;
+    Vector4(): x(0), y(0), z(0), w(0) {}
+    Vector4(float w, float x, float y, float z): x(x), y(y), z(z), w(w) {}
+    Vector4(const Vector4 & vec): x(vec.x), y(vec.y), z(vec.z), w(vec.w) {}
+
+    /* Static Members */
+    static Vector4 UNIT_X;
+    static Vector4 UNIT_Y;
+    static Vector4 UNIT_Z;
+    static Vector4 UNIT_W;
+    static Vector4 ZERO;
+
+    /* Operator Overload Functions */
+    Vector4 operator+ (const Vector4 & other) const;
+    Vector4 operator- () const;
+    Vector4 operator- (const Vector4 & other) const;
+    Vector4 operator* (const float & multiplicand) const;
+    Vector4 operator/ (const float divisor) const;
+    bool operator== (const Vector4 & other) const;
+    bool operator!= (const Vector4 & other) const;
+
+    /* Member Functions */
+    float dot(const Vector4 & other) const;
+    float length() const;
+    Vector4 normalized() const;
+    void normalize();
+    void print();
+
+    /* Static Functions */
+    static Vector4 lerp(const Vector4 & from, const Vector4 & to, float alpha);
+};
+
 
 /**
  * Quaternion
@@ -102,9 +140,9 @@ public:
 class Quaternion {
 public:
     float x, y, z, w;
-    Quaternion(): w(1), x(0), y(0), z(0) {}
-    Quaternion(float w, float x, float y, float z): x(x), y(y), z(z), w(w) {}
-    Quaternion(const Quaternion & quat): w(quat.z), x(quat.x), y(quat.y), z(quat.z) {}
+    Quaternion(): x(0), y(0), z(0), w(1) {}
+    Quaternion(float x, float y, float z, float w): x(x), y(y), z(z), w(w) {}
+    Quaternion(const Quaternion & quat): x(quat.x), y(quat.y), z(quat.z), w(quat.w) {}
 
     /* Static Members */
     static Quaternion IDENTITY;
@@ -132,7 +170,8 @@ public:
 
 }
 
-Lurdr::Vector3 operator* (float multiplier, const Lurdr::Vector3 & multiplicand);
 Lurdr::Vector2 operator* (float multiplier, const Lurdr::Vector2 & multiplicand);
+Lurdr::Vector3 operator* (float multiplier, const Lurdr::Vector3 & multiplicand);
+Lurdr::Vector4 operator* (float multiplier, const Lurdr::Vector4 & multiplicand);
 
 #endif

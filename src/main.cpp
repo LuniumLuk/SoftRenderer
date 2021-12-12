@@ -48,7 +48,7 @@ void test_quat() {
     }
 }
 
-int main() {
+void test_rotate() {
     vec3 from(0.0, 0.0, 1.0);
     vec3 to(0.0, 0.5, 0.866025);
 
@@ -63,6 +63,26 @@ int main() {
 
     vec.rotated(a1).print();
     vec.rotated(a2).print();
+
+    printf("%d\n", a1 == a2);
+    printf("%d\n", vec.rotated(a1) == vec.rotated(a2));
+}
+
+int main() {
+
+    double dur;
+    clock_t start, end;
+    start = clock();
+
+    int iter_times = 100000000;
+    float* array = new float[iter_times];
+    for (int i = 1; i < iter_times; i++) {
+        array[i] = 1.0f;
+    }
+
+    end = clock();
+    dur = (double)(end - start);
+    printf("Vector3 Class Use Time:%f\n", (dur / CLOCKS_PER_SEC));
 
     return 0;
 }

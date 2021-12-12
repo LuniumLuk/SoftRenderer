@@ -48,7 +48,8 @@ Vector2 Vector2::operator/ (const float divisor) const {
     return vec;
 }
 bool Vector2::operator== (const Vector2 & other) const {
-    if (x == other.x && y == other.y) {
+    if ( abs(x - other.x) <= EPSILON * max(max(abs(x), abs(other.x)), 1.0f)
+      && abs(y - other.y) <= EPSILON * max(max(abs(y), abs(other.y)), 1.0f) ) {
         return true;
     } else {
         return false;
@@ -82,7 +83,7 @@ float Vector2::length() const {
     return sqrtf(x * x + y * y);
 }
 void Vector2::print() {
-    printf("Vector3 : ( %6f, %6f )\n", x, y);
+    printf("Vector3 : ( % 6f, % 6f )\n", x, y);
 }
 
 Vector2 Vector2::normalized() const {
@@ -143,7 +144,9 @@ Vector3 Vector3::operator/ (const float divisor) const {
     return vec;
 }
 bool Vector3::operator== (const Vector3 & other) const {
-    if (x == other.x && y == other.y && z == other.z) {
+    if ( abs(x - other.x) <= EPSILON * max(max(abs(x), abs(other.x)), 1.0f)
+      && abs(y - other.y) <= EPSILON * max(max(abs(y), abs(other.y)), 1.0f)
+      && abs(z - other.z) <= EPSILON * max(max(abs(z), abs(other.z)), 1.0f) ) {
         return true;
     } else {
         return false;
@@ -190,7 +193,7 @@ void Vector3::normalize() {
     z *= factor;
 }
 void Vector3::print() {
-    printf("Vector3 : ( %6f, %6f, %6f )\n", x, y, z);
+    printf("Vector3 : ( % 6f, % 6f, % 6f )\n", x, y, z);
 }
 // reference : https://gamedev.stackexchange.com/questions/28395/rotating-vector3-by-a-quaternion
 Vector3 Vector3::rotated(const Quaternion & quat) const {
@@ -211,7 +214,7 @@ void Vector3::rotate(const Quaternion & quat) {
           + 2.0f * s * u.cross(*this);
 }
 
-Vector3 Vector3::Vector3::lerp(const Vector3 & from, const Vector3 & to, float alpha) {
+Vector3 Vector3::lerp(const Vector3 & from, const Vector3 & to, float alpha) {
     alpha = clamp(alpha, 0.0, 1.0);
     Vector3 vec(
         from.x * (1 - alpha) + to.x * alpha,
@@ -222,27 +225,130 @@ Vector3 Vector3::Vector3::lerp(const Vector3 & from, const Vector3 & to, float a
 }
 
 /**
+ * Vector4 : Functionalities and Utilities
+ */
+
+Vector4 Vector4::UNIT_X = Vector4(1.0, 0.0, 0.0, 0.0);
+Vector4 Vector4::UNIT_Y = Vector4(0.0, 1.0, 0.0, 0.0);
+Vector4 Vector4::UNIT_Z = Vector4(0.0, 0.0, 1.0, 0.0);
+Vector4 Vector4::UNIT_W = Vector4(0.0, 0.0, 0.0, 1.0);
+Vector4 Vector4::ZERO   = Vector4(0.0, 0.0, 0.0, 0.0);
+
+Vector4 Vector4::operator+ (const Vector4 & other) const {
+    Vector4 vec(x + other.x, y + other.y, z + other.z, w + other.w);
+    return vec;
+}
+Vector4 Vector4::operator- () const {
+    Vector4 vec(-x, -y, -z, -w);
+    return vec;
+}
+Vector4 Vector4::operator- (const Vector4 & other) const {
+    Vector4 vec(x - other.x, y - other.y, z - other.z, w - other.w);
+    return vec;
+}
+Vector4 operator* (float multiplier, const Vector4 & multiplicand) {
+    Vector4 vec(
+        multiplier * multiplicand.x,
+        multiplier * multiplicand.y,
+        multiplier * multiplicand.z,
+        multiplier * multiplicand.w
+    );
+    return vec;
+}
+Vector4 Vector4::operator* (const float & multiplicand) const {
+    Vector4 vec(x * multiplicand, y * multiplicand, z * multiplicand, w * multiplicand);
+    return vec;
+}
+Vector4 Vector4::operator/ (const float divisor) const {
+    assert(divisor != 0);
+    float factor = 1.0 / divisor;
+    Vector4 vec(x * factor, y * factor, z * factor, w * factor);
+    return vec;
+}
+bool Vector4::operator== (const Vector4 & other) const {
+    if ( abs(x - other.x) <= EPSILON * max(max(abs(x), abs(other.x)), 1.0f)
+      && abs(y - other.y) <= EPSILON * max(max(abs(y), abs(other.y)), 1.0f)
+      && abs(z - other.z) <= EPSILON * max(max(abs(z), abs(other.z)), 1.0f)
+      && abs(w - other.w) <= EPSILON * max(max(abs(w), abs(other.w)), 1.0f) ) {
+        return true;
+    } else {
+        return false;
+    }
+}
+bool Vector4::operator!= (const Vector4 & other) const {
+    if (*this == other) {
+        return false;
+    } else {
+        return true;
+    }
+}
+float Vector4::dot(const Vector4 & other) const {
+    return x * other.x + y * other.y + z * other.z + w * other.w;
+}
+float Vector4::length() const {
+    return sqrtf(x * x + y * y + z * z + w * w);
+}
+Vector4 Vector4::normalized() const {
+    float len = length();
+    assert(len != 0);
+    float factor = 1.0 / len;
+    Vector4 vec(
+        x * factor,
+        y * factor,
+        z * factor,
+        w * factor
+    );
+    return vec;
+}
+void Vector4::normalize() {
+    float len = length();
+    assert(len != 0);
+    float factor = 1.0 / len;
+    x *= factor;
+    y *= factor;
+    z *= factor;
+    w *= factor;
+}
+void Vector4::print() {
+    printf("Vector4 : ( % 6f, % 6f, % 6f, % 6f )\n", x, y, z, w);
+}
+
+Vector4 Vector4::lerp(const Vector4 & from, const Vector4 & to, float alpha) {
+    alpha = clamp(alpha, 0.0, 1.0);
+    Vector4 vec(
+        from.x * (1 - alpha) + to.x * alpha,
+        from.y * (1 - alpha) + to.y * alpha,
+        from.z * (1 - alpha) + to.z * alpha,
+        from.w * (1 - alpha) + to.w * alpha
+    );
+    return vec;
+}
+
+/**
  * Quaternion : Functionalities and Utilities
  * API reference : https://docs.unity.cn/2019.4/Documentation/ScriptReference/Quaternion.html
  */
 
-Quaternion Quaternion::IDENTITY = Quaternion(1.0, 0.0, 0.0, 0.0);
+Quaternion Quaternion::IDENTITY = Quaternion(0.0, 0.0, 0.0, 1.0);
 
 // reference : https://en.wikipedia.org/wiki/Quaternion
 // & https://ww2.mathworks.cn/help/aeroblks/quaternionmultiplication.html
 // & http://kieranwynn.github.io/pyquaternion/ for cross reference
-// note : 'a + bi + cj + dk' <=> 'w + xi + yj + zk'
+// note : 'a + bi + cj + dk' <=> 'xi + yj + zk + w'
 Quaternion Quaternion::operator* (const Quaternion & other) const {
     Quaternion quat(
-        other.w * w - other.x * x - other.y * y - other.z * z,
         other.w * x + other.x * w - other.y * z + other.z * y,
         other.w * y + other.x * z + other.y * w - other.z * x,
-        other.w * z - other.x * y + other.y * x + other.z * w
+        other.w * z - other.x * y + other.y * x + other.z * w,
+        other.w * w - other.x * x - other.y * y - other.z * z
     );
     return quat;
 }
 bool Quaternion::operator== (const Quaternion & other) const {
-    if (w == other.w && x == other.x && y == other.y && z == other.z) {
+    if ( abs(x - other.x) <= EPSILON * max(max(abs(x), abs(other.x)), 1.0f)
+      && abs(y - other.y) <= EPSILON * max(max(abs(y), abs(other.y)), 1.0f)
+      && abs(z - other.z) <= EPSILON * max(max(abs(z), abs(other.z)), 1.0f)
+      && abs(w - other.w) <= EPSILON * max(max(abs(w), abs(other.w)), 1.0f) ) {
         return true;
     } else {
         return false;
@@ -256,17 +362,17 @@ bool Quaternion::operator!= (const Quaternion & other) const {
     }
 }
 float Quaternion::dot(const Quaternion & other) const {
-    return w * other.w + x * other.x + y * other.y + z * other.z;
+    return x * other.x + y * other.y + z * other.z + w * other.w;
 }
 Quaternion Quaternion::normalized() const {
     float len = sqrtf(dot(*this));
     assert(len != 0);
     float factor = 1.0 / len;
     Quaternion quat(
-        w * factor,
         x * factor,
         y * factor,
-        z * factor
+        z * factor,
+        w * factor
     );
     return quat;
 }
@@ -274,10 +380,10 @@ void Quaternion::normalize() {
     float len = sqrtf(dot(*this));
     assert(len != 0);
     float factor = 1.0 / len;
-    w *= factor;
     x *= factor;
     y *= factor;
     z *= factor;
+    w *= factor;
 }
 // reference : https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 // & https://personal.utdallas.edu/~sxb027100/dock/quaternion.html
@@ -302,24 +408,24 @@ Quaternion Quaternion::inverse() const {
     assert(q != 0);
     float factor = 1.0 / q;
     Quaternion quat(
-         w * factor,
         -x * factor,
         -y * factor,
-        -z * factor
+        -z * factor,
+         w * factor
     );
     return quat;
 }
 void Quaternion::print() {
-    printf("Quaternion : ( %6f, %6f, %6f, %6f )\n", w, x, y, z);
+    printf("Quaternion : ( % 6fi + % 6fj + % 6fk + % 6f )\n", x, y, z, w);
 }
 // linear lerp for quaternion
 Quaternion Quaternion::lerp(const Quaternion & from, const Quaternion & to, float alpha) {
     alpha = clamp(alpha, 0.0, 1.0);
     Quaternion quat(
-        from.w * (1 - alpha) + to.w * alpha,
         from.x * (1 - alpha) + to.x * alpha,
         from.y * (1 - alpha) + to.y * alpha,
-        from.z * (1 - alpha) + to.z * alpha
+        from.z * (1 - alpha) + to.z * alpha,
+        from.w * (1 - alpha) + to.w * alpha
     );
     return quat;
 }
@@ -345,10 +451,10 @@ Quaternion Quaternion::fromEulerAngles(const Vector3 & angles) {
     float sr = sin(roll  * 0.5f);
 
     Quaternion quat(
-        cr * cp * cy + sr * sp * sy,
         sr * cp * cy - cr * sp * sy,
         cr * sp * cy + sr * cp * sy,
-        cr * cp * sy - sr * sp * cy
+        cr * cp * sy - sr * sp * cy,
+        cr * cp * cy + sr * sp * sy
     );
     return quat;
 }
@@ -366,10 +472,10 @@ Quaternion Quaternion::fromToRotation(const Vector3 & from, const Vector3 to) {
     } else {
         Vector3 cross = from_n.cross(to_n);
         Quaternion quat(
-            1.0f + dot,
             cross.x,
             cross.y,
-            cross.z
+            cross.z,
+            1.0f + dot
         );
         return quat.normalized();
     }
@@ -379,10 +485,10 @@ Quaternion Quaternion::fromAxisAngle(const Vector3 & axis, float angle) {
     float cosa = cosf(angle * 0.5f);
     float sina = sinf(angle * 0.5f);
     Quaternion quat(
-        cosa,
         sina * axis.x,
         sina * axis.y,
-        sina * axis.z
+        sina * axis.z,
+        cosa
     );
     return quat;
 }
