@@ -1,4 +1,5 @@
 OBJECTS = main.o lmath.o
+SRCS = src/main.cpp src/lmath.cpp
 CC = g++
 CFLAGS = -g -std=c++11
 # Windows
@@ -23,7 +24,7 @@ viewer : $(OBJECTS)
 lmath.o : src/lmath.cpp include/lmath.h
 	$(CC) $(CFLAGS) -c src/lmath.cpp
 main.o : src/main.cpp include/lmath.h
-	$(CC) $(CFLAGS) -c src/main.cpp
+	$(CC) $(CFLAGS) -c $(SRCS)
 
 .PHONY : clean
 clean :
