@@ -33,6 +33,7 @@
 
 # Target
 viewer
+viewer.dSYM
 
 # VS Code
 .vscode
