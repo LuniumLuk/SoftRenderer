@@ -87,10 +87,10 @@ void BMPImage::loadImage() {
     }
     size_t scan_line = ((data_line + 3) / 4) * 4;
 
-    m_buffer = new image_t[data_line * height];
-    image_t *temp_buffer = new image_t[scan_line];
+    m_buffer = new pixel_t[data_line * height];
+    pixel_t *temp_buffer = new pixel_t[scan_line];
     for (size_t i = 0; i < height; i++) {
-        fread(temp_buffer, sizeof(image_t), scan_line, fp);
+        fread(temp_buffer, sizeof(pixel_t), scan_line, fp);
         memcpy(m_buffer + i * data_line, temp_buffer, data_line);
     }
     delete[] temp_buffer;
@@ -153,8 +153,8 @@ BMPImage::BMPImage(const BMPImage & image): m_color_tables(nullptr),
     }
 
     size_t buffer_size = image.getBufferSize();
-    m_buffer = new image_t[buffer_size];
-    memcpy(m_buffer, image.m_buffer, buffer_size * sizeof(image_t));
+    m_buffer = new pixel_t[buffer_size];
+    memcpy(m_buffer, image.m_buffer, buffer_size * sizeof(pixel_t));
 
     size_t f_len = strlen(image.m_filename);
     m_filename = new char[f_len + 1];
@@ -176,7 +176,7 @@ size_t BMPImage::getChannelNum() const {
             return 0;
     }
 }
-unsigned char& BMPImage::operator() (const size_t & row, const size_t & column, const size_t & channel) {
+pixel_t& BMPImage::operator() (const size_t & row, const size_t & column, const size_t & channel) {
     size_t channel_num = getChannelNum();
     size_t data_line = getDataLine();
     assert(channel_num > 0);
@@ -221,6 +221,9 @@ void BMPImage::writeImage(const char* filename) const {
     }
 
     fclose(fp);
+}
+pixel_t* & BMPImage::getImageBuffer() {
+    return m_buffer;
 }
 void BMPImage::printImageInfo() const {
     if (m_is_loaded) {

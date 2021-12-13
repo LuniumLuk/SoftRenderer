@@ -2,6 +2,7 @@ OBJECTS = main.o lmath.o limage.o
 SRCS = src/main.cpp src/lmath.cpp src/limage.cpp
 CC = g++
 CFLAGS = -g -std=c++11
+OBJCFLAGS = -framework Cocoa
 # Windows
 ifeq ($(OS), Windows_NT)
 	SHELL = cmd.exe
@@ -31,3 +32,6 @@ main.o : src/main.cpp include/lmath.h include/limage.h
 .PHONY : clean
 clean :
 	rm *.o
+
+macos : src/macos.mm limage.o
+	clang++ $(OBJCFLAGS) $(CFLAGS) src/macos.mm limage.o -o viewer

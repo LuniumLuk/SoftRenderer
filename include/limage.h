@@ -15,7 +15,7 @@
 #define BI_RLE4 2   // 4bit RLE encoding
 
 // x86_64
-typedef unsigned char  image_t;  // 1 bytes
+typedef unsigned char  pixel_t;  // 1 bytes
 typedef unsigned short ushort_t; // 2 bytes
 typedef unsigned int   ulong_t;  // 4 bytes
 typedef int            long_t;   // 4 bytes
@@ -57,10 +57,10 @@ typedef struct BITMAPINFOHEADER {
 
 // used when bits_per_pixel <= 8
 typedef struct BITMAPCOLORTABLE {
-    image_t   red;
-    image_t   green;
-    image_t   blue;
-    image_t   reserved;
+    pixel_t   red;
+    pixel_t   green;
+    pixel_t   blue;
+    pixel_t   reserved;
 } BMPColorTable;
 
 class BMPImage {
@@ -68,7 +68,7 @@ private:
     BMPFileHeader m_file_header;
     BMPInfoHeader m_info_header;
     BMPColorTable *m_color_tables;
-    image_t *m_buffer;
+    pixel_t *m_buffer;
     bool          m_is_loaded;
     bool          m_use_color_table;
     bool          m_is_upside_down;
@@ -103,6 +103,7 @@ public:
     /* Member Functions */
     void writeImage(const char* filename) const;
     void printImageInfo() const;
+    pixel_t* & getImageBuffer();
 };
 
 }
