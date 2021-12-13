@@ -11,16 +11,16 @@ A Tiny Renderer relying on minimum dependencies
 - Image IO
   - BMP Format
 
-## Compile and Run
+## Compile
 
 ### Windows:
 
-PowerShell: `mingw32-make; .\viewer.exe`
+PowerShell: `mingw32-make`
 
-Command Promot: `mingw32-make && .\viewer.exe `
+Command Promot: `mingw32-make`
 
 ### MacOS:
 
-ZSH: `make; ./viewer`
+ZSH: `make`
 
-macos window: `make macos; ./viewer`
+macos viewer window: `make macos`
