@@ -45,12 +45,12 @@ void BMPImage::loadImage() {
     assert(m_filename != nullptr);
     fp = fopen(m_filename, "rb");
     if (fp == nullptr) {
-        printf("BMP image file: %s open failed\n", m_filename);
+        printf("BMPImage : image file: %s open failed\n", m_filename);
         return;
     }
     loadFileHeaderx64(fp);
     if (m_file_header.signature != BI_BM) {
-        printf("BMP file format error\n");
+        printf("BMPImage : file format error\n");
         clean();
         fclose(fp);
         return;
@@ -59,7 +59,6 @@ void BMPImage::loadImage() {
     fread(&m_info_header, sizeof(BMPInfoHeader), 1, fp);
     if (m_info_header.height < 0) {
         m_info_header.height = abs(m_info_header.height);
-        m_is_upside_down = false;
     }
 
     if (m_info_header.bits_per_pixel <= 8) {
@@ -80,7 +79,7 @@ void BMPImage::loadImage() {
     size_t data_line = getDataLine();
 
     if (data_line == -1) {
-        printf("BMP unsupported bits per pixel\n");
+        printf("BMPImage : unsupported bits per pixel\n");
         clean();
         fclose(fp);
         return;
@@ -93,6 +92,7 @@ void BMPImage::loadImage() {
         fread(temp_buffer, sizeof(pixel_t), scan_line, fp);
         memcpy(m_buffer + i * data_line, temp_buffer, data_line);
     }
+    
     delete[] temp_buffer;
 
     m_is_loaded = true;
@@ -105,7 +105,6 @@ void BMPImage::clean() {
     m_color_tables = nullptr;
     m_buffer = nullptr;
     m_is_loaded = false;
-    m_is_upside_down = true;
     m_filename = nullptr;
 }
 size_t BMPImage::getDataLine() const {
@@ -124,8 +123,7 @@ BMPImage::BMPImage(const char* filename): m_color_tables(nullptr),
                                           m_buffer(nullptr),
                                           m_filename(nullptr),
                                           m_is_loaded(false),
-                                          m_use_color_table(false),
-                                          m_is_upside_down(true) {
+                                          m_use_color_table(false) {
     size_t f_len = strlen(filename);
     m_filename = new char[f_len + 1];
     strcpy(m_filename, filename);
@@ -136,8 +134,7 @@ BMPImage::BMPImage(const BMPImage & image): m_color_tables(nullptr),
                                             m_buffer(nullptr),
                                             m_filename(nullptr),
                                             m_is_loaded(false),
-                                            m_use_color_table(false),
-                                            m_is_upside_down(true) {
+                                            m_use_color_table(false) {
     if (image.m_is_loaded == false) {
         clean();
         return;
@@ -160,7 +157,6 @@ BMPImage::BMPImage(const BMPImage & image): m_color_tables(nullptr),
     m_filename = new char[f_len + 1];
     strcpy(m_filename, image.m_filename);
     
-    m_is_upside_down = image.m_is_upside_down;
     m_is_loaded = true;
 }
 size_t BMPImage::getChannelNum() const {
@@ -172,7 +168,7 @@ size_t BMPImage::getChannelNum() const {
         case 24: return 3;
         case 32: return 4;
         default: 
-            printf("BMP image unloaded or unsupported channel num");
+            printf("BMPImage : image unloaded or unsupported channel num");
             return 0;
     }
 }
@@ -183,22 +179,18 @@ pixel_t& BMPImage::operator() (const size_t & row, const size_t & column, const 
     assert(channel < channel_num);
     assert(row < getImageHeight());
     assert(column < getImageWidth());
-    if (m_is_upside_down) {
-        return m_buffer[(getImageHeight() - row - 1) * data_line + column * channel_num + channel];
-    } else {
-        return m_buffer[row * data_line + column * channel_num + channel];
-    }
+    return m_buffer[row * data_line + column * channel_num + channel];
 }
 
 void BMPImage::writeImage(const char* filename) const {
     if (m_is_loaded == false) {
-        printf("BMP image unloaded\n");
+        printf("BMPImage : image unloaded\n");
         return;
     }
     FILE *fp;
     fp = fopen(filename, "wb");
     if (fp == nullptr) {
-        printf("BMP image file: %s open failed\n", filename);
+        printf("BMPImage : image file: %s open failed\n", filename);
         return;
     }
     writeFileHeaderx64(fp);
@@ -225,6 +217,9 @@ void BMPImage::writeImage(const char* filename) const {
 pixel_t* & BMPImage::getImageBuffer() {
     return m_buffer;
 }
+pixel_t* BMPImage::getImageBufferConst() const {
+    return m_buffer;
+}
 void BMPImage::printImageInfo() const {
     if (m_is_loaded) {
         printf("-- BMPImage info -----------------------------\n");
@@ -234,6 +229,6 @@ void BMPImage::printImageInfo() const {
         printf("    pixel size : %-8d bits\n",   m_info_header.bits_per_pixel);
         printf("----------------------------------------------\n");
     } else {
-        printf("BMPImage unloaded ----------------------------\n");
+        printf("-- BMPImage unloaded -------------------------\n");
     }
 }

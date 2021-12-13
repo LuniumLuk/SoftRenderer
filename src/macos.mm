@@ -257,7 +257,11 @@ int main(int argc, const char * argv[])
     window_t _window;
     BMPImage image("assets/lenna.bmp");
     image.printImageInfo();
-    _window.image_buffer = image.getImageBuffer();
+
+    UniformImage u_image(image);
+    u_image.convertColorSpace(COLOR_RGB);
+
+    _window.image_buffer = u_image.getImageBuffer();
 
     // Autorelease Pool:
     // Objects declared in this scope will be automatically
@@ -279,7 +283,7 @@ int main(int argc, const char * argv[])
     // Style flags:
     NSUInteger windowStyle = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable;
 
-    const char *title = "Test Window";
+    const char *title = "Viewer @ Lu Renderer";
     int width = 512;
     int height = 512;
 

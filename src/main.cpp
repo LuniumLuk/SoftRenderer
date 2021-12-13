@@ -122,19 +122,9 @@ int main() {
     clock_t start, end;
     start = clock();
 
-    // BMPImage image("test/lenna.bmp");
-
-    // // printf("%u\n", image(100, 100, 3));
-
-    // for (int i = 0; i < 100; i++) {
-    //     for (int j = 0; j < 100; j++) {
-    //         image(i, j, 0) = 0;
-    //     }
-    // }
-
-    // image.writeImage("test/test.bmp");
-
-    printf("%lu\n", sizeof(BMPImage));
+    BMPImage image("assets/lenna.bmp");
+    UniformImage u_image(image);
+    u_image.convertColorSpace(COLOR_RGB);
 
     end = clock();
     dur = (double)(end - start);

@@ -33,7 +33,7 @@
 
 # Target
 viewer
-viewer.dSYM
+viewer.dSYM/
 
 # VS Code
 .vscode

@@ -5,7 +5,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <utility>
 #include "lmath.h"
+#include "lglobal.h"
 
 #define BI_BM 0x4d42    // ASCII code for 'BM'
 #define BI_FILE_HEADER_SIZE 14L
@@ -13,12 +15,6 @@
 #define BI_RGB 0    // no compression
 #define BI_RLE8 1   // 8bit RLE encoding
 #define BI_RLE4 2   // 4bit RLE encoding
-
-// x86_64
-typedef unsigned char  pixel_t;  // 1 bytes
-typedef unsigned short ushort_t; // 2 bytes
-typedef unsigned int   ulong_t;  // 4 bytes
-typedef int            long_t;   // 4 bytes
 
 namespace Lurdr {
 
@@ -68,10 +64,10 @@ private:
     BMPFileHeader m_file_header;
     BMPInfoHeader m_info_header;
     BMPColorTable *m_color_tables;
-    pixel_t *m_buffer;
+    pixel_t *m_buffer;              // color is arranged in RGB order
+                                    // rows are arranged from bottom to top
     bool          m_is_loaded;
     bool          m_use_color_table;
-    bool          m_is_upside_down;
     char          *m_filename;
 
     void loadFileHeaderx64(FILE *fp);
@@ -85,8 +81,7 @@ public:
                 m_buffer(nullptr),
                 m_filename(nullptr),
                 m_is_loaded(false),
-                m_use_color_table(false),
-                m_is_upside_down(true) {}
+                m_use_color_table(false) {}
     BMPImage(const char* filename);
     BMPImage(const BMPImage & image);
     ~BMPImage() { clean(); }
@@ -104,6 +99,120 @@ public:
     void writeImage(const char* filename) const;
     void printImageInfo() const;
     pixel_t* & getImageBuffer();
+    pixel_t* getImageBufferConst() const;
+};
+
+#define COLOR_RGB 0U
+#define COLOR_BGR 1U
+#define COLOR_YUV 2U
+#define COLOR_HSV 3U
+
+class UniformImage {
+private:
+    size_t          m_width;
+    size_t          m_height;
+    pixel_t         *m_buffer;     // buffer rows are arranged from top to bottom
+    unsigned short  m_color_space; // RGB, BGR, YUV, HSV
+
+    // implemented base on std::swap
+    // reference : https://stackoverflow.com/questions/35154516/most-efficient-way-of-swapping-values-c
+    void swap(pixel_t & t1, pixel_t & t2) {
+        pixel_t temp(std::move(t1));
+        t1 = std::move(t2);
+        t2 = std::move(temp);
+    }
+
+    void RGB2BGR() {
+        size_t row_size = m_width * 3;
+        for (size_t i = 0; i < m_height; i++) {
+            for (size_t j = 0; j < m_width * 3; j += 3) {
+                // swap the 'R' and 'B' channel
+                swap(m_buffer[i * row_size + j], m_buffer[i * row_size + j + 2]);
+            }
+        }
+    }
+    void BGR2RGB() {
+        RGB2BGR();
+    }
+    void RGB2YUV();
+    void YUV2RGB();
+    void YUV2BGR();
+    void BGR2YUV();
+    void RGB2HSV();
+    void HSV2RGB();
+    void BGR2HSV();
+    void HSV2BGR();
+    void YUV2HSV();
+    void HSV2YUV();
+public:
+    UniformImage(): m_width(0),
+                    m_height(0),
+                    m_buffer(nullptr),
+                    m_color_space(COLOR_RGB) {}
+    UniformImage(size_t width, size_t height): m_width(width),
+                                               m_height(height),
+                                               m_buffer(nullptr),
+                                               m_color_space(COLOR_RGB) {}
+    UniformImage(const BMPImage & bmp): m_width(0),
+                                        m_height(0),
+                                        m_buffer(nullptr),
+                                        m_color_space(COLOR_RGB) {
+        createFromBMPImage(bmp);
+    }
+    ~UniformImage() {
+        delete[] m_buffer;
+    }
+
+    pixel_t& operator() (const size_t & row, const size_t & column, const size_t & channel) {
+        size_t row_size = m_width * 3;
+        assert(channel < 3);
+        assert(row < m_height);
+        assert(column < m_width);
+        return m_buffer[row * row_size + column * 3 + channel];
+    }
+
+    void createFromBMPImage(const BMPImage & bmp) {
+        if (!bmp.isLoaded()) {
+            printf("UniformImage : BMP image is unloaded\n");
+            return;
+        }
+        if (bmp.getChannelNum() != 3) {
+            printf("UniformImage : BMP channel number unsupported\n");
+            return;
+        }
+        m_width = bmp.getImageWidth();
+        m_height = bmp.getImageHeight();
+        m_color_space = COLOR_BGR;
+
+        size_t row_size = m_width * 3;
+        size_t buffer_size = row_size * m_height;
+
+        pixel_t *src_buffer = bmp.getImageBufferConst();
+        m_buffer = new pixel_t[buffer_size];
+        for (size_t i = 0; i < m_height; i++) {
+            memcpy(m_buffer + i * row_size, src_buffer + (m_height - i - 1) * row_size, row_size);
+        }
+    }
+
+    void convertColorSpace(const unsigned short mode) {
+        assert(mode >= 0 && mode < 4);
+        if (m_buffer == nullptr) {
+            printf("UniformImage : empty buffer");
+            return;
+        }
+        if (mode == m_color_space) return;
+        
+        if (mode == COLOR_RGB && m_color_space == COLOR_BGR) RGB2BGR();
+        if (mode == COLOR_BGR && m_color_space == COLOR_RGB) BGR2RGB();
+        // ...
+    }
+
+    pixel_t* & getImageBuffer() {
+        return m_buffer;
+    }
+    pixel_t* getImageBufferConst() const {
+        return m_buffer;
+    }
 };
 
 }
