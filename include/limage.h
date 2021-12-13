@@ -53,10 +53,10 @@ typedef struct BITMAPINFOHEADER {
 
 // used when bits_per_pixel <= 8
 typedef struct BITMAPCOLORTABLE {
-    pixel_t   red;
-    pixel_t   green;
-    pixel_t   blue;
-    pixel_t   reserved;
+    uchar_t   red;
+    uchar_t   green;
+    uchar_t   blue;
+    uchar_t   reserved;
 } BMPColorTable;
 
 class BMPImage {
@@ -64,7 +64,7 @@ private:
     BMPFileHeader m_file_header;
     BMPInfoHeader m_info_header;
     BMPColorTable *m_color_tables;
-    pixel_t *m_buffer;              // color is arranged in RGB order
+    uchar_t *m_buffer;              // color is arranged in RGB order
                                     // rows are arranged from bottom to top
     bool          m_is_loaded;
     bool          m_use_color_table;
@@ -98,8 +98,8 @@ public:
     /* Member Functions */
     void writeImage(const char* filename) const;
     void printImageInfo() const;
-    pixel_t* & getImageBuffer();
-    pixel_t* getImageBufferConst() const;
+    uchar_t* & getImageBuffer();
+    uchar_t* getImageBufferConst() const;
 };
 
 #define COLOR_RGB 0U
@@ -111,10 +111,10 @@ class UniformImage {
 private:
     size_t          m_width;
     size_t          m_height;
-    pixel_t         *m_buffer;     // buffer rows are arranged from top to bottom
+    uchar_t         *m_buffer;     // buffer rows are arranged from top to bottom
     unsigned short  m_color_space; // RGB, BGR, YUV, HSV
 
-    void swap(pixel_t & t1, pixel_t & t2);
+    void swap(uchar_t & t1, uchar_t & t2);
 
     void RGB2BGR();
     void RGB2BGR_SIMD();
@@ -139,12 +139,12 @@ public:
     UniformImage(const BMPImage & bmp);
     ~UniformImage();
 
-    pixel_t& operator() (const size_t & row, const size_t & column, const size_t & channel);
+    uchar_t& operator() (const size_t & row, const size_t & column, const size_t & channel);
 
     void createFromBMPImage(const BMPImage & bmp);
     void convertColorSpace(const unsigned short mode);
-    pixel_t* & getImageBuffer();
-    pixel_t* getImageBufferConst() const;
+    uchar_t* & getImageBuffer();
+    uchar_t* getImageBufferConst() const;
 };
 
 }

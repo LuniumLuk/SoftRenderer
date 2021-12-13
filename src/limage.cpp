@@ -86,10 +86,10 @@ void BMPImage::loadImage() {
     }
     size_t scan_line = ((data_line + 3) / 4) * 4;
 
-    m_buffer = new pixel_t[data_line * height];
-    pixel_t *temp_buffer = new pixel_t[scan_line];
+    m_buffer = new uchar_t[data_line * height];
+    uchar_t *temp_buffer = new uchar_t[scan_line];
     for (size_t i = 0; i < height; i++) {
-        fread(temp_buffer, sizeof(pixel_t), scan_line, fp);
+        fread(temp_buffer, sizeof(uchar_t), scan_line, fp);
         memcpy(m_buffer + i * data_line, temp_buffer, data_line);
     }
     
@@ -150,8 +150,8 @@ BMPImage::BMPImage(const BMPImage & image): m_color_tables(nullptr),
     }
 
     size_t buffer_size = image.getBufferSize();
-    m_buffer = new pixel_t[buffer_size];
-    memcpy(m_buffer, image.m_buffer, buffer_size * sizeof(pixel_t));
+    m_buffer = new uchar_t[buffer_size];
+    memcpy(m_buffer, image.m_buffer, buffer_size * sizeof(uchar_t));
 
     size_t f_len = strlen(image.m_filename);
     m_filename = new char[f_len + 1];
@@ -172,7 +172,7 @@ size_t BMPImage::getChannelNum() const {
             return 0;
     }
 }
-pixel_t& BMPImage::operator() (const size_t & row, const size_t & column, const size_t & channel) {
+uchar_t& BMPImage::operator() (const size_t & row, const size_t & column, const size_t & channel) {
     size_t channel_num = getChannelNum();
     size_t data_line = getDataLine();
     assert(channel_num > 0);
@@ -214,10 +214,10 @@ void BMPImage::writeImage(const char* filename) const {
 
     fclose(fp);
 }
-pixel_t* & BMPImage::getImageBuffer() {
+uchar_t* & BMPImage::getImageBuffer() {
     return m_buffer;
 }
-pixel_t* BMPImage::getImageBufferConst() const {
+uchar_t* BMPImage::getImageBufferConst() const {
     return m_buffer;
 }
 void BMPImage::printImageInfo() const {
@@ -250,8 +250,8 @@ UniformImage::~UniformImage() {
 
 // implemented base on std::swap
 // reference : https://stackoverflow.com/questions/35154516/most-efficient-way-of-swapping-values-c
-void UniformImage::swap(pixel_t & t1, pixel_t & t2) {
-    pixel_t temp(std::move(t1));
+void UniformImage::swap(uchar_t & t1, uchar_t & t2) {
+    uchar_t temp(std::move(t1));
     t1 = std::move(t2);
     t2 = std::move(temp);
 }
@@ -265,42 +265,41 @@ void UniformImage::RGB2BGR() {
         }
     }
 }
+// SIMD method to convert RGB to BGR
+// __uint128_t may not supported in some system, need to switch to other sturcture or type
 void UniformImage::RGB2BGR_SIMD() {
-    __uint64_t mask_64[2] = {
-        0xFF0000FF0000FF00, 0x00FF0000FF000000,
-    };
+    // batch size is 5 pixels
+    uchar_t u_mask[15] = { 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00 };
     __uint128_t mask_128;
-    memcpy(&mask_128, mask_64, 16);
+    memcpy(&mask_128, u_mask, 15);
 
     size_t row_size = m_width * 3;
     size_t i, j;
     __uint128_t s0, sr, sg, sb;
 
-    pixel_t *buffer_ptr = m_buffer;
-    pixel_t *buffer_end = m_buffer + m_width * m_height * 3 - 15;
+    uchar_t *buffer_ptr = m_buffer;
+    uchar_t *buffer_end = m_buffer + m_width * m_height * 3 - 15;
     while (buffer_ptr < buffer_end) {
         memcpy(&s0, buffer_ptr, 15);
         sr = mask_128 & s0;
-        sg = mask_128 & (s0 << 8);
-        sb = mask_128 & (s0 << 16);
-        memset(&s0, 0, 16);
-        s0 &= sr >> 16;
-        s0 &= sg >> 8;
-        s0 &= sr;
+        sg = mask_128 & (s0 >> 8);
+        sb = mask_128 & (s0 >> 16);
+        s0 = std::move(sb); // faster than memcpy
+        s0 |= (sr << 16);
+        s0 |= (sg << 8);
         memcpy(buffer_ptr, &s0, 15);
         buffer_ptr += 15;
     }
 
-    size_t rest = buffer_end + 15 - buffer_ptr - 1;
+    size_t rest = buffer_end + 15 - buffer_ptr;
     if (rest > 0) {
         memcpy(&s0, buffer_ptr, rest);
         sr = mask_128 & s0;
-        sg = mask_128 & (s0 << 8);
-        sb = mask_128 & (s0 << 16);
-        memset(&s0, 0, 16);
-        s0 &= sr >> 16;
-        s0 &= sg >> 8;
-        s0 &= sr;
+        sg = mask_128 & (s0 >> 8);
+        sb = mask_128 & (s0 >> 16);
+        s0 = std::move(sb);
+        s0 |= (sr << 16);
+        s0 |= (sg << 8);
         memcpy(buffer_ptr, &s0, rest);
     }
 }
@@ -311,7 +310,7 @@ void UniformImage::BGR2RGB_SIMD() {
     RGB2BGR_SIMD();
 }
 
-pixel_t& UniformImage::operator() (const size_t & row, const size_t & column, const size_t & channel) {
+uchar_t& UniformImage::operator() (const size_t & row, const size_t & column, const size_t & channel) {
     size_t row_size = m_width * 3;
     assert(channel < 3);
     assert(row < m_height);
@@ -335,8 +334,8 @@ void UniformImage::createFromBMPImage(const BMPImage & bmp) {
     size_t row_size = m_width * 3;
     size_t buffer_size = row_size * m_height;
 
-    pixel_t *src_buffer = bmp.getImageBufferConst();
-    m_buffer = new pixel_t[buffer_size];
+    uchar_t *src_buffer = bmp.getImageBufferConst();
+    m_buffer = new uchar_t[buffer_size];
     for (size_t i = 0; i < m_height; i++) {
         memcpy(m_buffer + i * row_size, src_buffer + (m_height - i - 1) * row_size, row_size);
     }
@@ -355,9 +354,9 @@ void UniformImage::convertColorSpace(const unsigned short mode) {
     // ...
 }
 
-pixel_t* & UniformImage::getImageBuffer() {
+uchar_t* & UniformImage::getImageBuffer() {
     return m_buffer;
 }
-pixel_t* UniformImage::getImageBufferConst() const {
+uchar_t* UniformImage::getImageBufferConst() const {
     return m_buffer;
 }
