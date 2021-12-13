@@ -8,6 +8,8 @@ A Tiny Renderer relying on minimum dependencies
   - vector
   - quaternion
   - matrix
+- Image IO
+  - BMP Format
 
 ## Compile and Run
 
