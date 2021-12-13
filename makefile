@@ -1,5 +1,5 @@
-OBJECTS = main.o lmath.o
-SRCS = src/main.cpp src/lmath.cpp
+OBJECTS = main.o lmath.o limage.o
+SRCS = src/main.cpp src/lmath.cpp src/limage.cpp
 CC = g++
 CFLAGS = -g -std=c++11
 # Windows
@@ -23,6 +23,8 @@ viewer : $(OBJECTS)
 
 lmath.o : src/lmath.cpp include/lmath.h
 	$(CC) $(CFLAGS) -c src/lmath.cpp
+limage.o : src/limage.cpp include/limage.h
+	$(CC) $(CFLAGS) -c src/limage.cpp
 main.o : src/main.cpp include/lmath.h include/limage.h
 	$(CC) $(CFLAGS) -c $(SRCS)
 

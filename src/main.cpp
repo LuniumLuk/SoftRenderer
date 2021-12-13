@@ -77,7 +77,7 @@ typedef struct TestStruct {
 } tests;
 
 void buffer_test() {
-size_t len = 10000;
+    size_t len = 10000;
     unsigned char * buffer = new unsigned char[len];
     for (int i = 0; i < len; i++) {
         buffer[i] = (unsigned char)(i % 256);
@@ -100,7 +100,7 @@ size_t len = 10000;
     printf("%u\n", buffer[257]); // still access the correct data, <Undefined Behavior>
 }
 
-int main() {
+void image_test() {
     double dur;
     clock_t start, end;
     start = clock();
@@ -115,6 +115,30 @@ int main() {
     end = clock();
     dur = (double)(end - start);
     printf("Read %d 512 * 512 Images Use Time: %fs\n", iter_times, (dur / CLOCKS_PER_SEC));
+}
+
+int main() {
+    double dur;
+    clock_t start, end;
+    start = clock();
+
+    // BMPImage image("test/lenna.bmp");
+
+    // // printf("%u\n", image(100, 100, 3));
+
+    // for (int i = 0; i < 100; i++) {
+    //     for (int j = 0; j < 100; j++) {
+    //         image(i, j, 0) = 0;
+    //     }
+    // }
+
+    // image.writeImage("test/test.bmp");
+
+    printf("%lu\n", sizeof(BMPImage));
+
+    end = clock();
+    dur = (double)(end - start);
+    printf("Use Time: %fms\n", (dur * 1000 / CLOCKS_PER_SEC));
 
     return 0;
 }
