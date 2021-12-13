@@ -10,6 +10,8 @@ A Tiny Renderer relying on minimum dependencies
   - matrix
 - Image IO
   - BMP Format
+- Mesh IO
+  - OBJ Format
 
 ## Compile
 
