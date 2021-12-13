@@ -114,26 +114,12 @@ private:
     pixel_t         *m_buffer;     // buffer rows are arranged from top to bottom
     unsigned short  m_color_space; // RGB, BGR, YUV, HSV
 
-    // implemented base on std::swap
-    // reference : https://stackoverflow.com/questions/35154516/most-efficient-way-of-swapping-values-c
-    void swap(pixel_t & t1, pixel_t & t2) {
-        pixel_t temp(std::move(t1));
-        t1 = std::move(t2);
-        t2 = std::move(temp);
-    }
+    void swap(pixel_t & t1, pixel_t & t2);
 
-    void RGB2BGR() {
-        size_t row_size = m_width * 3;
-        for (size_t i = 0; i < m_height; i++) {
-            for (size_t j = 0; j < m_width * 3; j += 3) {
-                // swap the 'R' and 'B' channel
-                swap(m_buffer[i * row_size + j], m_buffer[i * row_size + j + 2]);
-            }
-        }
-    }
-    void BGR2RGB() {
-        RGB2BGR();
-    }
+    void RGB2BGR();
+    void RGB2BGR_SIMD();
+    void BGR2RGB();
+    void BGR2RGB_SIMD();
     void RGB2YUV();
     void YUV2RGB();
     void YUV2BGR();
@@ -149,70 +135,16 @@ public:
                     m_height(0),
                     m_buffer(nullptr),
                     m_color_space(COLOR_RGB) {}
-    UniformImage(size_t width, size_t height): m_width(width),
-                                               m_height(height),
-                                               m_buffer(nullptr),
-                                               m_color_space(COLOR_RGB) {}
-    UniformImage(const BMPImage & bmp): m_width(0),
-                                        m_height(0),
-                                        m_buffer(nullptr),
-                                        m_color_space(COLOR_RGB) {
-        createFromBMPImage(bmp);
-    }
-    ~UniformImage() {
-        delete[] m_buffer;
-    }
+    UniformImage(size_t width, size_t height);
+    UniformImage(const BMPImage & bmp);
+    ~UniformImage();
 
-    pixel_t& operator() (const size_t & row, const size_t & column, const size_t & channel) {
-        size_t row_size = m_width * 3;
-        assert(channel < 3);
-        assert(row < m_height);
-        assert(column < m_width);
-        return m_buffer[row * row_size + column * 3 + channel];
-    }
+    pixel_t& operator() (const size_t & row, const size_t & column, const size_t & channel);
 
-    void createFromBMPImage(const BMPImage & bmp) {
-        if (!bmp.isLoaded()) {
-            printf("UniformImage : BMP image is unloaded\n");
-            return;
-        }
-        if (bmp.getChannelNum() != 3) {
-            printf("UniformImage : BMP channel number unsupported\n");
-            return;
-        }
-        m_width = bmp.getImageWidth();
-        m_height = bmp.getImageHeight();
-        m_color_space = COLOR_BGR;
-
-        size_t row_size = m_width * 3;
-        size_t buffer_size = row_size * m_height;
-
-        pixel_t *src_buffer = bmp.getImageBufferConst();
-        m_buffer = new pixel_t[buffer_size];
-        for (size_t i = 0; i < m_height; i++) {
-            memcpy(m_buffer + i * row_size, src_buffer + (m_height - i - 1) * row_size, row_size);
-        }
-    }
-
-    void convertColorSpace(const unsigned short mode) {
-        assert(mode >= 0 && mode < 4);
-        if (m_buffer == nullptr) {
-            printf("UniformImage : empty buffer");
-            return;
-        }
-        if (mode == m_color_space) return;
-        
-        if (mode == COLOR_RGB && m_color_space == COLOR_BGR) RGB2BGR();
-        if (mode == COLOR_BGR && m_color_space == COLOR_RGB) BGR2RGB();
-        // ...
-    }
-
-    pixel_t* & getImageBuffer() {
-        return m_buffer;
-    }
-    pixel_t* getImageBufferConst() const {
-        return m_buffer;
-    }
+    void createFromBMPImage(const BMPImage & bmp);
+    void convertColorSpace(const unsigned short mode);
+    pixel_t* & getImageBuffer();
+    pixel_t* getImageBufferConst() const;
 };
 
 }

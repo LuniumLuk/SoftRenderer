@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <utility>
 #include "../include/lmath.h"
 #include "../include/limage.h"
 
@@ -124,7 +125,16 @@ int main() {
 
     BMPImage image("assets/lenna.bmp");
     UniformImage u_image(image);
-    u_image.convertColorSpace(COLOR_RGB);
+
+    size_t iter_time = 1000; // SIMD: ~315ms
+                             // normal: ~915ms
+    for (size_t i = 0; i < iter_time; i++) {
+        if (i % 2 == 0) 
+            u_image.convertColorSpace(COLOR_RGB);
+        else
+            u_image.convertColorSpace(COLOR_BGR);
+    }
+    
 
     end = clock();
     dur = (double)(end - start);

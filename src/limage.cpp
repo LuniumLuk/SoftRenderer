@@ -232,3 +232,132 @@ void BMPImage::printImageInfo() const {
         printf("-- BMPImage unloaded -------------------------\n");
     }
 }
+
+
+UniformImage::UniformImage(size_t width, size_t height): m_width(width),
+                                                         m_height(height),
+                                                         m_buffer(nullptr),
+                                                         m_color_space(COLOR_RGB) {}
+UniformImage::UniformImage(const BMPImage & bmp): m_width(0),
+                                                  m_height(0),
+                                                  m_buffer(nullptr),
+                                                  m_color_space(COLOR_RGB) {
+    createFromBMPImage(bmp);
+}
+UniformImage::~UniformImage() {
+    delete[] m_buffer;
+}
+
+// implemented base on std::swap
+// reference : https://stackoverflow.com/questions/35154516/most-efficient-way-of-swapping-values-c
+void UniformImage::swap(pixel_t & t1, pixel_t & t2) {
+    pixel_t temp(std::move(t1));
+    t1 = std::move(t2);
+    t2 = std::move(temp);
+}
+
+void UniformImage::RGB2BGR() {
+    size_t row_size = m_width * 3;
+    for (size_t i = 0; i < m_height; i++) {
+        for (size_t j = 0; j < m_width * 3; j += 3) {
+            // swap the 'R' and 'B' channel
+            swap(m_buffer[i * row_size + j], m_buffer[i * row_size + j + 2]);
+        }
+    }
+}
+void UniformImage::RGB2BGR_SIMD() {
+    __uint64_t mask_64[2] = {
+        0xFF0000FF0000FF00, 0x00FF0000FF000000,
+    };
+    __uint128_t mask_128;
+    memcpy(&mask_128, mask_64, 16);
+
+    size_t row_size = m_width * 3;
+    size_t i, j;
+    __uint128_t s0, sr, sg, sb;
+
+    pixel_t *buffer_ptr = m_buffer;
+    pixel_t *buffer_end = m_buffer + m_width * m_height * 3 - 15;
+    while (buffer_ptr < buffer_end) {
+        memcpy(&s0, buffer_ptr, 15);
+        sr = mask_128 & s0;
+        sg = mask_128 & (s0 << 8);
+        sb = mask_128 & (s0 << 16);
+        memset(&s0, 0, 16);
+        s0 &= sr >> 16;
+        s0 &= sg >> 8;
+        s0 &= sr;
+        memcpy(buffer_ptr, &s0, 15);
+        buffer_ptr += 15;
+    }
+
+    size_t rest = buffer_end + 15 - buffer_ptr - 1;
+    if (rest > 0) {
+        memcpy(&s0, buffer_ptr, rest);
+        sr = mask_128 & s0;
+        sg = mask_128 & (s0 << 8);
+        sb = mask_128 & (s0 << 16);
+        memset(&s0, 0, 16);
+        s0 &= sr >> 16;
+        s0 &= sg >> 8;
+        s0 &= sr;
+        memcpy(buffer_ptr, &s0, rest);
+    }
+}
+void UniformImage::BGR2RGB() {
+    RGB2BGR();
+}
+void UniformImage::BGR2RGB_SIMD() {
+    RGB2BGR_SIMD();
+}
+
+pixel_t& UniformImage::operator() (const size_t & row, const size_t & column, const size_t & channel) {
+    size_t row_size = m_width * 3;
+    assert(channel < 3);
+    assert(row < m_height);
+    assert(column < m_width);
+    return m_buffer[row * row_size + column * 3 + channel];
+}
+
+void UniformImage::createFromBMPImage(const BMPImage & bmp) {
+    if (!bmp.isLoaded()) {
+        printf("UniformImage : BMP image is unloaded\n");
+        return;
+    }
+    if (bmp.getChannelNum() != 3) {
+        printf("UniformImage : BMP channel number unsupported\n");
+        return;
+    }
+    m_width = bmp.getImageWidth();
+    m_height = bmp.getImageHeight();
+    m_color_space = COLOR_BGR;
+
+    size_t row_size = m_width * 3;
+    size_t buffer_size = row_size * m_height;
+
+    pixel_t *src_buffer = bmp.getImageBufferConst();
+    m_buffer = new pixel_t[buffer_size];
+    for (size_t i = 0; i < m_height; i++) {
+        memcpy(m_buffer + i * row_size, src_buffer + (m_height - i - 1) * row_size, row_size);
+    }
+}
+
+void UniformImage::convertColorSpace(const unsigned short mode) {
+    assert(mode >= 0 && mode < 4);
+    if (m_buffer == nullptr) {
+        printf("UniformImage : empty buffer");
+        return;
+    }
+    if (mode == m_color_space) return;
+    
+    if (mode == COLOR_RGB && m_color_space == COLOR_BGR) { RGB2BGR_SIMD(); m_color_space = COLOR_BGR; }
+    if (mode == COLOR_BGR && m_color_space == COLOR_RGB) { BGR2RGB_SIMD(); m_color_space = COLOR_RGB; }
+    // ...
+}
+
+pixel_t* & UniformImage::getImageBuffer() {
+    return m_buffer;
+}
+pixel_t* UniformImage::getImageBufferConst() const {
+    return m_buffer;
+}
