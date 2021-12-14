@@ -13,7 +13,8 @@
 #define PI 3.14159265358979323846264338327950288f
 #define EPSILON 1e-6f
 
-namespace Lurdr {
+namespace Lurdr
+{
 
 typedef class Vector2 vec2;
 typedef class Vector3 vec3;
@@ -23,7 +24,8 @@ typedef class Quaternion quat;
 /**
  * Vector2
  */
-class Vector2 {
+class Vector2
+{
 public:
     float x, y;
     Vector2(): x(0), y(0) {}
@@ -59,7 +61,8 @@ public:
 /**
  * Vector3
  */
-class Vector3 {
+class Vector3
+{
 public:
     float x, y, z;
     Vector3(): x(0), y(0), z(0) {}
@@ -98,7 +101,8 @@ public:
 /**
  * Vector4
  */
-class Vector4 {
+class Vector4
+{
 public:
     float x, y, z, w;
     Vector4(): x(0), y(0), z(0), w(0) {}
@@ -136,7 +140,8 @@ public:
 /**
  * Quaternion
  */
-class Quaternion {
+class Quaternion
+{
 public:
     float x, y, z, w;
     Quaternion(): x(0), y(0), z(0), w(1) {}

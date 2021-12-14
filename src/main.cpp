@@ -10,14 +10,16 @@ using namespace Lurdr;
 
 typedef struct { float x, y, z; } vec3s;
 
-void test_vec_alloc() {
+void test_vec_alloc()
+{
     double dur;
     clock_t start, end;
     start = clock();
 
     int iter_times = 10000;
     vec3* vec3_array = new vec3[iter_times];
-    for (int i = 1; i < iter_times; i++) {
+    for (int i = 1; i < iter_times; i++)
+    {
         vec3_array[i].x = 1;
         vec3_array[i].y = 1;
         vec3_array[i].z = 1;
@@ -29,7 +31,8 @@ void test_vec_alloc() {
     start = clock();
 
     vec3s* vec3s_array = new vec3s[iter_times];
-    for (int i = 0; i < iter_times; i++) {
+    for (int i = 0; i < iter_times; i++)
+    {
         vec3s_array[i].x = 1;
         vec3s_array[i].y = 2;
         vec3s_array[i].z = 3;
@@ -40,10 +43,12 @@ void test_vec_alloc() {
     printf("Vector3 Struct Use Time: %fs\n", (dur / CLOCKS_PER_SEC));
 }
 
-void test_quat() {
+void test_quat()
+{
     int iter_times = 100;
     quat q = quat(1, 2, 3, 4);
-    for (int i = 1; i < iter_times; i++) {
+    for (int i = 1; i < iter_times; i++)
+    {
         // quats[i] = (quats[i-1] * quats[i-2]).normalized();
         q = q * quat(2, 1, 1, 1);
         q = q.normalized();
@@ -51,7 +56,8 @@ void test_quat() {
     }
 }
 
-void test_rotate() {
+void test_rotate()
+{
     vec3 from(0.0, 0.0, 1.0);
     vec3 to(0.0, 0.5, 0.866025);
 
@@ -71,23 +77,27 @@ void test_rotate() {
     printf("%d\n", vec.rotated(a1) == vec.rotated(a2));
 }
 
-typedef struct TestStruct {
+typedef struct TestStruct
+{
     float a;
     float b;
     unsigned char c;
 } tests;
 
-void buffer_test() {
+void buffer_test()
+{
     size_t len = 10000;
     unsigned char * buffer = new unsigned char[len];
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < len; i++)
+    {
         buffer[i] = (unsigned char)(i % 256);
     }
 
     unsigned char * buffer2 = new unsigned char[len];
     memcpy(buffer2, buffer, len * sizeof(unsigned char));
 
-    for (int i = 1100; i < 1120; i++) {
+    for (int i = 1100; i < 1120; i++)
+    {
         printf("=%u=", buffer[i]);
     }
     printf("\n");
@@ -101,13 +111,15 @@ void buffer_test() {
     printf("%u\n", buffer[257]); // still access the correct data, <Undefined Behavior>
 }
 
-void image_test() {
+void image_test()
+{
     double dur;
     clock_t start, end;
     start = clock();
 
     int iter_times = 10000;
-    for (int i = 1; i < iter_times; i++) {
+    for (int i = 1; i < iter_times; i++)
+    {
         BMPImage image("test/lenna.bmp");
         // image.printImageInfo();
         // image.writeImage("test/test.bmp");
@@ -131,7 +143,8 @@ int main() {
     u_image.printImageInfo();
     size_t iter_time = 100; // SIMD: ~315ms
                              // normal: ~915ms
-    for (size_t i = 0; i < iter_time; i++) {
+    for (size_t i = 0; i < iter_time; i++)
+    {
         if (i % 2 == 0) 
             u_image.convertColorSpace(COLOR_RGB);
         else

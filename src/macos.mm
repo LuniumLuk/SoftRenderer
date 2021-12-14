@@ -12,7 +12,8 @@
 // reference : http://glampert.com/2012/11-29/osx-window-without-xcode-and-ib/
 // & https://github.com/zauonlok/renderer/blob/master/renderer/platforms/macos.m
 
-struct window {
+struct window
+{
     NSWindow *handle;
     unsigned char* image_buffer;
     // image_t *surface;
@@ -26,7 +27,8 @@ struct window {
 
 #define PATH_SIZE 256
 
-static void create_menubar(void) {
+static void create_menubar(void)
+{
     NSMenu *menu_bar, *app_menu;
     NSMenuItem *app_menu_item, *quit_menu_item;
     NSString *app_name, *quit_title;
@@ -52,7 +54,8 @@ static NSAutoreleasePool *g_auto_release_pool;
 
 // note : static function makes this function visible by linker
 // occupying the signature in the function definition pool
-static void create_application() {
+static void create_application()
+{
     if (NSApp == nil) {
         g_auto_release_pool = [[NSAutoreleasePool alloc] init];
         [NSApplication sharedApplication];
@@ -61,7 +64,8 @@ static void create_application() {
         [NSApp finishLaunching];
     }
 }
-static void initialize_path() {
+static void initialize_path()
+{
     char path[PATH_SIZE];
     uint32_t size = PATH_SIZE;
     // returns a full path to the executable
@@ -71,7 +75,8 @@ static void initialize_path() {
     chdir(path);
     chdir("assets");
 }
-static void terminate_application() {
+static void terminate_application()
+{
     assert(g_auto_release_pool != NULL);
     [g_auto_release_pool drain];
     g_auto_release_pool = [[NSAutoreleasePool alloc] init];
@@ -203,13 +208,16 @@ static void terminate_application() {
 @interface ContentView : NSView
 @end
 
-@implementation ContentView {
+@implementation ContentView
+{
     window_t *_window;
 }
 
-- (instancetype)initWithWindow:(window_t *)window {
+- (instancetype)initWithWindow:(window_t *)window
+{
     self = [super init];
-    if (self != nil) {
+    if (self != nil)
+    {
         _window = window;
     }
     return self;
@@ -226,7 +234,8 @@ static void terminate_application() {
 // - upside down fix
 // - BGR -> RGB
 
-- (void)drawRect:(NSRect)dirtyRect {
+- (void)drawRect:(NSRect)dirtyRect
+{
     // image_t *surface = _window->surface;
     NSBitmapImageRep *rep = [[[NSBitmapImageRep alloc]
             initWithBitmapDataPlanes:&(_window->image_buffer)
@@ -246,7 +255,8 @@ static void terminate_application() {
 
 @end
 
-static void present_surface(window_t *window) {
+static void present_surface(window_t *window)
+{
     [[window->handle contentView] setNeedsDisplay:YES];  /* invoke drawRect */
 }
 

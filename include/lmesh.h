@@ -3,7 +3,8 @@
 
 namespace Lurdr {
 
-class OBJMesh {
+class OBJMesh
+{
 
 };
 

@@ -8,9 +8,11 @@ using namespace Lurdr;
  *  - limit the use of platte image
  */
 
-void BMPImage::loadFileHeaderx64(FILE *fp) {
+void BMPImage::loadFileHeaderx64(FILE *fp)
+{
     unsigned char *temp_buffer = new unsigned char[BI_FILE_HEADER_SIZE];
     unsigned char *ptr = temp_buffer;
+
     fseek(fp, 0L, SEEK_SET);
     fread(temp_buffer, BI_FILE_HEADER_SIZE, 1, fp);
     memcpy(&(m_file_header.signature), ptr, sizeof(ushort_t));
@@ -23,9 +25,11 @@ void BMPImage::loadFileHeaderx64(FILE *fp) {
 
     delete[] temp_buffer;
 }
-void BMPImage::writeFileHeaderx64(FILE *fp) const {
+void BMPImage::writeFileHeaderx64(FILE *fp) const
+{
     unsigned char *temp_buffer = new unsigned char[BI_FILE_HEADER_SIZE];
     unsigned char *ptr = temp_buffer;
+
     memcpy(ptr, &(m_file_header.signature), sizeof(ushort_t));
     ptr += sizeof(ushort_t);
     memcpy(ptr, &(m_file_header.file_size), sizeof(ushort_t));
@@ -40,16 +44,19 @@ void BMPImage::writeFileHeaderx64(FILE *fp) const {
     delete[] temp_buffer;
 }
 
-void BMPImage::loadImage() {
+void BMPImage::loadImage()
+{
     FILE *fp;
     assert(m_filename != nullptr);
     fp = fopen(m_filename, "rb");
-    if (fp == nullptr) {
+    if (fp == nullptr)
+    {
         printf("BMPImage : image file: %s open failed\n", m_filename);
         return;
     }
     loadFileHeaderx64(fp);
-    if (m_file_header.signature != BI_BM) {
+    if (m_file_header.signature != BI_BM)
+    {
         printf("BMPImage : file format error\n");
         clean();
         fclose(fp);
@@ -57,11 +64,13 @@ void BMPImage::loadImage() {
     }
     fseek(fp, BI_FILE_HEADER_SIZE, SEEK_SET);
     fread(&m_info_header, sizeof(BMPInfoHeader), 1, fp);
-    if (m_info_header.height < 0) {
+    if (m_info_header.height < 0)
+    {
         m_info_header.height = abs(m_info_header.height);
     }
 
-    if (m_info_header.bits_per_pixel <= 8) {
+    if (m_info_header.bits_per_pixel <= 8)
+    {
         m_use_color_table = true;
         size_t color_tables_offset = BI_FILE_HEADER_SIZE + sizeof(BMPInfoHeader);
         fseek(fp, color_tables_offset, SEEK_SET);
@@ -69,7 +78,9 @@ void BMPImage::loadImage() {
         size_t color_num = m_info_header.colors_used;
         m_color_tables = new BMPColorTable[color_num];
         fread(m_color_tables, sizeof(BMPColorTable), color_num, fp);
-    } else {
+    }
+    else
+    {
         m_use_color_table = false;
     }
 
@@ -78,7 +89,8 @@ void BMPImage::loadImage() {
     size_t height = getImageHeight();
     size_t data_line = getDataLine();
 
-    if (data_line == -1) {
+    if (data_line == -1)
+    {
         printf("BMPImage : unsupported bits per pixel\n");
         clean();
         fclose(fp);
@@ -88,7 +100,8 @@ void BMPImage::loadImage() {
 
     m_buffer = new uchar_t[data_line * height];
     uchar_t *temp_buffer = new uchar_t[scan_line];
-    for (size_t i = 0; i < height; i++) {
+    for (size_t i = 0; i < height; i++)
+    {
         fread(temp_buffer, sizeof(uchar_t), scan_line, fp);
         memcpy(m_buffer + i * data_line, temp_buffer, data_line);
     }
@@ -98,7 +111,8 @@ void BMPImage::loadImage() {
     m_is_loaded = true;
     fclose(fp);
 }
-void BMPImage::clean() {
+void BMPImage::clean() 
+{
     delete[] m_color_tables;
     delete[] m_buffer;
     delete[] m_filename;
@@ -107,15 +121,21 @@ void BMPImage::clean() {
     m_is_loaded = false;
     m_filename = nullptr;
 }
-size_t BMPImage::getDataLine() const {
+size_t BMPImage::getDataLine() const
+{
     ushort_t bits = m_info_header.bits_per_pixel;
     size_t width = m_info_header.width;
     size_t channel_num = getChannelNum();
-    if (channel_num < 0) {
+    if (channel_num < 0)
+    {
         return (width + (-channel_num - 1)) / (-channel_num);
-    } else if (channel_num > 0) {
+    } 
+    else if (channel_num > 0)
+    {
         return width * channel_num;
-    } else {
+    }
+    else
+    {
         return -1;
     }
 }
@@ -123,7 +143,8 @@ BMPImage::BMPImage(const char* filename): m_color_tables(nullptr),
                                           m_buffer(nullptr),
                                           m_filename(nullptr),
                                           m_is_loaded(false),
-                                          m_use_color_table(false) {
+                                          m_use_color_table(false)
+{
     size_t f_len = strlen(filename);
     m_filename = new char[f_len + 1];
     strcpy(m_filename, filename);
@@ -134,8 +155,10 @@ BMPImage::BMPImage(const BMPImage & image): m_color_tables(nullptr),
                                             m_buffer(nullptr),
                                             m_filename(nullptr),
                                             m_is_loaded(false),
-                                            m_use_color_table(false) {
-    if (image.m_is_loaded == false) {
+                                            m_use_color_table(false)
+{
+    if (image.m_is_loaded == false)
+    {
         clean();
         return;
     }
@@ -143,7 +166,8 @@ BMPImage::BMPImage(const BMPImage & image): m_color_tables(nullptr),
     m_info_header = image.m_info_header;
 
     m_use_color_table = image.m_use_color_table;
-    if (m_use_color_table) {
+    if (m_use_color_table)
+    {
         size_t color_num = m_info_header.colors_used;
         m_color_tables = new BMPColorTable[color_num];
         memcpy(m_color_tables, image.m_color_tables, color_num * sizeof(BMPColorTable));
@@ -159,9 +183,11 @@ BMPImage::BMPImage(const BMPImage & image): m_color_tables(nullptr),
     
     m_is_loaded = true;
 }
-size_t BMPImage::getChannelNum() const {
+size_t BMPImage::getChannelNum() const
+{
     ushort_t bits = m_info_header.bits_per_pixel;
-    switch (bits) {
+    switch (bits)
+    {
         case 1:  return -8;
         case 4:  return -2;
         case 8:  return 1;
@@ -172,7 +198,8 @@ size_t BMPImage::getChannelNum() const {
             return 0;
     }
 }
-uchar_t& BMPImage::operator() (const size_t & row, const size_t & column, const size_t & channel) {
+uchar_t& BMPImage::operator() (const size_t & row, const size_t & column, const size_t & channel)
+{
     size_t channel_num = getChannelNum();
     size_t data_line = getDataLine();
     assert(channel_num > 0);
@@ -182,21 +209,25 @@ uchar_t& BMPImage::operator() (const size_t & row, const size_t & column, const 
     return m_buffer[row * data_line + column * channel_num + channel];
 }
 
-void BMPImage::writeImage(const char* filename) const {
-    if (m_is_loaded == false) {
+void BMPImage::writeImage(const char* filename) const
+{
+    if (m_is_loaded == false)
+    {
         printf("BMPImage : image unloaded\n");
         return;
     }
     FILE *fp;
     fp = fopen(filename, "wb");
-    if (fp == nullptr) {
+    if (fp == nullptr)
+    {
         printf("BMPImage : image file: %s open failed\n", filename);
         return;
     }
     writeFileHeaderx64(fp);
     fseek(fp, BI_FILE_HEADER_SIZE, SEEK_SET);
     fwrite(&m_info_header, sizeof(BMPInfoHeader), 1, fp);
-    if (m_use_color_table) {
+    if (m_use_color_table)
+    {
         fwrite(&m_color_tables, 1, sizeof(m_color_tables), fp);
     }
 
@@ -207,28 +238,35 @@ void BMPImage::writeImage(const char* filename) const {
     size_t scan_line = ((data_line + 3) / 4) * 4;
     size_t pad_size = scan_line - data_line;
 
-    for (size_t i = 0; i < height; i++) {
+    for (size_t i = 0; i < height; i++)
+    {
         fwrite(m_buffer + i * data_line, data_line, 1, fp);
         fseek(fp, pad_size, SEEK_CUR);
     }
 
     fclose(fp);
 }
-uchar_t* & BMPImage::getImageBuffer() {
+uchar_t* & BMPImage::getImageBuffer()
+{
     return m_buffer;
 }
-uchar_t* BMPImage::getImageBufferConst() const {
+uchar_t* BMPImage::getImageBufferConst() const
+{
     return m_buffer;
 }
-void BMPImage::printImageInfo() const {
-    if (m_is_loaded) {
+void BMPImage::printImageInfo() const
+{
+    if (m_is_loaded)
+    {
         printf("-- BMPImage info -----------------------------\n");
         printf("      filename : %s\n", m_filename);
         printf("    image size : %-6d * %-6d\n", getImageHeight(), getImageWidth());
         printf("     data size : %-8lu bytes\n", getImageHeight() * getDataLine());
         printf("    pixel size : %-8d bits\n",   m_info_header.bits_per_pixel);
         printf("----------------------------------------------\n");
-    } else {
+    }
+    else
+    {
         printf("-- BMPImage unloaded -------------------------\n");
     }
 }
@@ -241,25 +279,31 @@ UniformImage::UniformImage(size_t width, size_t height): m_width(width),
 UniformImage::UniformImage(const BMPImage & bmp): m_width(0),
                                                   m_height(0),
                                                   m_buffer(nullptr),
-                                                  m_color_space(COLOR_RGB) {
+                                                  m_color_space(COLOR_RGB)
+{
     createFromBMPImage(bmp);
 }
-UniformImage::~UniformImage() {
+UniformImage::~UniformImage()
+{
     delete[] m_buffer;
 }
 
 // implemented base on std::swap
 // reference : https://stackoverflow.com/questions/35154516/most-efficient-way-of-swapping-values-c
-void UniformImage::swap(uchar_t & t1, uchar_t & t2) {
+void UniformImage::swap(uchar_t & t1, uchar_t & t2)
+{
     uchar_t temp(std::move(t1));
     t1 = std::move(t2);
     t2 = std::move(temp);
 }
-
-void UniformImage::RGB2BGR() {
+// brutal froce method (abandoned)
+void UniformImage::RGB2BGR()
+{
     size_t row_size = m_width * 3;
-    for (size_t i = 0; i < m_height; i++) {
-        for (size_t j = 0; j < m_width * 3; j += 3) {
+    for (size_t i = 0; i < m_height; i++)
+    {
+        for (size_t j = 0; j < m_width * 3; j += 3)
+        {
             // swap the 'R' and 'B' channel
             swap(m_buffer[i * row_size + j], m_buffer[i * row_size + j + 2]);
         }
@@ -267,10 +311,9 @@ void UniformImage::RGB2BGR() {
 }
 // SIMD method to convert RGB to BGR
 // __uint128_t may not supported in some system, need to switch to other sturcture or type
-void UniformImage::RGB2BGR_SIMD() {
-    // uchar_t u_mask[15] = { 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00 };
-    // __uint128_t mask_128;
-    // memcpy(&mask_128, u_mask, 15);
+void UniformImage::RGB2BGR_SIMD() 
+{
+    // a more readable way to initialize a uint128
     simd_128_t mask = { .c = { 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00 }};
     size_t row_size = m_width * 3;
     size_t i, j;
@@ -278,8 +321,9 @@ void UniformImage::RGB2BGR_SIMD() {
 
     uchar_t *buffer_ptr = m_buffer;
     uchar_t *buffer_end = m_buffer + m_width * m_height * 3 - 15;
-    while (buffer_ptr < buffer_end) {
-        memmove(&s0, buffer_ptr, 15);
+    while (buffer_ptr < buffer_end)
+    {
+        memcpy(&s0, buffer_ptr, 15);
         sr = mask.i & s0;
         sg = mask.i & (s0 >> 8);
         sb = mask.i & (s0 >> 16);
@@ -291,7 +335,8 @@ void UniformImage::RGB2BGR_SIMD() {
     }
 
     size_t rest = buffer_end + 15 - buffer_ptr;
-    if (rest > 0) {
+    if (rest > 0)
+    {
         memcpy(&s0, buffer_ptr, rest);
         sr = mask.i & s0;
         sg = mask.i & (s0 >> 8);
@@ -302,14 +347,17 @@ void UniformImage::RGB2BGR_SIMD() {
         memcpy(buffer_ptr, &s0, rest);
     }
 }
-void UniformImage::BGR2RGB() {
+void UniformImage::BGR2RGB()
+{
     RGB2BGR();
 }
-void UniformImage::BGR2RGB_SIMD() {
+void UniformImage::BGR2RGB_SIMD()
+{
     RGB2BGR_SIMD();
 }
 
-uchar_t& UniformImage::operator() (const size_t & row, const size_t & column, const size_t & channel) {
+uchar_t& UniformImage::operator() (const size_t & row, const size_t & column, const size_t & channel)
+{
     size_t row_size = m_width * 3;
     assert(channel < 3);
     assert(row < m_height);
@@ -317,12 +365,15 @@ uchar_t& UniformImage::operator() (const size_t & row, const size_t & column, co
     return m_buffer[row * row_size + column * 3 + channel];
 }
 
-void UniformImage::createFromBMPImage(const BMPImage & bmp) {
-    if (!bmp.isLoaded()) {
+void UniformImage::createFromBMPImage(const BMPImage & bmp)
+{
+    if (!bmp.isLoaded())
+    {
         printf("UniformImage : BMP image is unloaded\n");
         return;
     }
-    if (bmp.getChannelNum() != 3) {
+    if (bmp.getChannelNum() != 3)
+    {
         printf("UniformImage : BMP channel number unsupported\n");
         return;
     }
@@ -335,41 +386,61 @@ void UniformImage::createFromBMPImage(const BMPImage & bmp) {
 
     uchar_t *src_buffer = bmp.getImageBufferConst();
     m_buffer = new uchar_t[buffer_size];
-    for (size_t i = 0; i < m_height; i++) {
+    for (size_t i = 0; i < m_height; i++)
+    {
         memcpy(m_buffer + i * row_size, src_buffer + (m_height - i - 1) * row_size, row_size);
     }
 }
 
-void UniformImage::convertColorSpace(const unsigned short mode) {
+void UniformImage::convertColorSpace(const unsigned short mode)
+{
     assert(mode >= 0 && mode < 4);
-    if (m_buffer == nullptr) {
+    if (m_buffer == nullptr)
+    {
         printf("UniformImage : empty buffer");
         return;
     }
-    if (mode == m_color_space) return;
+    if (mode == m_color_space)
+    {
+        return;
+    }
     
-    if (mode == COLOR_RGB && m_color_space == COLOR_BGR) { RGB2BGR_SIMD(); m_color_space = COLOR_BGR; }
-    if (mode == COLOR_BGR && m_color_space == COLOR_RGB) { BGR2RGB_SIMD(); m_color_space = COLOR_RGB; }
+    if (mode == COLOR_RGB && m_color_space == COLOR_BGR)
+    { 
+        RGB2BGR_SIMD();
+        m_color_space = COLOR_BGR;
+    }
+    if (mode == COLOR_BGR && m_color_space == COLOR_RGB)
+    { 
+        BGR2RGB_SIMD();
+        m_color_space = COLOR_RGB;
+    }
     // ...
 }
 
-uchar_t* & UniformImage::getImageBuffer() {
+uchar_t* & UniformImage::getImageBuffer()
+{
     return m_buffer;
 }
-uchar_t* UniformImage::getImageBufferConst() const {
+uchar_t* UniformImage::getImageBufferConst() const
+{
     return m_buffer;
 }
 // determin the endianness of the system
 // reference : https://stackoverflow.com/questions/1001307/detecting-endianness-programmatically-in-a-c-program
-bool UniformImage::isBigEndian() {
-    union {
+bool UniformImage::isBigEndian()
+{
+    union 
+    {
         uint32_t      i;
         unsigned char c[4];
     } bint = { 0x01020304 };
     return bint.c[0] == 1; 
 }
-void UniformImage::printImageInfo() const {
-    if (m_width > 0 && m_height > 0) {
+void UniformImage::printImageInfo() const
+{
+    if (m_width > 0 && m_height > 0)
+    {
         printf("-- UniformImage info -------------------------\n");
         printf("    image size : %-6lu * %-6lu\n", m_width, m_height);
         if (m_color_space == COLOR_RGB)
@@ -381,7 +452,9 @@ void UniformImage::printImageInfo() const {
         if (m_color_space == COLOR_HSV)
             printf("   color space : HSV\n");
         printf("----------------------------------------------\n");
-    } else {
+    }
+    else
+    {
         printf("-- BMPImage unloaded -------------------------\n");
     }
 }

@@ -22,12 +22,14 @@
 #define COLOR_HSV 3U
 
 // SIMD structure to do unsigned char operations in image
-typedef union SIMD128{
+typedef union SIMD128
+{
     __uint128_t i;
     uchar_t     c[16];
 } simd_128_t;
 
-namespace Lurdr {
+namespace Lurdr
+{
 
 // BMP File Format
 // reference : http://www.ece.ualberta.ca/~elliott/ee552/studentAppNotes/2003_w/misc/bmp_file_format/bmp_file_format.htm
@@ -36,14 +38,16 @@ namespace Lurdr {
 // BitMapFileHeader :
 // in x86,    sizeof(BITMAPFILEHEADER) = 14, use fread to load this struct (not implemented yet)
 // in x86_64, sizeof(BITMAPFILEHEADER) = 16, use loadFileHeaderx64() to load this struct
-typedef struct BITMAPFILEHEADER {
+typedef struct BITMAPFILEHEADER
+{
 	ushort_t  signature;
 	ulong_t   file_size;
 	ulong_t   reserved;
 	ulong_t   data_offset;
 } BMPFileHeader;
 
-typedef struct BITMAPINFOHEADER {
+typedef struct BITMAPINFOHEADER
+{
 	ulong_t         size;       // info header size
 	long_t          width;
  	long_t          height;     // negative height indicate upside-down data buffer
@@ -63,14 +67,16 @@ typedef struct BITMAPINFOHEADER {
 } BMPInfoHeader;
 
 // used when bits_per_pixel <= 8
-typedef struct BITMAPCOLORTABLE {
+typedef struct BITMAPCOLORTABLE
+{
     uchar_t   red;
     uchar_t   green;
     uchar_t   blue;
     uchar_t   reserved;
 } BMPColorTable;
 
-class BMPImage {
+class BMPImage
+{
 private:
     BMPFileHeader m_file_header;
     BMPInfoHeader m_info_header;
@@ -113,7 +119,8 @@ public:
     uchar_t* getImageBufferConst() const;
 };
 
-class UniformImage {
+class UniformImage
+{
 private:
     size_t          m_width;
     size_t          m_height;
