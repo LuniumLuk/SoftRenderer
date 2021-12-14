@@ -124,23 +124,25 @@ int main() {
     start = clock();
 
     BMPImage image("assets/lenna.bmp");
-    printf("R: %u, G: %u, B: %u\n", image(0, 511, 0), image(0, 511, 1), image(0, 511, 2));
+    // printf("R: %u, G: %u, B: %u\n", image(0, 511, 0), image(0, 511, 1), image(0, 511, 2));
     // printf("R: %u, G: %u, B: %u\n", image(0, 0, 0), image(0, 0, 1), image(0, 0, 2));
     UniformImage u_image(image);
 
-    // size_t iter_time = 1000; // SIMD: ~315ms
-    //                          // normal: ~915ms
-    // for (size_t i = 0; i < iter_time; i++) {
-    //     if (i % 2 == 0) 
-    //         u_image.convertColorSpace(COLOR_RGB);
-    //     else
-    //         u_image.convertColorSpace(COLOR_BGR);
-    // }
+    u_image.printImageInfo();
+    size_t iter_time = 100; // SIMD: ~315ms
+                             // normal: ~915ms
+    for (size_t i = 0; i < iter_time; i++) {
+        if (i % 2 == 0) 
+            u_image.convertColorSpace(COLOR_RGB);
+        else
+            u_image.convertColorSpace(COLOR_BGR);
+    }
 
-    u_image.convertColorSpace(COLOR_RGB);
-    printf("R: %u, G: %u, B: %u\n", u_image(511, 511, 0), u_image(511, 511, 1), u_image(511, 511, 2));
+    // u_image.convertColorSpace(COLOR_RGB);
+    // printf("R: %u, G: %u, B: %u\n", u_image(511, 511, 0), u_image(511, 511, 1), u_image(511, 511, 2));
     // printf("R: %u, G: %u, B: %u\n", u_image(511, 0, 0), u_image(511, 0, 1), u_image(511, 0, 2));
-    
+
+
 
     end = clock();
     dur = (double)(end - start);

@@ -16,6 +16,17 @@
 #define BI_RLE8 1   // 8bit RLE encoding
 #define BI_RLE4 2   // 4bit RLE encoding
 
+#define COLOR_RGB 0U
+#define COLOR_BGR 1U
+#define COLOR_YUV 2U
+#define COLOR_HSV 3U
+
+// SIMD structure to do unsigned char operations in image
+typedef union SIMD128{
+    __uint128_t i;
+    uchar_t     c[16];
+} simd_128_t;
+
 namespace Lurdr {
 
 // BMP File Format
@@ -102,11 +113,6 @@ public:
     uchar_t* getImageBufferConst() const;
 };
 
-#define COLOR_RGB 0U
-#define COLOR_BGR 1U
-#define COLOR_YUV 2U
-#define COLOR_HSV 3U
-
 class UniformImage {
 private:
     size_t          m_width;
@@ -115,6 +121,7 @@ private:
     unsigned short  m_color_space; // RGB, BGR, YUV, HSV
 
     void swap(uchar_t & t1, uchar_t & t2);
+    static bool isBigEndian();
 
     void RGB2BGR();
     void RGB2BGR_SIMD();
@@ -145,6 +152,7 @@ public:
     void convertColorSpace(const unsigned short mode);
     uchar_t* & getImageBuffer();
     uchar_t* getImageBufferConst() const;
+    void printImageInfo() const;
 };
 
 }

@@ -268,11 +268,10 @@ void UniformImage::RGB2BGR() {
 // SIMD method to convert RGB to BGR
 // __uint128_t may not supported in some system, need to switch to other sturcture or type
 void UniformImage::RGB2BGR_SIMD() {
-    // batch size is 5 pixels
-    uchar_t u_mask[15] = { 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00 };
-    __uint128_t mask_128;
-    memcpy(&mask_128, u_mask, 15);
-
+    // uchar_t u_mask[15] = { 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00 };
+    // __uint128_t mask_128;
+    // memcpy(&mask_128, u_mask, 15);
+    simd_128_t mask = { .c = { 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00 }};
     size_t row_size = m_width * 3;
     size_t i, j;
     __uint128_t s0, sr, sg, sb;
@@ -280,10 +279,10 @@ void UniformImage::RGB2BGR_SIMD() {
     uchar_t *buffer_ptr = m_buffer;
     uchar_t *buffer_end = m_buffer + m_width * m_height * 3 - 15;
     while (buffer_ptr < buffer_end) {
-        memcpy(&s0, buffer_ptr, 15);
-        sr = mask_128 & s0;
-        sg = mask_128 & (s0 >> 8);
-        sb = mask_128 & (s0 >> 16);
+        memmove(&s0, buffer_ptr, 15);
+        sr = mask.i & s0;
+        sg = mask.i & (s0 >> 8);
+        sb = mask.i & (s0 >> 16);
         s0 = std::move(sb); // faster than memcpy
         s0 |= (sr << 16);
         s0 |= (sg << 8);
@@ -294,9 +293,9 @@ void UniformImage::RGB2BGR_SIMD() {
     size_t rest = buffer_end + 15 - buffer_ptr;
     if (rest > 0) {
         memcpy(&s0, buffer_ptr, rest);
-        sr = mask_128 & s0;
-        sg = mask_128 & (s0 >> 8);
-        sb = mask_128 & (s0 >> 16);
+        sr = mask.i & s0;
+        sg = mask.i & (s0 >> 8);
+        sb = mask.i & (s0 >> 16);
         s0 = std::move(sb);
         s0 |= (sr << 16);
         s0 |= (sg << 8);
@@ -359,4 +358,30 @@ uchar_t* & UniformImage::getImageBuffer() {
 }
 uchar_t* UniformImage::getImageBufferConst() const {
     return m_buffer;
+}
+// determin the endianness of the system
+// reference : https://stackoverflow.com/questions/1001307/detecting-endianness-programmatically-in-a-c-program
+bool UniformImage::isBigEndian() {
+    union {
+        uint32_t      i;
+        unsigned char c[4];
+    } bint = { 0x01020304 };
+    return bint.c[0] == 1; 
+}
+void UniformImage::printImageInfo() const {
+    if (m_width > 0 && m_height > 0) {
+        printf("-- UniformImage info -------------------------\n");
+        printf("    image size : %-6lu * %-6lu\n", m_width, m_height);
+        if (m_color_space == COLOR_RGB)
+            printf("   color space : RGB\n");
+        if (m_color_space == COLOR_BGR)
+            printf("   color space : BGR\n");
+        if (m_color_space == COLOR_YUV)
+            printf("   color space : YUV\n");
+        if (m_color_space == COLOR_HSV)
+            printf("   color space : HSV\n");
+        printf("----------------------------------------------\n");
+    } else {
+        printf("-- BMPImage unloaded -------------------------\n");
+    }
 }
