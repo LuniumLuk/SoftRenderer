@@ -1,4 +1,4 @@
-#include "../include/lmath.h"
+#include "../include/maths.h"
 
 using namespace Lurdr;
 
@@ -18,6 +18,11 @@ Vector2 Vector2::UNIT_X = Vector2(1.0, 0.0);
 Vector2 Vector2::UNIT_Y = Vector2(0.0, 1.0);
 Vector2 Vector2::ZERO   = Vector2(0.0, 0.0);
 
+void Vector2::operator= (const Vector2 & other)
+{
+    x = other.x;
+    y = other.y;
+}
 Vector2 Vector2::operator+ (const Vector2 & other) const
 {
     Vector2 vec(x + other.x, y + other.y);
@@ -100,7 +105,7 @@ float Vector2::length() const
 {
     return sqrtf(x * x + y * y);
 }
-void Vector2::print()
+void Vector2::print() const
 {
     printf("Vector3 : ( % 6f, % 6f )\n", x, y);
 }
@@ -134,6 +139,12 @@ Vector3 Vector3::UNIT_Y = Vector3(0.0, 1.0, 0.0);
 Vector3 Vector3::UNIT_Z = Vector3(0.0, 0.0, 1.0);
 Vector3 Vector3::ZERO   = Vector3(0.0, 0.0, 0.0);
 
+void Vector3::operator= (const Vector3 & other)
+{
+    x = other.x;
+    y = other.y;
+    z = other.z;
+}
 Vector3 Vector3::operator+ (const Vector3 & other) const
 {
     Vector3 vec(x + other.x, y + other.y, z + other.z);
@@ -232,7 +243,7 @@ void Vector3::normalize()
     y *= factor;
     z *= factor;
 }
-void Vector3::print()
+void Vector3::print() const
 {
     printf("Vector3 : ( % 6f, % 6f, % 6f )\n", x, y, z);
 }
@@ -278,6 +289,13 @@ Vector4 Vector4::UNIT_Z = Vector4(0.0, 0.0, 1.0, 0.0);
 Vector4 Vector4::UNIT_W = Vector4(0.0, 0.0, 0.0, 1.0);
 Vector4 Vector4::ZERO   = Vector4(0.0, 0.0, 0.0, 0.0);
 
+void Vector4::operator= (const Vector4 & other)
+{
+    x = other.x;
+    y = other.y;
+    z = other.z;
+    w = other.w;
+}
 Vector4 Vector4::operator+ (const Vector4 & other) const
 {
     Vector4 vec(x + other.x, y + other.y, z + other.z, w + other.w);
@@ -371,7 +389,7 @@ void Vector4::normalize()
     z *= factor;
     w *= factor;
 }
-void Vector4::print()
+void Vector4::print() const
 {
     printf("Vector4 : ( % 6f, % 6f, % 6f, % 6f )\n", x, y, z, w);
 }
@@ -395,6 +413,13 @@ Vector4 Vector4::lerp(const Vector4 & from, const Vector4 & to, float alpha)
 
 Quaternion Quaternion::IDENTITY = Quaternion(0.0, 0.0, 0.0, 1.0);
 
+void Quaternion::operator= (const Quaternion & other)
+{
+    x = other.x;
+    y = other.y;
+    z = other.z;
+    w = other.w;
+}
 // reference : https://en.wikipedia.org/wiki/Quaternion
 // & https://ww2.mathworks.cn/help/aeroblks/quaternionmultiplication.html
 // & http://kieranwynn.github.io/pyquaternion/ for cross reference
@@ -496,7 +521,7 @@ Quaternion Quaternion::inverse() const
     );
     return quat;
 }
-void Quaternion::print()
+void Quaternion::print() const
 {
     printf("Quaternion : ( % 6fi + % 6fj + % 6fk + % 6f )\n", x, y, z, w);
 }

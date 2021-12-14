@@ -1,10 +1,11 @@
-#ifndef __LMATH_H__
-#define __LMATH_H__
+#ifndef __MATHS_H__
+#define __MATHS_H__
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
+#include "global.h"
 
 #define min(a,b) ((a)<(b)?(a):(b))
 #define max(a,b) ((a)>(b)?(a):(b))
@@ -38,6 +39,7 @@ public:
     static Vector2 ZERO;
 
     /* Operator Overload Functions */
+    void operator= (const Vector2 & other);
     Vector2 operator+ (const Vector2 & other) const;
     Vector2 operator- () const;
     Vector2 operator- (const Vector2 & other) const;
@@ -52,7 +54,7 @@ public:
     float length() const;
     Vector2 normalized() const;
     void normalize();
-    void print();
+    void print() const;
 
     /* Static Functions */
     static Vector2 lerp(const Vector2 & from, const Vector2 & to, float alpha);
@@ -76,6 +78,7 @@ public:
     static Vector3 ZERO;
 
     /* Operator Overload Functions */
+    void operator= (const Vector3 & other);
     Vector3 operator+ (const Vector3 & other) const;
     Vector3 operator- () const;
     Vector3 operator- (const Vector3 & other) const;
@@ -90,7 +93,7 @@ public:
     float length() const;
     Vector3 normalized() const;
     void normalize();
-    void print();
+    void print() const;
     Vector3 rotated(const Quaternion & quat) const;
     void rotate(const Quaternion & quat);
 
@@ -117,6 +120,7 @@ public:
     static Vector4 ZERO;
 
     /* Operator Overload Functions */
+    void operator= (const Vector4 & other);
     Vector4 operator+ (const Vector4 & other) const;
     Vector4 operator- () const;
     Vector4 operator- (const Vector4 & other) const;
@@ -130,7 +134,7 @@ public:
     float length() const;
     Vector4 normalized() const;
     void normalize();
-    void print();
+    void print() const;
 
     /* Static Functions */
     static Vector4 lerp(const Vector4 & from, const Vector4 & to, float alpha);
@@ -152,6 +156,7 @@ public:
     static Quaternion IDENTITY;
 
     /* Operator Overload Functions */
+    void operator= (const Quaternion & other);
     Quaternion operator* (const Quaternion & other) const;
     bool operator== (const Quaternion & other) const;
     bool operator!= (const Quaternion & other) const;
@@ -162,7 +167,7 @@ public:
     void normalize();
     Vector3 toEulerAngles() const;
     Quaternion inverse() const;
-    void print();
+    void print() const;
 
     /* Static Functions */
     static Quaternion lerp(const Quaternion & from, const Quaternion & to, float alpha);

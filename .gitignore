@@ -35,6 +35,6 @@
 viewer
 viewer.dSYM/
 
-# VS Code
+# Others
 .vscode
-test
+assets/

@@ -3,9 +3,12 @@
 #include <string.h>
 #include <time.h>
 #include <utility>
-#include "../include/lglobal.h"
-#include "../include/lmath.h"
-#include "../include/limage.h"
+#include "../include/global.h"
+#include "../include/maths.h"
+#include "../include/image.h"
+#include "../include/mesh.h"
+#include "../include/buffer.h"
+#include "../include/darray.h"
 
 using namespace Lurdr;
 
@@ -136,25 +139,14 @@ int main() {
     clock_t start, end;
     start = clock();
 
-    BMPImage image("assets/lenna.bmp");
-    // printf("R: %u, G: %u, B: %u\n", image(0, 511, 0), image(0, 511, 1), image(0, 511, 2));
-    // printf("R: %u, G: %u, B: %u\n", image(0, 0, 0), image(0, 0, 1), image(0, 0, 2));
-    UniformImage u_image(image);
-
-    u_image.printImageInfo();
-    size_t iter_time = 1000; // SIMD: ~315ms
-                             // normal: ~915ms
-    for (size_t i = 0; i < iter_time; i++)
-    {
-        if (i % 2 == 0) 
-            u_image.convertColorSpace(COLOR_RGB);
-        else
-            u_image.convertColorSpace(COLOR_BGR);
+    // OBJMesh mesh("assets/test.obj");
+    DynamicArray<vec3> positions;
+    int iter_times = 1000000;
+    for (int i = 0; i < iter_times; i++)
+    {   
+        vec3 vec(i, i, i);
+        positions.push_back(vec);
     }
-
-    // u_image.convertColorSpace(COLOR_RGB);
-    // printf("R: %u, G: %u, B: %u\n", u_image(511, 511, 0), u_image(511, 511, 1), u_image(511, 511, 2));
-    // printf("R: %u, G: %u, B: %u\n", u_image(511, 0, 0), u_image(511, 0, 1), u_image(511, 0, 2));
 
     end = clock();
     dur = (double)(end - start);

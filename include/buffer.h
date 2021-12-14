@@ -1,11 +1,11 @@
-#ifndef __LBUFFER_H__
-#define __LBUFFER_H__
+#ifndef __BUFFER_H__
+#define __BUFFER_H__
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include "lmath.h"
-#include "lglobal.h"
+#include "maths.h"
+#include "global.h"
 
 namespace Lurdr
 {

@@ -1,17 +1,22 @@
-#ifndef __LMESH_H__
-#define __LMESH_H__
+#ifndef __MESH_H__
+#define __MESH_H__
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include "lglobal.h"
-#include "lmath.h"
+#include <string.h>
+#include "global.h"
+#include "maths.h"
 
 namespace Lurdr {
+
+#define MAX_OBJ_LINE 256
 
 class OBJMesh
 {
 private:
+    char    *m_filename;
+
     vec3    *m_vs;
     ulong_t *m_fs;
     ulong_t *m_fvts;
@@ -27,6 +32,16 @@ private:
     bool     m_has_tex_coords;
     bool     m_has_param_space_vertices;
     bool     m_has_line_elements;
+
+    void loadMesh();
+    void init();
+public:
+    OBJMesh();
+    OBJMesh(const char* filename);
+    OBJMesh(const OBJMesh & mesh);
+    ~OBJMesh();
+
+    void printMeshInfo() const;
 };
 
 struct Vertex

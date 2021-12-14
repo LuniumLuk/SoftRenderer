@@ -1,13 +1,12 @@
-#ifndef __LIMAGE_H__
-#define __LIMAGE_H__
+#ifndef __IMAGE_H__
+#define __IMAGE_H__
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
 #include <utility>
-#include "lmath.h"
-#include "lglobal.h"
+#include "global.h"
 
 #define BI_BM 0x4d42    // ASCII code for 'BM'
 #define BI_FILE_HEADER_SIZE 14L
