@@ -3,6 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include <utility>
+#include "../include/lglobal.h"
 #include "../include/lmath.h"
 #include "../include/limage.h"
 
@@ -81,20 +82,20 @@ typedef struct TestStruct
 {
     float a;
     float b;
-    unsigned char c;
+    byte_t c;
 } tests;
 
 void buffer_test()
 {
     size_t len = 10000;
-    unsigned char * buffer = new unsigned char[len];
+    byte_t * buffer = new byte_t[len];
     for (int i = 0; i < len; i++)
     {
-        buffer[i] = (unsigned char)(i % 256);
+        buffer[i] = (byte_t)(i % 256);
     }
 
-    unsigned char * buffer2 = new unsigned char[len];
-    memcpy(buffer2, buffer, len * sizeof(unsigned char));
+    byte_t * buffer2 = new byte_t[len];
+    memcpy(buffer2, buffer, len * sizeof(byte_t));
 
     for (int i = 1100; i < 1120; i++)
     {
@@ -141,7 +142,7 @@ int main() {
     UniformImage u_image(image);
 
     u_image.printImageInfo();
-    size_t iter_time = 100; // SIMD: ~315ms
+    size_t iter_time = 1000; // SIMD: ~315ms
                              // normal: ~915ms
     for (size_t i = 0; i < iter_time; i++)
     {
@@ -154,8 +155,6 @@ int main() {
     // u_image.convertColorSpace(COLOR_RGB);
     // printf("R: %u, G: %u, B: %u\n", u_image(511, 511, 0), u_image(511, 511, 1), u_image(511, 511, 2));
     // printf("R: %u, G: %u, B: %u\n", u_image(511, 0, 0), u_image(511, 0, 1), u_image(511, 0, 2));
-
-
 
     end = clock();
     dur = (double)(end - start);

@@ -21,11 +21,11 @@
 #define COLOR_YUV 2U
 #define COLOR_HSV 3U
 
-// SIMD structure to do unsigned char operations in image
+// SIMD structure to do byte_t operations in image
 typedef union SIMD128
 {
     __uint128_t i;
-    uchar_t     c[16];
+    byte_t     c[16];
 } simd_128_t;
 
 namespace Lurdr
@@ -69,10 +69,10 @@ typedef struct BITMAPINFOHEADER
 // used when bits_per_pixel <= 8
 typedef struct BITMAPCOLORTABLE
 {
-    uchar_t   red;
-    uchar_t   green;
-    uchar_t   blue;
-    uchar_t   reserved;
+    byte_t   red;
+    byte_t   green;
+    byte_t   blue;
+    byte_t   reserved;
 } BMPColorTable;
 
 class BMPImage
@@ -81,7 +81,7 @@ private:
     BMPFileHeader m_file_header;
     BMPInfoHeader m_info_header;
     BMPColorTable *m_color_tables;
-    uchar_t *m_buffer;              // color is arranged in RGB order
+    byte_t *m_buffer;              // color is arranged in RGB order
                                     // rows are arranged from bottom to top
     bool          m_is_loaded;
     bool          m_use_color_table;
@@ -110,13 +110,13 @@ public:
     size_t  getChannelNum()  const;
 
     /* Operator Overload Functions */
-    unsigned char& operator() (const size_t & row, const size_t & column, const size_t & channel);
+    byte_t& operator() (const size_t & row, const size_t & column, const size_t & channel);
 
     /* Member Functions */
     void writeImage(const char* filename) const;
     void printImageInfo() const;
-    uchar_t* & getImageBuffer();
-    uchar_t* getImageBufferConst() const;
+    byte_t* & getImageBuffer();
+    byte_t* getImageBufferConst() const;
 };
 
 class UniformImage
@@ -124,10 +124,10 @@ class UniformImage
 private:
     size_t          m_width;
     size_t          m_height;
-    uchar_t         *m_buffer;     // buffer rows are arranged from top to bottom
+    byte_t         *m_buffer;     // buffer rows are arranged from top to bottom
     unsigned short  m_color_space; // RGB, BGR, YUV, HSV
 
-    void swap(uchar_t & t1, uchar_t & t2);
+    void swap(byte_t & t1, byte_t & t2);
     static bool isBigEndian();
 
     void RGB2BGR();
@@ -153,12 +153,12 @@ public:
     UniformImage(const BMPImage & bmp);
     ~UniformImage();
 
-    uchar_t& operator() (const size_t & row, const size_t & column, const size_t & channel);
+    byte_t& operator() (const size_t & row, const size_t & column, const size_t & channel);
 
     void createFromBMPImage(const BMPImage & bmp);
     void convertColorSpace(const unsigned short mode);
-    uchar_t* & getImageBuffer();
-    uchar_t* getImageBufferConst() const;
+    byte_t* & getImageBuffer();
+    byte_t* getImageBufferConst() const;
     void printImageInfo() const;
 };
 

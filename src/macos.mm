@@ -15,7 +15,7 @@
 struct window
 {
     NSWindow *handle;
-    unsigned char* image_buffer;
+    byte_t* image_buffer;
     // image_t *surface;
     /* common data */
     // int should_close;

@@ -1,4 +1,5 @@
 OBJECTS = main.o lmath.o limage.o
+INCLUDES = include/lmath.h include/limage.h include/lglobal.h
 SRCS = src/main.cpp src/lmath.cpp src/limage.cpp
 CC = g++
 CFLAGS = -g -std=c++11
@@ -26,7 +27,7 @@ lmath.o : src/lmath.cpp include/lmath.h
 	$(CC) $(CFLAGS) -c src/lmath.cpp
 limage.o : src/limage.cpp include/limage.h
 	$(CC) $(CFLAGS) -c src/limage.cpp
-main.o : src/main.cpp include/lmath.h include/limage.h
+main.o : src/main.cpp $(INCLUDES)
 	$(CC) $(CFLAGS) -c $(SRCS)
 
 .PHONY : clean

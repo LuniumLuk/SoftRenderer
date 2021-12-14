@@ -10,8 +10,8 @@ using namespace Lurdr;
 
 void BMPImage::loadFileHeaderx64(FILE *fp)
 {
-    unsigned char *temp_buffer = new unsigned char[BI_FILE_HEADER_SIZE];
-    unsigned char *ptr = temp_buffer;
+    byte_t *temp_buffer = new byte_t[BI_FILE_HEADER_SIZE];
+    byte_t *ptr = temp_buffer;
 
     fseek(fp, 0L, SEEK_SET);
     fread(temp_buffer, BI_FILE_HEADER_SIZE, 1, fp);
@@ -27,8 +27,8 @@ void BMPImage::loadFileHeaderx64(FILE *fp)
 }
 void BMPImage::writeFileHeaderx64(FILE *fp) const
 {
-    unsigned char *temp_buffer = new unsigned char[BI_FILE_HEADER_SIZE];
-    unsigned char *ptr = temp_buffer;
+    byte_t *temp_buffer = new byte_t[BI_FILE_HEADER_SIZE];
+    byte_t *ptr = temp_buffer;
 
     memcpy(ptr, &(m_file_header.signature), sizeof(ushort_t));
     ptr += sizeof(ushort_t);
@@ -98,11 +98,11 @@ void BMPImage::loadImage()
     }
     size_t scan_line = ((data_line + 3) / 4) * 4;
 
-    m_buffer = new uchar_t[data_line * height];
-    uchar_t *temp_buffer = new uchar_t[scan_line];
+    m_buffer = new byte_t[data_line * height];
+    byte_t *temp_buffer = new byte_t[scan_line];
     for (size_t i = 0; i < height; i++)
     {
-        fread(temp_buffer, sizeof(uchar_t), scan_line, fp);
+        fread(temp_buffer, sizeof(byte_t), scan_line, fp);
         memcpy(m_buffer + i * data_line, temp_buffer, data_line);
     }
     
@@ -174,8 +174,8 @@ BMPImage::BMPImage(const BMPImage & image): m_color_tables(nullptr),
     }
 
     size_t buffer_size = image.getBufferSize();
-    m_buffer = new uchar_t[buffer_size];
-    memcpy(m_buffer, image.m_buffer, buffer_size * sizeof(uchar_t));
+    m_buffer = new byte_t[buffer_size];
+    memcpy(m_buffer, image.m_buffer, buffer_size * sizeof(byte_t));
 
     size_t f_len = strlen(image.m_filename);
     m_filename = new char[f_len + 1];
@@ -198,7 +198,7 @@ size_t BMPImage::getChannelNum() const
             return 0;
     }
 }
-uchar_t& BMPImage::operator() (const size_t & row, const size_t & column, const size_t & channel)
+byte_t& BMPImage::operator() (const size_t & row, const size_t & column, const size_t & channel)
 {
     size_t channel_num = getChannelNum();
     size_t data_line = getDataLine();
@@ -246,11 +246,11 @@ void BMPImage::writeImage(const char* filename) const
 
     fclose(fp);
 }
-uchar_t* & BMPImage::getImageBuffer()
+byte_t* & BMPImage::getImageBuffer()
 {
     return m_buffer;
 }
-uchar_t* BMPImage::getImageBufferConst() const
+byte_t* BMPImage::getImageBufferConst() const
 {
     return m_buffer;
 }
@@ -290,9 +290,9 @@ UniformImage::~UniformImage()
 
 // implemented base on std::swap
 // reference : https://stackoverflow.com/questions/35154516/most-efficient-way-of-swapping-values-c
-void UniformImage::swap(uchar_t & t1, uchar_t & t2)
+void UniformImage::swap(byte_t & t1, byte_t & t2)
 {
-    uchar_t temp(std::move(t1));
+    byte_t temp(std::move(t1));
     t1 = std::move(t2);
     t2 = std::move(temp);
 }
@@ -319,8 +319,8 @@ void UniformImage::RGB2BGR_SIMD()
     size_t i, j;
     __uint128_t s0, sr, sg, sb;
 
-    uchar_t *buffer_ptr = m_buffer;
-    uchar_t *buffer_end = m_buffer + m_width * m_height * 3 - 15;
+    byte_t *buffer_ptr = m_buffer;
+    byte_t *buffer_end = m_buffer + m_width * m_height * 3 - 15;
     while (buffer_ptr < buffer_end)
     {
         memcpy(&s0, buffer_ptr, 15);
@@ -356,7 +356,7 @@ void UniformImage::BGR2RGB_SIMD()
     RGB2BGR_SIMD();
 }
 
-uchar_t& UniformImage::operator() (const size_t & row, const size_t & column, const size_t & channel)
+byte_t& UniformImage::operator() (const size_t & row, const size_t & column, const size_t & channel)
 {
     size_t row_size = m_width * 3;
     assert(channel < 3);
@@ -384,8 +384,8 @@ void UniformImage::createFromBMPImage(const BMPImage & bmp)
     size_t row_size = m_width * 3;
     size_t buffer_size = row_size * m_height;
 
-    uchar_t *src_buffer = bmp.getImageBufferConst();
-    m_buffer = new uchar_t[buffer_size];
+    byte_t *src_buffer = bmp.getImageBufferConst();
+    m_buffer = new byte_t[buffer_size];
     for (size_t i = 0; i < m_height; i++)
     {
         memcpy(m_buffer + i * row_size, src_buffer + (m_height - i - 1) * row_size, row_size);
@@ -418,11 +418,11 @@ void UniformImage::convertColorSpace(const unsigned short mode)
     // ...
 }
 
-uchar_t* & UniformImage::getImageBuffer()
+byte_t* & UniformImage::getImageBuffer()
 {
     return m_buffer;
 }
-uchar_t* UniformImage::getImageBufferConst() const
+byte_t* UniformImage::getImageBufferConst() const
 {
     return m_buffer;
 }
@@ -433,7 +433,7 @@ bool UniformImage::isBigEndian()
     union 
     {
         uint32_t      i;
-        unsigned char c[4];
+        byte_t c[4];
     } bint = { 0x01020304 };
     return bint.c[0] == 1; 
 }
