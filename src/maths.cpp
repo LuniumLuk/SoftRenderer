@@ -278,6 +278,36 @@ Vector3 Vector3::lerp(const Vector3 & from, const Vector3 & to, float alpha)
     );
     return vec;
 }
+// this method is validated by : https://www.vcalc.com/wiki/vCalc/V3+-+Vector+Rotation
+Vector3 Vector3::rotatedFromAxisAngle(const Vector3 & axis, const float angle)
+{
+    float sina = sinf(angle);
+    float cosa = cosf(angle);
+    Vector3 normal = axis.normalized();
+
+    // vector operation method 1000000 ~= 88ms
+    // return (*this) * cosa - (*this).dot(normal) * normal * (cosa - 1) + normal.cross(*this) * sina;
+
+    // numerical method 1000000 ~= 50ms
+    float nx = normal.x;
+    float ny = normal.y;
+    float nz = normal.z;
+
+    float nx2 = nx * nx;
+    float ny2 = ny * ny;
+    float nz2 = nz * nz;
+
+    float nxy = nx * ny;
+    float nxz = nx * nz;
+    float nyz = ny * nz;
+
+    Vector3 vec(
+        x * cosa - (x * nx2 + y * nxy + z * nxz) * (cosa - 1) + (ny * z - nz * y) * sina,
+        y * cosa - (x * nxy + y * ny2 + z * nyz) * (cosa - 1) + (nz * x - nx * z) * sina,
+        z * cosa - (x * nxz + y * nyz + z * nz2) * (cosa - 1) + (nx * y - ny * x) * sina
+    );
+    return vec;
+}
 
 /**
  * Vector4 : Functionalities and Utilities

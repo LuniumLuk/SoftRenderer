@@ -140,13 +140,24 @@ int main() {
     start = clock();
 
     // OBJMesh mesh("assets/test.obj");
-    DynamicArray<vec3> positions;
+    // DynamicArray<vec3> positions;
+    // int iter_times = 1000000;
+    // for (int i = 0; i < iter_times; i++)
+    // {   
+    //     vec3 vec(i, i, i);
+    //     positions.push_back(vec);
+    // }
+
+    vec3 axis(1, 1, 1);
+    vec3 a(1, 0, 0);
+
     int iter_times = 1000000;
     for (int i = 0; i < iter_times; i++)
     {   
-        vec3 vec(i, i, i);
-        positions.push_back(vec);
+        a.rotatedFromAxisAngle(axis, PI / 6);
     }
+
+    
 
     end = clock();
     dur = (double)(end - start);

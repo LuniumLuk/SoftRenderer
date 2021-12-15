@@ -96,6 +96,7 @@ public:
     void print() const;
     Vector3 rotated(const Quaternion & quat) const;
     void rotate(const Quaternion & quat);
+    Vector3 rotatedFromAxisAngle(const Vector3 & axis, const float angle);
 
     /* Static Functions */
     static Vector3 lerp(const Vector3 & from, const Vector3 & to, float alpha);
