@@ -139,29 +139,13 @@ int main() {
     clock_t start, end;
     start = clock();
 
-    // OBJMesh mesh("assets/test.obj");
-    // DynamicArray<vec3> positions;
-    // int iter_times = 1000000;
-    // for (int i = 0; i < iter_times; i++)
-    // {   
-    //     vec3 vec(i, i, i);
-    //     positions.push_back(vec);
-    // }
-
-    vec3 axis(1, 1, 1);
-    vec3 a(1, 0, 0);
-
-    int iter_times = 1000000;
-    for (int i = 0; i < iter_times; i++)
-    {   
-        a.rotatedFromAxisAngle(axis, PI / 6);
-    }
-
-    
+    mat3 m(1,2,3,0,1,4,5,6,0);
+    m.inversed().print();
+    (m * m.inversed()).print();
 
     end = clock();
     dur = (double)(end - start);
-    printf("Use Time: %fms\n", (dur * 1000 / CLOCKS_PER_SEC));
+    printf("Use Time: %9.3fms\n", (dur * 1000 / CLOCKS_PER_SEC));
 
     return 0;
 }

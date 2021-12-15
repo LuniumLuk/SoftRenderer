@@ -5,18 +5,17 @@ using namespace Lurdr;
 /**
  * TODOs :
  *  - check normalization
- *  - slerp() implementation
  *  - check correctness
  *  - check EPSILON
  */
 
 /**
- * Vector2 : Functionalities and Utilities
+ * Vector2 : functionalities and utilities
  */
 
-Vector2 Vector2::UNIT_X = Vector2(1.0, 0.0);
-Vector2 Vector2::UNIT_Y = Vector2(0.0, 1.0);
-Vector2 Vector2::ZERO   = Vector2(0.0, 0.0);
+Vector2 Vector2::UNIT_X = Vector2( 1.0f, 0.0f );
+Vector2 Vector2::UNIT_Y = Vector2( 0.0f, 1.0f );
+Vector2 Vector2::ZERO   = Vector2( 0.0f, 0.0f );
 
 void Vector2::operator= (const Vector2 & other)
 {
@@ -53,8 +52,8 @@ Vector2 Vector2::operator* (const float & multiplicand) const
 }
 Vector2 Vector2::operator/ (const float divisor) const
 {
-    assert(divisor != 0);
-    float factor = 1.0 / divisor;
+    assert(abs(divisor) > EPSILON);
+    float factor = 1.0f / divisor;
     Vector2 vec(x * factor, y * factor);
     return vec;
 }
@@ -96,8 +95,8 @@ Vector2 Vector2::lerp(const Vector2 & from, const Vector2 & to, float alpha)
 {
     alpha = clamp(alpha, 0.0, 1.0);
     Vector2 vec(
-        from.x * (1 - alpha) + to.x * alpha,
-        from.y * (1 - alpha) + to.y * alpha
+        from.x * (1.0f - alpha) + to.x * alpha,
+        from.y * (1.0f - alpha) + to.y * alpha
     );
     return vec;
 }
@@ -107,14 +106,14 @@ float Vector2::length() const
 }
 void Vector2::print() const
 {
-    printf("Vector3 : ( % 6f, % 6f )\n", x, y);
+    printf("Vector3 : ( %9.3f, %9.3f )\n", x, y);
 }
 
 Vector2 Vector2::normalized() const
 {
     float len = length();
-    assert(len != 0);
-    float factor = 1.0 / len;
+    assert(abs(len) > EPSILON);
+    float factor = 1.0f / len;
     Vector2 vec(
         x * factor,
         y * factor
@@ -124,8 +123,8 @@ Vector2 Vector2::normalized() const
 void Vector2::normalize()
 {
     float len = length();
-    assert(len != 0);
-    float factor = 1.0 / len;
+    assert(abs(len) > EPSILON);
+    float factor = 1.0f / len;
     x *= factor;
     y *= factor;
 }
@@ -134,10 +133,10 @@ void Vector2::normalize()
  * Vector3 : Functionalities and Utilities
  */
 
-Vector3 Vector3::UNIT_X = Vector3(1.0, 0.0, 0.0);
-Vector3 Vector3::UNIT_Y = Vector3(0.0, 1.0, 0.0);
-Vector3 Vector3::UNIT_Z = Vector3(0.0, 0.0, 1.0);
-Vector3 Vector3::ZERO   = Vector3(0.0, 0.0, 0.0);
+Vector3 Vector3::UNIT_X = Vector3( 1.0f, 0.0f, 0.0f );
+Vector3 Vector3::UNIT_Y = Vector3( 0.0f, 1.0f, 0.0f );
+Vector3 Vector3::UNIT_Z = Vector3( 0.0f, 0.0f, 1.0f );
+Vector3 Vector3::ZERO   = Vector3( 0.0f, 0.0f, 0.0f );
 
 void Vector3::operator= (const Vector3 & other)
 {
@@ -176,8 +175,8 @@ Vector3 Vector3::operator* (const float & multiplicand) const
 }
 Vector3 Vector3::operator/ (const float divisor) const
 {
-    assert(divisor != 0);
-    float factor = 1.0 / divisor;
+    assert(abs(divisor) > EPSILON);
+    float factor = 1.0f / divisor;
     Vector3 vec(x * factor, y * factor, z * factor);
     return vec;
 }
@@ -225,8 +224,8 @@ float Vector3::length() const
 Vector3 Vector3::normalized() const
 {
     float len = length();
-    assert(len != 0);
-    float factor = 1.0 / len;
+    assert(abs(len) > EPSILON);
+    float factor = 1.0f / len;
     Vector3 vec(
         x * factor,
         y * factor,
@@ -237,15 +236,15 @@ Vector3 Vector3::normalized() const
 void Vector3::normalize()
 {
     float len = length();
-    assert(len != 0);
-    float factor = 1.0 / len;
+    assert(abs(len) > EPSILON);
+    float factor = 1.0f / len;
     x *= factor;
     y *= factor;
     z *= factor;
 }
 void Vector3::print() const
 {
-    printf("Vector3 : ( % 6f, % 6f, % 6f )\n", x, y, z);
+    printf("Vector3 : ( %9.3f, %9.3f, %9.3f )\n", x, y, z);
 }
 // reference : https://gamedev.stackexchange.com/questions/28395/rotating-vector3-by-a-quaternion
 Vector3 Vector3::rotated(const Quaternion & quat) const
@@ -270,7 +269,7 @@ void Vector3::rotate(const Quaternion & quat)
 
 Vector3 Vector3::lerp(const Vector3 & from, const Vector3 & to, float alpha)
 {
-    alpha = clamp(alpha, 0.0, 1.0);
+    alpha = clamp(alpha, 0.0f, 1.0f);
     Vector3 vec(
         from.x * (1 - alpha) + to.x * alpha,
         from.y * (1 - alpha) + to.y * alpha,
@@ -302,22 +301,22 @@ Vector3 Vector3::rotatedFromAxisAngle(const Vector3 & axis, const float angle)
     float nyz = ny * nz;
 
     Vector3 vec(
-        x * cosa - (x * nx2 + y * nxy + z * nxz) * (cosa - 1) + (ny * z - nz * y) * sina,
-        y * cosa - (x * nxy + y * ny2 + z * nyz) * (cosa - 1) + (nz * x - nx * z) * sina,
-        z * cosa - (x * nxz + y * nyz + z * nz2) * (cosa - 1) + (nx * y - ny * x) * sina
+        x * cosa + (x * nx2 + y * nxy + z * nxz) * (1 - cosa) + (ny * z - nz * y) * sina,
+        y * cosa + (x * nxy + y * ny2 + z * nyz) * (1 - cosa) + (nz * x - nx * z) * sina,
+        z * cosa + (x * nxz + y * nyz + z * nz2) * (1 - cosa) + (nx * y - ny * x) * sina
     );
     return vec;
 }
 
 /**
- * Vector4 : Functionalities and Utilities
+ * Vector4 : functionalities and utilities
  */
 
-Vector4 Vector4::UNIT_X = Vector4(1.0, 0.0, 0.0, 0.0);
-Vector4 Vector4::UNIT_Y = Vector4(0.0, 1.0, 0.0, 0.0);
-Vector4 Vector4::UNIT_Z = Vector4(0.0, 0.0, 1.0, 0.0);
-Vector4 Vector4::UNIT_W = Vector4(0.0, 0.0, 0.0, 1.0);
-Vector4 Vector4::ZERO   = Vector4(0.0, 0.0, 0.0, 0.0);
+Vector4 Vector4::UNIT_X = Vector4( 1.0f, 0.0f, 0.0f, 0.0f );
+Vector4 Vector4::UNIT_Y = Vector4( 0.0f, 1.0f, 0.0f, 0.0f );
+Vector4 Vector4::UNIT_Z = Vector4( 0.0f, 0.0f, 1.0f, 0.0f );
+Vector4 Vector4::UNIT_W = Vector4( 0.0f, 0.0f, 0.0f, 1.0f );
+Vector4 Vector4::ZERO   = Vector4( 0.0f, 0.0f, 0.0f, 0.0f );
 
 void Vector4::operator= (const Vector4 & other)
 {
@@ -358,8 +357,8 @@ Vector4 Vector4::operator* (const float & multiplicand) const
 }
 Vector4 Vector4::operator/ (const float divisor) const
 {
-    assert(divisor != 0);
-    float factor = 1.0 / divisor;
+    assert(abs(divisor) > EPSILON);
+    float factor = 1.0f / divisor;
     Vector4 vec(x * factor, y * factor, z * factor, w * factor);
     return vec;
 }
@@ -399,8 +398,8 @@ float Vector4::length() const
 Vector4 Vector4::normalized() const
 {
     float len = length();
-    assert(len != 0);
-    float factor = 1.0 / len;
+    assert(abs(len) > EPSILON);
+    float factor = 1.0f / len;
     Vector4 vec(
         x * factor,
         y * factor,
@@ -412,8 +411,8 @@ Vector4 Vector4::normalized() const
 void Vector4::normalize()
 {
     float len = length();
-    assert(len != 0);
-    float factor = 1.0 / len;
+    assert(abs(len) > EPSILON);
+    float factor = 1.0f / len;
     x *= factor;
     y *= factor;
     z *= factor;
@@ -421,12 +420,12 @@ void Vector4::normalize()
 }
 void Vector4::print() const
 {
-    printf("Vector4 : ( % 6f, % 6f, % 6f, % 6f )\n", x, y, z, w);
+    printf("Vector4 : ( %9.3f, %9.3f, %9.3f, %9.3f )\n", x, y, z, w);
 }
 
 Vector4 Vector4::lerp(const Vector4 & from, const Vector4 & to, float alpha)
 {
-    alpha = clamp(alpha, 0.0, 1.0);
+    alpha = clamp(alpha, 0.0f, 1.0f);
     Vector4 vec(
         from.x * (1 - alpha) + to.x * alpha,
         from.y * (1 - alpha) + to.y * alpha,
@@ -437,7 +436,7 @@ Vector4 Vector4::lerp(const Vector4 & from, const Vector4 & to, float alpha)
 }
 
 /**
- * Quaternion : Functionalities and Utilities
+ * Quaternion : functionalities and utilities
  * API reference : https://docs.unity.cn/2019.4/Documentation/ScriptReference/Quaternion.html
  */
 
@@ -491,13 +490,15 @@ bool Quaternion::operator!= (const Quaternion & other) const
 }
 float Quaternion::dot(const Quaternion & other) const
 {
+    // note : return the real part of multiplication of two quaternions
+    // which is ((*this).inversed() * other).w
     return x * other.x + y * other.y + z * other.z + w * other.w;
 }
 Quaternion Quaternion::normalized() const
 {
     float len = sqrtf(dot(*this));
-    assert(len != 0);
-    float factor = 1.0 / len;
+    assert(abs(len) > EPSILON);
+    float factor = 1.0f / len;
     Quaternion quat(
         x * factor,
         y * factor,
@@ -509,8 +510,8 @@ Quaternion Quaternion::normalized() const
 void Quaternion::normalize()
 {
     float len = sqrtf(dot(*this));
-    assert(len != 0);
-    float factor = 1.0 / len;
+    assert(abs(len) > EPSILON);
+    float factor = 1.0f / len;
     x *= factor;
     y *= factor;
     z *= factor;
@@ -520,29 +521,29 @@ void Quaternion::normalize()
 // & https://personal.utdallas.edu/~sxb027100/dock/quaternion.html
 Vector3 Quaternion::toEulerAngles() const
 {
-    float roll = atan2(2 * (w * x + y * z), 1 - 2 * (x * x + y * y));
-    float p = 2 * (w * y - x * z);
+    float roll = atan2(2.0f * (w * x + y * z), 1.0f - 2.0f * (x * x + y * y));
+    float p = 2.0f * (w * y - x * z);
     float pitch;
-    if (abs(p) >= 1)
+    if (abs(p) >= 1.0f)
     {
         // handle 90 degree rotation
-        pitch = copysign(PI / 2, p);
+        pitch = copysign(PI / 2.0f, p);
     }
     else
     {
         pitch = asin(p);
     }
-    float yaw = atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z));
+    float yaw = atan2(2.0f * (w * z + x * y), 1.0f - 2.0f * (y * y + z * z));
 
     Vector3 vec(roll, pitch, yaw);
     return vec;
 }
 // nonzero quaternion has an inverse with respect to its Hamilton product
-Quaternion Quaternion::inverse() const
+Quaternion Quaternion::inversed() const
 {
     float q = dot(*this);
-    assert(q != 0);
-    float factor = 1.0 / q;
+    assert(abs(q) > EPSILON);
+    float factor = 1.0f / q;
     Quaternion quat(
         -x * factor,
         -y * factor,
@@ -553,12 +554,12 @@ Quaternion Quaternion::inverse() const
 }
 void Quaternion::print() const
 {
-    printf("Quaternion : ( % 6fi + % 6fj + % 6fk + % 6f )\n", x, y, z, w);
+    printf("Quaternion : ( %9.3fi + %9.3fj + %9.3fk + %9.3f )\n", x, y, z, w);
 }
 // linear lerp for quaternion
 Quaternion Quaternion::lerp(const Quaternion & from, const Quaternion & to, float alpha)
 {
-    alpha = clamp(alpha, 0.0, 1.0);
+    alpha = clamp(alpha, 0.0f, 1.0f);
     Quaternion quat(
         from.x * (1 - alpha) + to.x * alpha,
         from.y * (1 - alpha) + to.y * alpha,
@@ -568,13 +569,67 @@ Quaternion Quaternion::lerp(const Quaternion & from, const Quaternion & to, floa
     return quat;
 }
 // spherical lerp for quaternion
+// reference : https://github.com/zauonlok/renderer/blob/master/renderer/core/maths.c
+// & https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
 Quaternion Quaternion::slerp(const Quaternion & from, const Quaternion & to, float alpha)
 {
-    Quaternion quat;
-    bool is_implemented = false;
-    assert(is_implemented);
-    // ....
-    return quat;
+    alpha = clamp(alpha, 0.0f, 1.0f);
+    float cosa = from.dot(to);
+    Quaternion target = to;
+    if (cosa < 0)
+    {
+        // negate the target to lerp in the smaller arc
+        target.x = -target.x;
+        target.y = -target.y;
+        target.z = -target.z;
+        target.w = -target.w;
+        cosa = -cosa;
+    }
+    if (cosa > 1.0f - EPSILON)
+    {
+        // almost parellel, lerp linearly
+        Quaternion quat(
+            from.x * (1 - alpha) + target.x * alpha,
+            from.y * (1 - alpha) + target.y * alpha,
+            from.z * (1 - alpha) + target.z * alpha,
+            from.w * (1 - alpha) + target.w * alpha
+        );
+        return quat;
+    }
+    else
+    {
+        // reference : https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
+        // & https://www.geometrictools.com/Documentation/Quaternions.pdf
+        float a = acosf(cosa);
+        float sina = sinf(a);
+        float angle_from = (1.0f - alpha) * a;
+        float angle_target = alpha * a;
+        float factor_from = sinf(angle_from) / sina;
+        float factor_target = sinf(angle_target) / sina;
+
+        Quaternion quat(
+            from.x * factor_from + target.x * factor_target,
+            from.y * factor_from + target.y * factor_target,
+            from.z * factor_from + target.z * factor_target,
+            from.w * factor_from + target.w * factor_target
+        );
+        return quat;
+
+        // // a method by calculating relative rotation between two quaternions
+        // // double the time consuming than the above method
+        // float a = acosf(cosa);
+        // float new_angle = alpha * a;
+        // float factor = sinf(new_angle) / sinf(a);
+        // Quaternion q = from.inversed() * target;
+        
+        // Quaternion quat(
+        //     q.x * factor,
+        //     q.y * factor,
+        //     q.z * factor,
+        //     cosf(new_angle)
+        // );
+        // return from * quat;
+    }
 }
 // reference : https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 Quaternion Quaternion::fromEulerAngles(const Vector3 & angles)
@@ -638,4 +693,195 @@ Quaternion Quaternion::fromAxisAngle(const Vector3 & axis, float angle)
         cosa
     );
     return quat;
+}
+
+/**
+ * Matrix3 : functionalities and utilities
+ */
+
+Matrix3 Matrix3::IDENTITY = Matrix3( 1.0f, 0.0f, 0.0f, 
+                                     0.0f, 1.0f, 0.0f,
+                                     0.0f, 0.0f, 1.0f );
+
+Matrix3::Matrix3()
+{
+    m[0] = 0.0f; m[1] = 0.0f; m[2] = 0.0f;
+    m[3] = 0.0f; m[4] = 0.0f; m[5] = 0.0f;
+    m[6] = 0.0f; m[7] = 0.0f; m[8] = 0.0f;
+}
+Matrix3::Matrix3(
+    const float & m1, const float & m2, const float & m3,
+    const float & m4, const float & m5, const float & m6,
+    const float & m7, const float & m8, const float & m9 )
+{
+    m[0] = m1; m[1] = m2; m[2] = m3;
+    m[3] = m4; m[4] = m5; m[5] = m6;
+    m[6] = m7; m[7] = m8; m[8] = m9;
+}
+Matrix3::Matrix3(const Matrix3 & other)
+{
+    m[0] = other.m[0]; m[1] = other.m[1]; m[2] = other.m[2];
+    m[3] = other.m[3]; m[4] = other.m[4]; m[5] = other.m[5];
+    m[6] = other.m[6]; m[7] = other.m[7]; m[8] = other.m[8];
+}
+
+void Matrix3::operator= (const Matrix3 & other)
+{
+    m[0] = other.m[0]; m[1] = other.m[1]; m[2] = other.m[2];
+    m[3] = other.m[3]; m[4] = other.m[4]; m[5] = other.m[5];
+    m[6] = other.m[6]; m[7] = other.m[7]; m[8] = other.m[8];
+}
+float& Matrix3::operator() (const size_t & row, const size_t & col)
+{
+    assert(row >= 0 && row < 3);
+    assert(col >= 0 && col < 3);
+
+    return m[row * 3 + col];
+}
+Matrix3 Matrix3::operator+ (const Matrix3 & other) const
+{   
+    Matrix3 mat(
+        m[0] + other.m[0], m[1] + other.m[1], m[2] + other.m[2],
+        m[3] + other.m[3], m[4] + other.m[4], m[5] + other.m[5],
+        m[6] + other.m[6], m[7] + other.m[7], m[8] + other.m[8]
+    );
+    return mat;
+}
+Matrix3 Matrix3::operator- (const Matrix3 & other) const
+{
+    Matrix3 mat(
+        m[0] - other.m[0], m[1] - other.m[1], m[2] - other.m[2],
+        m[3] - other.m[3], m[4] - other.m[4], m[5] - other.m[5],
+        m[6] - other.m[6], m[7] - other.m[7], m[8] - other.m[8]
+    );
+    return mat;
+}
+Matrix3 Matrix3::operator* (const Matrix3 & other) const
+{
+    Matrix3 mat(
+        m[0] * other.m[0] + m[1] * other.m[3] + m[2] * other.m[6],
+        m[0] * other.m[1] + m[1] * other.m[4] + m[2] * other.m[7],
+        m[0] * other.m[2] + m[1] * other.m[5] + m[2] * other.m[8],
+
+        m[3] * other.m[0] + m[4] * other.m[3] + m[5] * other.m[6],
+        m[3] * other.m[1] + m[4] * other.m[4] + m[5] * other.m[7],
+        m[3] * other.m[2] + m[4] * other.m[5] + m[5] * other.m[8],
+
+        m[6] * other.m[0] + m[7] * other.m[3] + m[8] * other.m[6],
+        m[6] * other.m[1] + m[7] * other.m[4] + m[8] * other.m[7],
+        m[6] * other.m[2] + m[7] * other.m[5] + m[8] * other.m[8]
+    );
+    return mat;
+}
+Matrix3 Matrix3::operator/ (const float & divisor) const
+{
+    assert(abs(divisor) > EPSILON);
+    float factor = 1.0f / divisor;
+    Matrix3 mat(
+        m[0] * factor, m[1] * factor, m[2] * factor,
+        m[3] * factor, m[4] * factor, m[5] * factor,
+        m[6] * factor, m[7] * factor, m[8] * factor
+    );
+    return mat;
+}
+bool Matrix3::operator== (const Matrix3 & other) const
+{
+    if ( abs(m[0] - other.m[0]) <= EPSILON * max(max(abs(m[0]), abs(other.m[0])), 1.0f)
+      && abs(m[1] - other.m[1]) <= EPSILON * max(max(abs(m[1]), abs(other.m[1])), 1.0f)
+      && abs(m[2] - other.m[2]) <= EPSILON * max(max(abs(m[2]), abs(other.m[2])), 1.0f)
+      && abs(m[3] - other.m[3]) <= EPSILON * max(max(abs(m[3]), abs(other.m[3])), 1.0f) 
+      && abs(m[4] - other.m[4]) <= EPSILON * max(max(abs(m[4]), abs(other.m[4])), 1.0f) 
+      && abs(m[5] - other.m[5]) <= EPSILON * max(max(abs(m[5]), abs(other.m[5])), 1.0f) 
+      && abs(m[6] - other.m[6]) <= EPSILON * max(max(abs(m[6]), abs(other.m[6])), 1.0f) 
+      && abs(m[7] - other.m[7]) <= EPSILON * max(max(abs(m[7]), abs(other.m[7])), 1.0f) 
+      && abs(m[8] - other.m[8]) <= EPSILON * max(max(abs(m[8]), abs(other.m[8])), 1.0f) )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+bool Matrix3::operator!= (const Matrix3 & other) const
+{
+    if (*this == other)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+// hadamard product : https://en.wikipedia.org/wiki/Hadamard_product_(matrices)
+Matrix3 Matrix3::hadamard(const Matrix3 & other) const
+{
+    Matrix3 mat(
+        m[0] * other.m[0], m[1] * other.m[1], m[2] * other.m[2],
+        m[3] * other.m[3], m[4] * other.m[4], m[5] * other.m[5],
+        m[6] * other.m[6], m[7] * other.m[7], m[8] * other.m[8]
+    );
+    return mat;
+}
+Matrix3 Matrix3::dot(const Matrix3 & other) const
+{
+    Matrix3 mat(
+        m[0] * other.m[0] + m[1] * other.m[3] + m[2] * other.m[6],
+        m[0] * other.m[1] + m[1] * other.m[4] + m[2] * other.m[7],
+        m[0] * other.m[2] + m[1] * other.m[5] + m[2] * other.m[8],
+
+        m[3] * other.m[0] + m[4] * other.m[3] + m[5] * other.m[6],
+        m[3] * other.m[1] + m[4] * other.m[4] + m[5] * other.m[7],
+        m[3] * other.m[2] + m[4] * other.m[5] + m[5] * other.m[8],
+
+        m[6] * other.m[0] + m[7] * other.m[3] + m[8] * other.m[6],
+        m[6] * other.m[1] + m[7] * other.m[4] + m[8] * other.m[7],
+        m[6] * other.m[2] + m[7] * other.m[5] + m[8] * other.m[8]
+    );
+    return mat;
+}
+Matrix3 Matrix3::inversed() const
+{
+    float det = (*this).det();
+    assert(abs(det) > EPSILON);
+
+    float factor = 1.0f / det;
+    float a1 = m[4] * m[8] - m[5] * m[7];
+    float a2 = m[3] * m[8] - m[5] * m[6];
+    float a3 = m[3] * m[7] - m[4] * m[6];
+    float a4 = m[1] * m[8] - m[2] * m[7];
+    float a5 = m[0] * m[8] - m[2] * m[6];
+    float a6 = m[0] * m[7] - m[1] * m[6];
+    float a7 = m[1] * m[5] - m[2] * m[4];
+    float a8 = m[0] * m[5] - m[2] * m[3];
+    float a9 = m[0] * m[4] - m[1] * m[3];
+
+    Matrix3 mat(
+         a1 * factor, -a4 * factor,  a7 * factor,
+        -a2 * factor,  a5 * factor, -a8 * factor,
+         a3 * factor, -a6 * factor,  a9 * factor
+    );
+    return mat;
+}
+float Matrix3::det() const
+{
+    return m[0] * (m[4] * m[8] - m[5] * m[7])
+         - m[1] * (m[3] * m[8] - m[5] * m[6])
+         + m[2] * (m[3] * m[7] - m[4] * m[6]);
+}
+Matrix3 Matrix3::transposed() const
+{
+    Matrix3 mat(
+        m[0], m[3], m[6],
+        m[1], m[4], m[7],
+        m[2], m[5], m[8]
+    );
+    return mat;
+}
+void Matrix3::print() const
+{
+    printf("Matrix3 : ( %9.3f, %9.3f, %9.3f, \n", m[0], m[1], m[2]);
+    printf("            %9.3f, %9.3f, %9.3f, \n", m[3], m[4], m[5]);
+    printf("            %9.3f, %9.3f, %9.3f )\n", m[6], m[7], m[8]);
 }

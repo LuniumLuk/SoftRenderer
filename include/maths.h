@@ -21,6 +21,7 @@ typedef class Vector2 vec2;
 typedef class Vector3 vec3;
 typedef class Vector4 vec4;
 typedef class Quaternion quat;
+typedef class Matrix3 mat3;
 
 /**
  * Vector2
@@ -167,7 +168,7 @@ public:
     Quaternion normalized() const;
     void normalize();
     Vector3 toEulerAngles() const;
-    Quaternion inverse() const;
+    Quaternion inversed() const;
     void print() const;
 
     /* Static Functions */
@@ -176,6 +177,43 @@ public:
     static Quaternion fromEulerAngles(const Vector3 & vec);
     static Quaternion fromToRotation(const Vector3 & from, const Vector3 to);
     static Quaternion fromAxisAngle(const Vector3 & axis, float angle);
+};
+
+/**
+ * Matrix3
+ */
+class Matrix3
+{
+public:
+    float m[9];
+
+    Matrix3();
+    Matrix3(
+        const float & m1, const float & m2, const float & m3,
+        const float & m4, const float & m5, const float & m6,
+        const float & m7, const float & m8, const float & m9 );
+    Matrix3(const Matrix3 & other);
+    
+    /* Static Members */
+    static Matrix3 IDENTITY;
+    
+    /* Operator Overload Functions */
+    void operator= (const Matrix3 & other);
+    float& operator() (const size_t & row, const size_t & col);
+    Matrix3 operator+ (const Matrix3 & other) const;
+    Matrix3 operator- (const Matrix3 & other) const;
+    Matrix3 operator* (const Matrix3 & other) const;
+    Matrix3 operator/ (const float & divisor) const;
+    bool operator== (const Matrix3 & other) const;
+    bool operator!= (const Matrix3 & other) const;
+
+    /* Member Functions */
+    Matrix3 hadamard(const Matrix3 & other) const;
+    Matrix3 dot(const Matrix3 & other) const;
+    Matrix3 inversed() const;
+    float det() const;
+    Matrix3 transposed() const;
+    void print() const;
 };
 
 }
