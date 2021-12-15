@@ -203,13 +203,13 @@ public:
     Matrix3 operator+ (const Matrix3 & other) const;
     Matrix3 operator- (const Matrix3 & other) const;
     Matrix3 operator* (const Matrix3 & other) const;
+    Vector3 operator* (const Vector3 & other) const;
     Matrix3 operator/ (const float & divisor) const;
     bool operator== (const Matrix3 & other) const;
     bool operator!= (const Matrix3 & other) const;
 
     /* Member Functions */
     Matrix3 hadamard(const Matrix3 & other) const;
-    Matrix3 dot(const Matrix3 & other) const;
     Matrix3 inversed() const;
     float det() const;
     Matrix3 transposed() const;

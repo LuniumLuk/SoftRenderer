@@ -773,6 +773,15 @@ Matrix3 Matrix3::operator* (const Matrix3 & other) const
     );
     return mat;
 }
+Vector3 Matrix3::operator* (const Vector3 & other) const
+{
+    Vector3 vec(
+        m[0] * other.x + m[1] * other.y + m[2] * other.z,
+        m[3] * other.x + m[4] * other.y + m[5] * other.z,
+        m[6] * other.x + m[7] * other.y + m[8] * other.z
+    );
+    return vec;
+}
 Matrix3 Matrix3::operator/ (const float & divisor) const
 {
     assert(abs(divisor) > EPSILON);
@@ -821,23 +830,6 @@ Matrix3 Matrix3::hadamard(const Matrix3 & other) const
         m[0] * other.m[0], m[1] * other.m[1], m[2] * other.m[2],
         m[3] * other.m[3], m[4] * other.m[4], m[5] * other.m[5],
         m[6] * other.m[6], m[7] * other.m[7], m[8] * other.m[8]
-    );
-    return mat;
-}
-Matrix3 Matrix3::dot(const Matrix3 & other) const
-{
-    Matrix3 mat(
-        m[0] * other.m[0] + m[1] * other.m[3] + m[2] * other.m[6],
-        m[0] * other.m[1] + m[1] * other.m[4] + m[2] * other.m[7],
-        m[0] * other.m[2] + m[1] * other.m[5] + m[2] * other.m[8],
-
-        m[3] * other.m[0] + m[4] * other.m[3] + m[5] * other.m[6],
-        m[3] * other.m[1] + m[4] * other.m[4] + m[5] * other.m[7],
-        m[3] * other.m[2] + m[4] * other.m[5] + m[5] * other.m[8],
-
-        m[6] * other.m[0] + m[7] * other.m[3] + m[8] * other.m[6],
-        m[6] * other.m[1] + m[7] * other.m[4] + m[8] * other.m[7],
-        m[6] * other.m[2] + m[7] * other.m[5] + m[8] * other.m[8]
     );
     return mat;
 }
