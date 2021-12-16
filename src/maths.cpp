@@ -720,16 +720,12 @@ Matrix3::Matrix3(
 }
 Matrix3::Matrix3(const Matrix3 & other)
 {
-    m[0] = other.m[0]; m[1] = other.m[1]; m[2] = other.m[2];
-    m[3] = other.m[3]; m[4] = other.m[4]; m[5] = other.m[5];
-    m[6] = other.m[6]; m[7] = other.m[7]; m[8] = other.m[8];
+    memcpy(m, other.m, 9 * sizeof(float));
 }
 
 void Matrix3::operator= (const Matrix3 & other)
 {
-    m[0] = other.m[0]; m[1] = other.m[1]; m[2] = other.m[2];
-    m[3] = other.m[3]; m[4] = other.m[4]; m[5] = other.m[5];
-    m[6] = other.m[6]; m[7] = other.m[7]; m[8] = other.m[8];
+    memcpy(m, other.m, 9 * sizeof(float));
 }
 float& Matrix3::operator() (const size_t & row, const size_t & col)
 {
@@ -876,4 +872,403 @@ void Matrix3::print() const
     printf("Matrix3 : ( %9.3f, %9.3f, %9.3f, \n", m[0], m[1], m[2]);
     printf("            %9.3f, %9.3f, %9.3f, \n", m[3], m[4], m[5]);
     printf("            %9.3f, %9.3f, %9.3f )\n", m[6], m[7], m[8]);
+}
+
+/**
+ * Matrix4 : functionalities and utilities
+ */
+
+Matrix4 Matrix4::IDENTITY = Matrix4(
+    1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f
+);
+
+Matrix4::Matrix4()
+{
+    m[0]  = 0.0f; m[1]  = 0.0f; m[2]  = 0.0f; m[3]  = 0.0f; 
+    m[4]  = 0.0f; m[5]  = 0.0f; m[6]  = 0.0f; m[7]  = 0.0f; 
+    m[8]  = 0.0f; m[9]  = 0.0f; m[10] = 0.0f; m[11] = 0.0f; 
+    m[12] = 0.0f; m[13] = 0.0f; m[14] = 0.0f; m[15] = 0.0f; 
+}
+Matrix4::Matrix4(
+    const float & m1,  const float & m2,  const float & m3,  const float & m4,
+    const float & m5,  const float & m6,  const float & m7,  const float & m8,
+    const float & m9,  const float & m10, const float & m11, const float & m12,
+    const float & m13, const float & m14, const float & m15, const float & m16 )
+{
+    m[0]  = m1;  m[1]  = m2;  m[2]  = m3;  m[3]  = m4; 
+    m[4]  = m5;  m[5]  = m6;  m[6]  = m7;  m[7]  = m8; 
+    m[8]  = m9;  m[9]  = m10; m[10] = m11; m[11] = m12; 
+    m[12] = m13; m[13] = m14; m[14] = m15; m[15] = m16; 
+}
+Matrix4::Matrix4(const Matrix4 & other)
+{
+    memcpy(m, other.m, 16 * sizeof(float));
+}
+void Matrix4::operator= (const Matrix4 & other)
+{
+    memcpy(m, other.m, 16 * sizeof(float));
+}
+float& Matrix4::operator() (const size_t & row, const size_t & col)
+{
+    assert(row >= 0 && row < 4);
+    assert(col >= 0 && col < 4);
+    return m[row * 4 + col];
+}
+Matrix4 Matrix4::operator+ (const Matrix4 & other) const
+{
+    Matrix4 mat(
+        m[0]  + other.m[0],  m[1]  + other.m[1],  m[2]  + other.m[2],  m[3] + other.m[3],
+        m[4]  + other.m[4],  m[5]  + other.m[5],  m[6]  + other.m[6],  m[3] + other.m[7],
+        m[8]  + other.m[8],  m[9]  + other.m[9],  m[10] + other.m[10], m[3] + other.m[11],
+        m[12] + other.m[12], m[13] + other.m[13], m[14] + other.m[14], m[3] + other.m[15]
+    );
+    return mat;
+}
+Matrix4 Matrix4::operator- (const Matrix4 & other) const
+{
+    Matrix4 mat(
+        m[0]  - other.m[0],  m[1]  - other.m[1],  m[2]  - other.m[2],  m[3] - other.m[3],
+        m[4]  - other.m[4],  m[5]  - other.m[5],  m[6]  - other.m[6],  m[3] - other.m[7],
+        m[8]  - other.m[8],  m[9]  - other.m[9],  m[10] - other.m[10], m[3] - other.m[11],
+        m[12] - other.m[12], m[13] - other.m[13], m[14] - other.m[14], m[3] - other.m[15]
+    );
+    return mat;
+}
+Matrix4 Matrix4::operator* (const Matrix4 & other) const
+{
+    Matrix4 mat(
+        m[0] * other.m[0] + m[1] * other.m[4] + m[2] * other.m[8]  + m[3] * other.m[12],
+        m[0] * other.m[1] + m[1] * other.m[5] + m[2] * other.m[9]  + m[3] * other.m[13],
+        m[0] * other.m[2] + m[1] * other.m[6] + m[2] * other.m[10] + m[3] * other.m[14],
+        m[0] * other.m[3] + m[1] * other.m[7] + m[2] * other.m[11] + m[3] * other.m[15],
+
+        m[4] * other.m[0] + m[5] * other.m[4] + m[6] * other.m[8]  + m[7] * other.m[12],
+        m[4] * other.m[1] + m[5] * other.m[5] + m[6] * other.m[9]  + m[7] * other.m[13],
+        m[4] * other.m[2] + m[5] * other.m[6] + m[6] * other.m[10] + m[7] * other.m[14],
+        m[4] * other.m[3] + m[5] * other.m[7] + m[6] * other.m[11] + m[7] * other.m[15],
+
+        m[8] * other.m[0] + m[9] * other.m[4] + m[10] * other.m[8]  + m[11] * other.m[12],
+        m[8] * other.m[1] + m[9] * other.m[5] + m[10] * other.m[9]  + m[11] * other.m[13],
+        m[8] * other.m[2] + m[9] * other.m[6] + m[10] * other.m[10] + m[11] * other.m[14],
+        m[8] * other.m[3] + m[9] * other.m[7] + m[10] * other.m[11] + m[11] * other.m[15],
+
+        m[12] * other.m[0] + m[13] * other.m[4] + m[14] * other.m[8]  + m[15] * other.m[12],
+        m[12] * other.m[1] + m[13] * other.m[5] + m[14] * other.m[9]  + m[15] * other.m[13],
+        m[12] * other.m[2] + m[13] * other.m[6] + m[14] * other.m[10] + m[15] * other.m[14],
+        m[12] * other.m[3] + m[13] * other.m[7] + m[14] * other.m[11] + m[15] * other.m[15]
+    );
+    return mat;
+}
+Vector4 Matrix4::operator* (const Vector4 & other) const
+{
+    Vector4 vec(
+        m[0]  * other.x + m[1]  * other.y + m[2]  * other.z + m[3]  * other.w,
+        m[4]  * other.x + m[5]  * other.y + m[6]  * other.z + m[7]  * other.w,
+        m[8]  * other.x + m[9]  * other.y + m[10] * other.z + m[11] * other.w,
+        m[12] * other.x + m[13] * other.y + m[14] * other.z + m[15] * other.w
+    );
+    return vec;
+}
+Matrix4 Matrix4::operator/ (const float & divisor) const
+{
+    assert(abs(divisor) > EPSILON);
+    float factor = 1.0f / divisor;
+    Matrix4 mat(
+        m[0]  * factor, m[1]  * factor, m[2]  * factor, m[3] * factor,
+        m[4]  * factor, m[5]  * factor, m[6]  * factor, m[3] * factor,
+        m[8]  * factor, m[9]  * factor, m[10] * factor, m[3] * factor,
+        m[12] * factor, m[13] * factor, m[14] * factor, m[3] * factor
+    );
+    return mat;
+}
+bool Matrix4::operator== (const Matrix4 & other) const
+{
+    if ( abs(m[0] - other.m[0]) <= EPSILON * max(max(abs(m[0]), abs(other.m[0])), 1.0f)
+      && abs(m[1] - other.m[1]) <= EPSILON * max(max(abs(m[1]), abs(other.m[1])), 1.0f)
+      && abs(m[2] - other.m[2]) <= EPSILON * max(max(abs(m[2]), abs(other.m[2])), 1.0f)
+      && abs(m[3] - other.m[3]) <= EPSILON * max(max(abs(m[3]), abs(other.m[3])), 1.0f) 
+      && abs(m[4] - other.m[4]) <= EPSILON * max(max(abs(m[4]), abs(other.m[4])), 1.0f) 
+      && abs(m[5] - other.m[5]) <= EPSILON * max(max(abs(m[5]), abs(other.m[5])), 1.0f) 
+      && abs(m[6] - other.m[6]) <= EPSILON * max(max(abs(m[6]), abs(other.m[6])), 1.0f) 
+      && abs(m[7] - other.m[7]) <= EPSILON * max(max(abs(m[7]), abs(other.m[7])), 1.0f) 
+      && abs(m[8] - other.m[8]) <= EPSILON * max(max(abs(m[8]), abs(other.m[8])), 1.0f)
+      && abs(m[9] - other.m[9]) <= EPSILON * max(max(abs(m[9]), abs(other.m[9])), 1.0f)
+      && abs(m[10] - other.m[10]) <= EPSILON * max(max(abs(m[10]), abs(other.m[10])), 1.0f)
+      && abs(m[11] - other.m[11]) <= EPSILON * max(max(abs(m[11]), abs(other.m[11])), 1.0f)
+      && abs(m[12] - other.m[12]) <= EPSILON * max(max(abs(m[12]), abs(other.m[12])), 1.0f) 
+      && abs(m[13] - other.m[13]) <= EPSILON * max(max(abs(m[13]), abs(other.m[13])), 1.0f) 
+      && abs(m[14] - other.m[14]) <= EPSILON * max(max(abs(m[14]), abs(other.m[14])), 1.0f) 
+      && abs(m[15] - other.m[15]) <= EPSILON * max(max(abs(m[15]), abs(other.m[15])), 1.0f) )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+bool Matrix4::operator!= (const Matrix4 & other) const
+{
+    if (*this == other)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+Matrix4 Matrix4::hadamard(const Matrix4 & other) const
+{
+    Matrix4 mat(
+        m[0]  * other.m[0],  m[1]  * other.m[1],  m[2]  * other.m[2],  m[3] * other.m[3],
+        m[4]  * other.m[4],  m[5]  * other.m[5],  m[6]  * other.m[6],  m[3] * other.m[7],
+        m[8]  * other.m[8],  m[9]  * other.m[9],  m[10] * other.m[10], m[3] * other.m[11],
+        m[12] * other.m[12], m[13] * other.m[13], m[14] * other.m[14], m[3] * other.m[15]
+    );
+    return mat;
+}
+Matrix4 Matrix4::inversed() const
+{
+    float det = (*this).det();
+    assert(abs(det) > EPSILON);
+    float factor = 1.0f / det;
+    float m11 = Matrix3(m[5],  m[6],  m[7], 
+                        m[9],  m[10], m[11], 
+                        m[13], m[14], m[15]).det();
+    float m12 = Matrix3(m[4],  m[6],  m[7], 
+                        m[8],  m[10], m[11], 
+                        m[12], m[14], m[15]).det();
+    float m13 = Matrix3(m[4],  m[5],  m[7], 
+                        m[8],  m[9],  m[11], 
+                        m[12], m[13], m[15]).det();
+    float m14 = Matrix3(m[4],  m[5],  m[6], 
+                        m[8],  m[9],  m[10], 
+                        m[12], m[13], m[14]).det();
+    float m21 = Matrix3(m[1],  m[2],  m[3], 
+                        m[9],  m[10], m[11], 
+                        m[13], m[14], m[15]).det();
+    float m22 = Matrix3(m[0],  m[2],  m[3], 
+                        m[8],  m[10], m[11], 
+                        m[12], m[14], m[15]).det();
+    float m23 = Matrix3(m[0],  m[1],  m[3], 
+                        m[8],  m[9],  m[11], 
+                        m[12], m[13], m[15]).det();
+    float m24 = Matrix3(m[0],  m[1],  m[2], 
+                        m[8],  m[9],  m[10], 
+                        m[12], m[13], m[14]).det();
+    float m31 = Matrix3(m[1],  m[2],  m[3], 
+                        m[5],  m[6],  m[7], 
+                        m[13], m[14], m[15]).det();
+    float m32 = Matrix3(m[0],  m[2],  m[3], 
+                        m[4],  m[6],  m[7], 
+                        m[12], m[14], m[15]).det();
+    float m33 = Matrix3(m[0],  m[1],  m[3], 
+                        m[4],  m[5],  m[7], 
+                        m[12], m[13], m[15]).det();
+    float m34 = Matrix3(m[0],  m[1],  m[2], 
+                        m[4],  m[5],  m[6], 
+                        m[12], m[13], m[14]).det();
+    float m41 = Matrix3(m[1],  m[2],  m[3], 
+                        m[5],  m[6],  m[7], 
+                        m[9],  m[10], m[11]).det();
+    float m42 = Matrix3(m[0],  m[2],  m[3], 
+                        m[4],  m[6],  m[7], 
+                        m[8],  m[10], m[11]).det();
+    float m43 = Matrix3(m[0],  m[1],  m[3], 
+                        m[4],  m[5],  m[7], 
+                        m[8],  m[9],  m[11]).det();
+    float m44 = Matrix3(m[0],  m[1],  m[2], 
+                        m[4],  m[5],  m[6], 
+                        m[8],  m[9],  m[10]).det();
+    Matrix4 mat(
+         m11 * factor, -m21 * factor,  m31 * factor, -m41 * factor, 
+        -m12 * factor,  m22 * factor, -m32 * factor,  m42 * factor, 
+         m13 * factor, -m23 * factor,  m33 * factor, -m43 * factor, 
+        -m14 * factor,  m24 * factor, -m34 * factor,  m44 * factor
+    );
+    return mat;
+}
+float Matrix4::det() const
+{
+    return 
+        m[0] * Matrix3(m[5],  m[6],  m[7], 
+                       m[9],  m[10], m[11], 
+                       m[13], m[14], m[15]).det()
+      - m[1] * Matrix3(m[4],  m[6],  m[7], 
+                       m[8],  m[10], m[11], 
+                       m[12], m[14], m[15]).det()
+      + m[2] * Matrix3(m[4],  m[5],  m[7], 
+                       m[8],  m[9],  m[11], 
+                       m[12], m[13], m[15]).det()
+      - m[3] * Matrix3(m[4],  m[5],  m[6], 
+                       m[8],  m[9],  m[10], 
+                       m[12], m[13], m[14]).det();
+}
+Matrix4 Matrix4::transposed() const
+{
+    Matrix4 mat(
+        m[0], m[4], m[8],  m[12],
+        m[1], m[5], m[9],  m[13],
+        m[2], m[6], m[10], m[14],
+        m[3], m[7], m[11], m[15]
+    );
+    return mat;
+}
+void Matrix4::print() const
+{
+    printf("Matrix4 : ( %9.3f, %9.3f, %9.3f, %9.3f, \n", m[0],  m[1],  m[2],  m[3]);
+    printf("            %9.3f, %9.3f, %9.3f, %9.3f, \n", m[4],  m[5],  m[6],  m[7]);
+    printf("            %9.3f, %9.3f, %9.3f, %9.3f, \n", m[8],  m[9],  m[10], m[11]);
+    printf("            %9.3f, %9.3f, %9.3f, %9.3f )\n", m[12], m[13], m[14], m[15]);
+}
+void Matrix4::multiply(const Matrix4 & other)
+{
+    m[0] = m[0] * other.m[0] + m[1] * other.m[4] + m[2] * other.m[8]  + m[3] * other.m[12];
+    m[1] = m[0] * other.m[1] + m[1] * other.m[5] + m[2] * other.m[9]  + m[3] * other.m[13];
+    m[2] = m[0] * other.m[2] + m[1] * other.m[6] + m[2] * other.m[10] + m[3] * other.m[14];
+    m[3] = m[0] * other.m[3] + m[1] * other.m[7] + m[2] * other.m[11] + m[3] * other.m[15];
+
+    m[4] = m[4] * other.m[0] + m[5] * other.m[4] + m[6] * other.m[8]  + m[7] * other.m[12];
+    m[5] = m[4] * other.m[1] + m[5] * other.m[5] + m[6] * other.m[9]  + m[7] * other.m[13];
+    m[6] = m[4] * other.m[2] + m[5] * other.m[6] + m[6] * other.m[10] + m[7] * other.m[14];
+    m[7] = m[4] * other.m[3] + m[5] * other.m[7] + m[6] * other.m[11] + m[7] * other.m[15];
+
+    m[8] = m[8] * other.m[0] + m[9] * other.m[4] + m[10] * other.m[8]  + m[11] * other.m[12];
+    m[9] = m[8] * other.m[1] + m[9] * other.m[5] + m[10] * other.m[9]  + m[11] * other.m[13];
+    m[10] = m[8] * other.m[2] + m[9] * other.m[6] + m[10] * other.m[10] + m[11] * other.m[14];
+    m[11] = m[8] * other.m[3] + m[9] * other.m[7] + m[10] * other.m[11] + m[11] * other.m[15];
+
+    m[12] = m[12] * other.m[0] + m[13] * other.m[4] + m[14] * other.m[8]  + m[15] * other.m[12];
+    m[13] = m[12] * other.m[1] + m[13] * other.m[5] + m[14] * other.m[9]  + m[15] * other.m[13];
+    m[14] = m[12] * other.m[2] + m[13] * other.m[6] + m[14] * other.m[10] + m[15] * other.m[14];
+    m[15] = m[12] * other.m[3] + m[13] * other.m[7] + m[14] * other.m[11] + m[15] * other.m[15];
+}
+Matrix4 Matrix4::fromQuaternion(const Quaternion & quat)
+{
+    return fromTRS(vec3::ZERO, quat, vec3(1.0f, 1.0f, 1.0f));
+}
+// reference : http://www.songho.ca/opengl/gl_quaternion.html
+Matrix4 Matrix4::fromTRS(const Vector3 & translation, const Quaternion & rotation, const Vector3 & scale)
+{
+    assert(abs(scale.x) > EPSILON);
+    assert(abs(scale.y) > EPSILON);
+    assert(abs(scale.z) > EPSILON);
+
+    float xx = rotation.x * rotation.x;
+    float xy = rotation.x * rotation.y;
+    float xz = rotation.x * rotation.z;
+    float xw = rotation.x * rotation.w;
+    float yy = rotation.y * rotation.y;
+    float yz = rotation.y * rotation.z;
+    float yw = rotation.y * rotation.w;
+    float zz = rotation.z * rotation.z;
+    float zw = rotation.z * rotation.w;
+
+    float m11 = (1.0f - 2.0f * yy - 2.0f * zz) * scale.x;
+    float m22 = (1.0f - 2.0f * xx - 2.0f * zz) * scale.y;
+    float m33 = (1.0f - 2.0f * xx - 2.0f * yy) * scale.z;
+
+    Matrix4 mat(
+        m11,                    2.0f * xy - 2.0f * zw,  2.0f * xz + 2.0f * yw,  translation.x,
+        2.0f * xy + 2.0f * zw,  m22,                    2.0f * yz - 2.0f * xw,  translation.y,
+        2.0f * xz - 2.0f * yw,  2.0f * yz + 2.0f * xw,  m33,                    translation.z,
+        0.0f,                   0.0f,                   0.0f,                   1.0f
+    );
+    return mat;
+}
+// reference : https://en.wikipedia.org/wiki/Rotation_matrix
+Matrix4 Matrix4::fromAxisAngle(const Vector3 & axis, const float & angle)
+{
+    assert(abs(axis.x) > EPSILON);
+    assert(abs(axis.y) > EPSILON);
+    assert(abs(axis.z) > EPSILON);
+    Vector3 normalized = axis.normalized();
+
+    float sin = sinf(angle);
+    float cos = cosf(angle);
+    float xx = axis.x * axis.x;
+    float xy = axis.x * axis.y;
+    float xz = axis.x * axis.z;
+    float yy = axis.y * axis.y;
+    float yz = axis.y * axis.z;
+    float zz = axis.z * axis.z;
+
+    Matrix4 mat(
+        cos + xx * (1.0f - cos), xy * (1.0f - cos) - axis.z * sin, xz * (1.0f - cos) + axis.y * sin, 0.0f,
+        xy * (1.0f - cos) + axis.z * sin, cos + yy * (1.0f - cos), yz * (1.0f - cos) - axis.x * sin, 0.0f,
+        xz * (1.0f - cos) - axis.y * sin, yz * (1.0f - cos) + axis.x * sin, cos + zz * (1.0f - cos), 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f 
+    );
+    return mat;
+}
+Matrix4 Matrix4::fromLookAt(const Vector3 & eye, const Vector3 & target, const Vector3 & up)
+{
+    Matrix4 mat;
+    // ...
+    return mat;
+}
+
+Matrix4 Matrix4::translated(const Vector3 & translation) const
+{
+    Matrix4 mat(
+        m[0],  m[1],  m[2],  m[3]  + translation.x,
+        m[4],  m[5],  m[6],  m[7]  + translation.y,
+        m[8],  m[9],  m[10], m[11] + translation.z,
+        m[12], m[13], m[14], m[15]
+    );
+    return mat;
+}
+Matrix4 Matrix4::scaled(const Vector3 & scale) const
+{
+    assert(abs(scale.x) > EPSILON);
+    assert(abs(scale.y) > EPSILON);
+    assert(abs(scale.z) > EPSILON);
+
+    Matrix4 mat(
+        m[0] * scale.x, m[1],           m[2],            m[3],
+        m[4],           m[5] * scale.y, m[6],            m[7],
+        m[8],           m[9],           m[10] * scale.z, m[11],
+        m[12],          m[13],          m[14],           m[15]
+    );
+    return mat;
+}
+Matrix4 Matrix4::rotated(const Vector3 & axis, const float & angle) const
+{
+    Matrix4 mat = fromAxisAngle(axis, angle);
+    return (*this) * mat;
+}
+Matrix4 Matrix4::rotated(const Quaternion & rotation) const
+{
+    Matrix4 mat = fromQuaternion(rotation);
+    return (*this) * mat;
+}
+
+void Matrix4::translate(const Vector3 & translation)
+{
+    m[3]  += translation.x;
+    m[7]  += translation.y;
+    m[11] += translation.z;
+}
+void Matrix4::scale(const Vector3 & scale)
+{
+    assert(abs(scale.x) > EPSILON);
+    assert(abs(scale.y) > EPSILON);
+    assert(abs(scale.z) > EPSILON);
+
+    m[0]  *= scale.x;
+    m[5]  *= scale.y;
+    m[10] *= scale.z;
+}
+void Matrix4::rotate(const Vector3 & axis, const float & angle)
+{
+    (*this).multiply(fromAxisAngle(axis, angle));
+}
+void Matrix4::rotate(const Quaternion & rotation)
+{
+    (*this).multiply(fromQuaternion(rotation));
 }

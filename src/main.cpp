@@ -139,10 +139,6 @@ int main() {
     clock_t start, end;
     start = clock();
 
-    mat3 m(1,2,3,0,1,4,5,6,0);
-    m.inversed().print();
-    (m * m.inversed()).print();
-
     end = clock();
     dur = (double)(end - start);
     printf("Use Time: %9.3fms\n", (dur * 1000 / CLOCKS_PER_SEC));

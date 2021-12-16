@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
+#include <string.h>
 #include "global.h"
 
 #define min(a,b) ((a)<(b)?(a):(b))
@@ -22,6 +23,7 @@ typedef class Vector3 vec3;
 typedef class Vector4 vec4;
 typedef class Quaternion quat;
 typedef class Matrix3 mat3;
+typedef class Matrix4 mat4;
 
 /**
  * Vector2
@@ -214,6 +216,60 @@ public:
     float det() const;
     Matrix3 transposed() const;
     void print() const;
+};
+
+/**
+ * Matrix4
+ */
+class Matrix4
+{
+public:
+    float m[16];
+
+    Matrix4();
+    Matrix4(
+        const float & m1,  const float & m2,  const float & m3,  const float & m4,
+        const float & m5,  const float & m6,  const float & m7,  const float & m8,
+        const float & m9,  const float & m10, const float & m11, const float & m12,
+        const float & m13, const float & m14, const float & m15, const float & m16 );
+    Matrix4(const Matrix4 & other);
+    
+    /* Static Members */
+    static Matrix4 IDENTITY;
+    
+    /* Operator Overload Functions */
+    void operator= (const Matrix4 & other);
+    float& operator() (const size_t & row, const size_t & col);
+    Matrix4 operator+ (const Matrix4 & other) const;
+    Matrix4 operator- (const Matrix4 & other) const;
+    Matrix4 operator* (const Matrix4 & other) const;
+    Vector4 operator* (const Vector4 & other) const;
+    Matrix4 operator/ (const float & divisor) const;
+    bool operator== (const Matrix4 & other) const;
+    bool operator!= (const Matrix4 & other) const;
+
+    /* Member Functions */
+    Matrix4 hadamard(const Matrix4 & other) const;
+    void multiply(const Matrix4 & other);
+    Matrix4 inversed() const;
+    float det() const;
+    Matrix4 transposed() const;
+    void print() const;
+
+    static Matrix4 fromQuaternion(const Quaternion & quat);
+    static Matrix4 fromTRS(const Vector3 & translation, const Quaternion & rotation, const Vector3 & scale);
+    static Matrix4 fromAxisAngle(const Vector3 & axis, const float & angle);
+    static Matrix4 fromLookAt(const Vector3 & eye, const Vector3 & target, const Vector3 & up);
+
+    Matrix4 translated(const Vector3 & translation) const;
+    Matrix4 scaled(const Vector3 & scale) const;
+    Matrix4 rotated(const Vector3 & axis, const float & angle) const;
+    Matrix4 rotated(const Quaternion & rotation) const;
+
+    void translate(const Vector3 & translation);
+    void scale(const Vector3 & scale);
+    void rotate(const Vector3 & axis, const float & angle);
+    void rotate(const Quaternion & rotation);
 };
 
 }
