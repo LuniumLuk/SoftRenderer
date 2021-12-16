@@ -30,6 +30,23 @@ public:
         delete[] m_color_buffer;
         delete[] m_depth_buffer;
     }
+
+    size_t getHeight() const
+    {
+        return m_height;
+    }
+    size_t getWidth() const
+    {
+        return m_width;
+    }
+    byte_t* colorBuffer() const
+    {
+        return m_color_buffer;
+    }
+    float* depthBuffer() const
+    {
+        return m_depth_buffer;
+    }
 };
 
 }

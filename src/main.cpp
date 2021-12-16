@@ -143,6 +143,8 @@ int main() {
     // mesh.printMeshInfo();
 
     printf("%lu\n", sizeof(Vertex));
+    printf("%lu\n", sizeof(double));
+    printf("%lu\n", sizeof(float));
 
     end = clock();
     dur = (double)(end - start);

@@ -313,8 +313,13 @@ void UniformImage::RGB2BGR()
 // __uint128_t may not supported in some system, need to switch to other sturcture or type
 void UniformImage::RGB2BGR_SIMD() 
 {
+    // SIMD structure to do byte_t operations in image
     // a more readable way to initialize a uint128
-    simd_128_t mask = { .c = { 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00 }};
+    union
+    {
+        __uint128_t i;
+        byte_t     c[16];
+    } mask = { .c = { 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00 }};
     size_t row_size = m_width * 3;
     size_t i, j;
     __uint128_t s0, sr, sg, sb;

@@ -19,15 +19,19 @@ struct window
     // image_t *surface;
     /* common data */
     // int should_close;
-    // char keys[KEY_NUM];
+    bool keys[KEY_NUM];
     // char buttons[BUTTON_NUM];
+    void (*keyCallback)(window_t *window, KEY_CODE key, bool pressed);
+    // void (*buttonCallback)(window_t *window, MOUSE_BUTTON button, bool pressed);
+    // void (*scrollCallback)(window_t *window, float offset);
     // callbacks_t callbacks;
     // void *userdata;
 };
 
 #define PATH_SIZE 256
 
-static void create_menubar(void)
+// reference : https://github.com/zauonlok/renderer/blob/master/renderer/platforms/macos.m
+static void createMenuBar()
 {
     NSMenu *menu_bar, *app_menu;
     NSMenuItem *app_menu_item, *quit_menu_item;
@@ -54,156 +58,67 @@ static NSAutoreleasePool *g_auto_release_pool;
 
 // note : static function makes this function visible by linker
 // occupying the signature in the function definition pool
-static void create_application()
+static void createApplication()
 {
     if (NSApp == nil) {
         g_auto_release_pool = [[NSAutoreleasePool alloc] init];
         [NSApplication sharedApplication];
         [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
-        create_menubar();
+        createMenuBar();
         [NSApp finishLaunching];
     }
 }
-static void initialize_path()
+static void setupEnvironment()
 {
     char path[PATH_SIZE];
     uint32_t size = PATH_SIZE;
     // returns a full path to the executable
     _NSGetExecutablePath(path, &size);
-    // returns a pointer to the last occurrence of character in the C string str
     *strrchr(path, '/') = '\0';
     chdir(path);
     chdir("assets");
 }
-static void terminate_application()
+void terminateApplication()
 {
     assert(g_auto_release_pool != NULL);
     [g_auto_release_pool drain];
     g_auto_release_pool = [[NSAutoreleasePool alloc] init];
 }
 
-// @interface WindowDelegate : NSObject <NSWindowDelegate>
-
-// @end
-
-// @implementation WindowDelegate {
-//     window_t *_window;
-// }
-
-// - (instancetype)initWithWindow:(window_t *)window {
-//     self = [super init];
-//     if (self != nil) {
-//         _window = window;
-//     }
-//     return self;
-// }
-
-// - (BOOL)windowShouldClose:(NSWindow *)sender {
-//     UNUSED_VAR(sender);
-//     _window->should_close = 1;
-//     // YES to allow sender to be closed; otherwise, NO.
-//     return NO;
-// }
-
-// @end
-
-// /*
-//  * for virtual-key codes, see
-//  * https://stackoverflow.com/questions/3202629/where-can-i-find-a-list-of-mac-virtual-key-codes
-//  */
-// static void handle_key_event(window_t *window, int virtual_key, char pressed) {
-//     keycode_t key;
-//     switch (virtual_key) {
-//         case 0x00: key = KEY_A;     break;
-//         case 0x02: key = KEY_D;     break;
-//         case 0x01: key = KEY_S;     break;
-//         case 0x0D: key = KEY_W;     break;
-//         case 0x31: key = KEY_SPACE; break;
-//         default:   key = KEY_NUM;   break;
-//     }
-//     if (key < KEY_NUM) {
-//         window->keys[key] = pressed;
-//         if (window->callbacks.key_callback) {
-//             window->callbacks.key_callback(window, key, pressed);
-//         }
-//     }
-// }
 
 
-// @interface ContentView : NSView
-// @end
+// virtual-key codes : https://stackoverflow.com/questions/3202629/where-can-i-find-a-list-of-mac-virtual-key-codes
+static void handleKeyEvent(window_t *window, int virtual_key, bool pressed)
+{
+    KEY_CODE key;
+    if (pressed)
+    {
+        printf("Key down: [%d]\n", key);
+    }
+    else
+    {
+        printf("Key up: [%d]\n", key);
+    }
+    switch (virtual_key) {
+        case 0x00: key = KEY_A;     break;
+        case 0x02: key = KEY_D;     break;
+        case 0x01: key = KEY_S;     break;
+        case 0x0D: key = KEY_W;     break;
+        case 0x31: key = KEY_SPACE; break;
+        default:   key = KEY_NUM;   break;
+    }
+    if (key < KEY_NUM) {
+        window->keys[key] = pressed;
+        // if (window->callbacks.key_callback) {
+        //     window->callbacks.key_callback(window, key, pressed);
+        // }
+    }
+}
 
-// @implementation ContentView {
-//     window_t *_window;
-// }
-
-// - (instancetype)initWithWindow:(window_t *)window {
-//     self = [super init];
-//     if (self != nil) {
-//         _window = window;
-//     }
-//     return self;
-// }
-
-// - (BOOL)acceptsFirstResponder {
-//     return YES;  /* to receive key-down events */
-// }
-
-// - (void)drawRect:(NSRect)dirtyRect {
-//     image_t *surface = _window->surface;
-//     NSBitmapImageRep *rep = [[[NSBitmapImageRep alloc]
-//             initWithBitmapDataPlanes:&(surface->ldr_buffer)
-//                           pixelsWide:surface->width
-//                           pixelsHigh:surface->height
-//                        bitsPerSample:8
-//                      samplesPerPixel:3
-//                             hasAlpha:NO
-//                             isPlanar:NO
-//                       colorSpaceName:NSCalibratedRGBColorSpace
-//                          bytesPerRow:surface->width * 4
-//                         bitsPerPixel:32] autorelease];
-//     NSImage *nsimage = [[[NSImage alloc] init] autorelease];
-//     [nsimage addRepresentation:rep];
-//     [nsimage drawInRect:dirtyRect];
-// }
-
-// - (void)keyDown:(NSEvent *)event {
-//     handle_key_event(_window, [event keyCode], 1);
-// }
-
-// - (void)keyUp:(NSEvent *)event {
-//     handle_key_event(_window, [event keyCode], 0);
-// }
-
-// - (void)mouseDown:(NSEvent *)event {
-//     UNUSED_VAR(event);
-//     handle_button_event(_window, BUTTON_L, 1);
-// }
-
-// - (void)mouseUp:(NSEvent *)event {
-//     UNUSED_VAR(event);
-//     handle_button_event(_window, BUTTON_L, 0);
-// }
-
-// - (void)rightMouseDown:(NSEvent *)event {
-//     UNUSED_VAR(event);
-//     handle_button_event(_window, BUTTON_R, 1);
-// }
-
-// - (void)rightMouseUp:(NSEvent *)event {
-//     UNUSED_VAR(event);
-//     handle_button_event(_window, BUTTON_R, 0);
-// }
-
-// - (void)scrollWheel:(NSEvent *)event {
-//     float offset = (float)[event scrollingDeltaY];
-//     if ([event hasPreciseScrollingDeltas]) {
-//         offset *= 0.1f;
-//     }
-//     handle_scroll_event(_window, offset);
-// }
-
-// @end
+static void handleMouseDrag(window_t *window, float x, float y)
+{
+    printf("Mouse Position: [%6.2f, %6.2f]\n", x, y);
+}
 
 @interface ContentView : NSView
 @end
@@ -223,16 +138,23 @@ static void terminate_application()
     return self;
 }
 
-// - (BOOL)acceptsFirstResponder {
-//     return YES;  /* to receive key-down events */
-// }
+- (void)keyDown:(NSEvent *)event {
+    handleKeyEvent(_window, [event keyCode], true);
+}
 
-// static 
+- (void)keyUp:(NSEvent *)event {
+    handleKeyEvent(_window, [event keyCode], false);
+}
 
-// Trouble Shot: 
-// - Inconsistent set of values to create NSBitmapImageRep (Fixed: bytesperrow must be set in consisten with bitsperpixel)
-// - upside down fix
-// - BGR -> RGB
+- (void)mouseDragged:(NSEvent *)event {
+    NSPoint locationInView = [self convertPoint:[event locationInWindow] fromView:nil];
+    handleMouseDrag(_window, locationInView.x, locationInView.y);
+}
+
+// A Boolean value that indicates whether the responder accepts first responder status.
+- (BOOL)acceptsFirstResponder {
+    return YES;
+}
 
 - (void)drawRect:(NSRect)dirtyRect
 {
@@ -331,7 +253,7 @@ int main(int argc, const char * argv[])
     // TODO: Create app delegate to handle system events.
 
     // TODO: Create menus (especially Quit!)
-    create_menubar();
+    createMenuBar();
 
     // Show window and run event loop.
     [handle orderFrontRegardless];

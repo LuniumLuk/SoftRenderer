@@ -20,15 +20,23 @@
 #define COLOR_YUV 2U
 #define COLOR_HSV 3U
 
-// SIMD structure to do byte_t operations in image
-typedef union SIMD128
-{
-    __uint128_t i;
-    byte_t     c[16];
-} simd_128_t;
-
 namespace Lurdr
 {
+
+typedef struct RGBCOLOR
+{
+    byte_t R;
+    byte_t G;
+    byte_t B;
+} RGBColor;
+
+typedef struct RGBECOLOR
+{
+    byte_t R;
+    byte_t G;
+    byte_t B;
+    byte_t E;
+} RGBEColor;
 
 // BMP File Format
 // reference : http://www.ece.ualberta.ca/~elliott/ee552/studentAppNotes/2003_w/misc/bmp_file_format/bmp_file_format.htm

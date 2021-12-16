@@ -39,5 +39,5 @@ main.o : src/main.cpp $(INCLUDES)
 clean :
 	rm *.o
 
-macos : src/macos.mm limage.o
-	clang++ $(OBJCFLAGS) $(CFLAGS) src/macos.mm limage.o -o viewer
+macos : src/macos.mm image.o include/platform.hpp
+	clang++ $(OBJCFLAGS) $(CFLAGS) src/macos.mm image.o -o viewer
