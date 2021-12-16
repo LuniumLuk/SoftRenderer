@@ -1,12 +1,12 @@
-#ifndef __IMAGE_H__
-#define __IMAGE_H__
+#ifndef __IMAGE_HPP__
+#define __IMAGE_HPP__
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
 #include <utility>
-#include "global.h"
+#include "global.hpp"
 
 #define BI_BM 0x4d42    // ASCII code for 'BM'
 #define BI_FILE_HEADER_SIZE 14L

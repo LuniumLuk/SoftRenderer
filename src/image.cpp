@@ -1,4 +1,4 @@
-#include "../include/image.h"
+#include "../include/image.hpp"
 
 using namespace Lurdr;
 

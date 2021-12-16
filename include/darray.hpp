@@ -1,13 +1,14 @@
-#ifndef __DARRAY_H__
-#define __DARRAY_H__
+#ifndef __DARRAY_HPP__
+#define __DARRAY_HPP__
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
-#include "global.h"
+#include "global.hpp"
 
-namespace Lurdr {
+namespace Lurdr
+{
 
 // DynamicArray implement basic functionalities as STL std::vector
 template<typename T>
@@ -23,10 +24,7 @@ public:
                     m_capacity(0) {}
     DynamicArray(const size_t & reserve);
     DynamicArray(const DynamicArray & array);
-    ~DynamicArray()
-    {
-        delete[] m_array;
-    }
+    ~DynamicArray();
 
     void push_back(const T element);
     void pop_back();
@@ -36,6 +34,9 @@ public:
     T& operator[] (const size_t & pos);
     void clear();
     bool empty() const;
+    size_t size() const;
+    size_t capacity() const;
+    T* data() const;
 };
 
 // note : classes with template hvae to implement their member functions within the header file
@@ -53,6 +54,11 @@ DynamicArray<T>::DynamicArray(const DynamicArray & array)
     m_size = array.m_size;
     m_capacity = array.m_capacity;
     memcpy(m_array, array.m_array, m_size);
+}
+template<typename T>
+DynamicArray<T>::~DynamicArray()
+{
+    delete[] m_array;
 }
 
 template<typename T>
@@ -121,6 +127,21 @@ template<typename T>
 bool DynamicArray<T>::empty() const
 {
     return m_size == 0;
+}
+template<typename T>
+size_t DynamicArray<T>::size() const
+{
+    return m_size;
+}
+template<typename T>
+size_t DynamicArray<T>::capacity() const
+{
+    return m_capacity;
+}
+template<typename T>
+T* DynamicArray<T>::data() const
+{
+    return m_array;
 }
 
 }

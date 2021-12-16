@@ -1,5 +1,5 @@
-#ifndef __GLOBAL_H__
-#define __GLOBAL_H__
+#ifndef __GLOBAL_HPP__
+#define __GLOBAL_HPP__
 
 // x86_64
 typedef unsigned char  byte_t;   // 1 bytes

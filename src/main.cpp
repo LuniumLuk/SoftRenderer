@@ -3,12 +3,12 @@
 #include <string.h>
 #include <time.h>
 #include <utility>
-#include "../include/global.h"
-#include "../include/maths.h"
-#include "../include/image.h"
-#include "../include/mesh.h"
-#include "../include/buffer.h"
-#include "../include/darray.h"
+#include "../include/global.hpp"
+#include "../include/maths.hpp"
+#include "../include/image.hpp"
+#include "../include/mesh.hpp"
+#include "../include/buffer.hpp"
+#include "../include/darray.hpp"
 
 using namespace Lurdr;
 
@@ -138,6 +138,11 @@ int main() {
     double dur;
     clock_t start, end;
     start = clock();
+
+    // OBJMesh mesh("assets/bunny.obj");
+    // mesh.printMeshInfo();
+
+    printf("%lu\n", sizeof(Vertex));
 
     end = clock();
     dur = (double)(end - start);

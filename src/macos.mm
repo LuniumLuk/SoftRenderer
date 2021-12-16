@@ -5,8 +5,8 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/lplatform.h"
-#include "../include/limage.h"
+#include "../include/platform.hpp"
+#include "../include/image.hpp"
 
 // window and IO interfaces for MacOS
 // reference : http://glampert.com/2012/11-29/osx-window-without-xcode-and-ib/

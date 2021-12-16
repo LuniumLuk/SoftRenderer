@@ -1,12 +1,12 @@
-#ifndef __MATHS_H__
-#define __MATHS_H__
+#ifndef __MATHS_HPP__
+#define __MATHS_HPP__
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
 #include <string.h>
-#include "global.h"
+#include "global.hpp"
 
 #define min(a,b) ((a)<(b)?(a):(b))
 #define max(a,b) ((a)>(b)?(a):(b))

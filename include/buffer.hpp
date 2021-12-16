@@ -1,11 +1,11 @@
-#ifndef __BUFFER_H__
-#define __BUFFER_H__
+#ifndef __BUFFER_HPP__
+#define __BUFFER_HPP__
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include "maths.h"
-#include "global.h"
+#include "maths.hpp"
+#include "global.hpp"
 
 namespace Lurdr
 {
@@ -16,7 +16,7 @@ private:
     size_t  m_width;
     size_t  m_height;
     byte_t *m_color_buffer;
-    float   *m_depth_buffer;
+    float  *m_depth_buffer;
 public:
     FrameBuffer() {}
     FrameBuffer(size_t width, size_t height): m_width(width), m_height(height)

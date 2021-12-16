@@ -1,4 +1,4 @@
-#include "../include/maths.h"
+#include "../include/maths.hpp"
 
 using namespace Lurdr;
 

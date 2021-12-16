@@ -1,6 +1,6 @@
 OBJECTS = main.o maths.o image.o mesh.o darray.o
-INCLUDES = include/maths.h include/image.h include/global.h include/mesh.h include/darray.h
-SRCS = src/main.cpp src/maths.cpp src/image.cpp src/mesh.cpp src/darray.cpp
+INCLUDES = include/maths.hpp include/image.hpp include/global.hpp include/mesh.hpp include/darray.hpp
+SRCS = src/main.cpp src/maths.cpp src/image.cpp src/mesh.cpp
 CC = g++
 CFLAGS = -g -std=c++11
 OBJCFLAGS = -framework Cocoa
@@ -26,14 +26,12 @@ endif
 viewer : $(OBJECTS)
 	$(CC) $(CFLAGS) -o viewer $(OBJECTS)
 
-mesh.o : src/mesh.cpp include/mesh.h
+mesh.o : src/mesh.cpp include/mesh.hpp
 	$(CC) $(CFLAGS) -c src/mesh.cpp
-maths.o : src/maths.cpp include/maths.h
+maths.o : src/maths.cpp include/maths.hpp
 	$(CC) $(CFLAGS) -c src/maths.cpp
-image.o : src/image.cpp include/image.h
+image.o : src/image.cpp include/image.hpp
 	$(CC) $(CFLAGS) -c src/image.cpp
-darray.o : src/darray.cpp include/darray.h
-	$(CC) $(CFLAGS) -c src/darray.cpp
 main.o : src/main.cpp $(INCLUDES)
 	$(CC) $(CFLAGS) -c $(SRCS)
 
