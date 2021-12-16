@@ -39,7 +39,7 @@ public:
     T* data() const;
 };
 
-// note : classes with template hvae to implement their member functions within the header file
+// note : classes with template have to implement their member functions within the header file
 // see : https://stackoverflow.com/questions/495021/why-can-templates-only-be-implemented-in-the-header-file
 template<typename T>
 DynamicArray<T>::DynamicArray(const size_t & reserve)
