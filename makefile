@@ -1,6 +1,7 @@
-OBJECTS = main.o maths.o image.o mesh.o darray.o
-INCLUDES = include/maths.hpp include/image.hpp include/global.hpp include/mesh.hpp include/darray.hpp
-SRCS = src/main.cpp src/maths.cpp src/image.cpp src/mesh.cpp
+OBJECTS = main.o maths.o image.o mesh.o darray.o graphics.o
+MACOBJS = maths.o image.o mesh.o darray.o graphics.o
+INCLUDES = include/maths.hpp include/image.hpp include/global.hpp include/mesh.hpp include/darray.hpp include/graphics.hpp include/buffer.hpp 
+SRCS = src/main.cpp src/maths.cpp src/image.cpp src/mesh.cpp src/graphics.cpp
 CC = g++
 CFLAGS = -g -std=c++11
 OBJCFLAGS = -framework Cocoa
@@ -32,6 +33,8 @@ maths.o : src/maths.cpp include/maths.hpp
 	$(CC) $(CFLAGS) -c src/maths.cpp
 image.o : src/image.cpp include/image.hpp
 	$(CC) $(CFLAGS) -c src/image.cpp
+graphics.o : src/graphics.cpp include/graphics.hpp
+	$(CC) $(CFLAGS) -c src/graphics.cpp
 main.o : src/main.cpp $(INCLUDES)
 	$(CC) $(CFLAGS) -c $(SRCS)
 
@@ -39,5 +42,5 @@ main.o : src/main.cpp $(INCLUDES)
 clean :
 	rm *.o
 
-macos : src/macos.mm image.o include/platform.hpp
-	clang++ $(OBJCFLAGS) $(CFLAGS) src/macos.mm image.o -o viewer
+macos : src/macos.mm $(MACOBJS) $(INCLUDES)
+	clang++ $(OBJCFLAGS) $(CFLAGS) src/macos.mm -o viewer $(MACOBJS)

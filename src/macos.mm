@@ -5,8 +5,14 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/platform.hpp"
+#include "../include/global.hpp"
+// #include "../include/maths.hpp"
 #include "../include/image.hpp"
+// #include "../include/mesh.hpp"
+#include "../include/buffer.hpp"
+// #include "../include/darray.hpp"
+#include "../include/graphics.hpp"
+#include "../include/platform.hpp"
 
 // window and IO interfaces for MacOS
 // reference : http://glampert.com/2012/11-29/osx-window-without-xcode-and-ib/
@@ -158,7 +164,6 @@ static void handleMouseDrag(window_t *window, float x, float y)
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    // image_t *surface = _window->surface;
     NSBitmapImageRep *rep = [[[NSBitmapImageRep alloc]
             initWithBitmapDataPlanes:&(_window->image_buffer)
                           pixelsWide:512
@@ -177,7 +182,7 @@ static void handleMouseDrag(window_t *window, float x, float y)
 
 @end
 
-static void present_surface(window_t *window)
+static void updateView(window_t *window)
 {
     [[window->handle contentView] setNeedsDisplay:YES];  /* invoke drawRect */
 }
@@ -193,7 +198,19 @@ int main(int argc, const char * argv[])
     UniformImage u_image(image);
     u_image.convertColorSpace(COLOR_RGB);
 
-    _window.image_buffer = u_image.getImageBuffer();
+    FrameBuffer frame_buffer(512, 512);
+
+    // _window.image_buffer = u_image.getImageBuffer();
+    _window.image_buffer = frame_buffer.colorBuffer();
+
+    Lurdr::RGBColor white;
+    white.R = 255;
+    white.G = 255;
+    white.B = 255;
+
+    printf("%u, %u, %u\n", white.R, white.G, white.B);
+    Lurdr::drawPoint(frame_buffer, vec2(255, 255), white);
+    Lurdr::drawLine(frame_buffer, vec2(100, 100), vec2(200, 200), white);
 
     // Autorelease Pool:
     // Objects declared in this scope will be automatically
@@ -241,25 +258,11 @@ int main(int argc, const char * argv[])
     NSWindowController * windowController = [[NSWindowController alloc] initWithWindow:handle];
     [windowController autorelease];
 
-    // This will add a simple text view to the window,
-    // so we can write a test string on it.
-    // === [ORIGIN TEXT VIEW] ===
-    // NSTextView * textView = [[NSTextView alloc] initWithFrame:windowRect];
-    // [textView autorelease];
-    // [handle setContentView:textView];
-    // [textView insertText:@"Hello OSX/Cocoa world!" replacementRange:NSMakeRange(1, 0)];
-    // ==========================
-
-    // TODO: Create app delegate to handle system events.
-
-    // TODO: Create menus (especially Quit!)
     createMenuBar();
 
     // Show window and run event loop.
     [handle orderFrontRegardless];
     [NSApp run];
-
-    // Block here
 
     [g_auto_release_pool drain];
 

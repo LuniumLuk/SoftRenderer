@@ -63,6 +63,8 @@ public:
     static Vector2 lerp(const Vector2 & from, const Vector2 & to, float alpha);
 };
 
+Vector2 operator* (float multiplier, const Vector2 & multiplicand);
+
 /**
  * Vector3
  */
@@ -105,6 +107,8 @@ public:
     static Vector3 lerp(const Vector3 & from, const Vector3 & to, float alpha);
 };
 
+Vector3 operator* (float multiplier, const Vector3 & multiplicand);
+
 /**
  * Vector4
  */
@@ -144,7 +148,7 @@ public:
     static Vector4 lerp(const Vector4 & from, const Vector4 & to, float alpha);
 };
 
-
+Vector4 operator* (float multiplier, const Vector4 & multiplicand);
 /**
  * Quaternion
  */
@@ -274,8 +278,6 @@ public:
 
 }
 
-Lurdr::Vector2 operator* (float multiplier, const Lurdr::Vector2 & multiplicand);
-Lurdr::Vector3 operator* (float multiplier, const Lurdr::Vector3 & multiplicand);
-Lurdr::Vector4 operator* (float multiplier, const Lurdr::Vector4 & multiplicand);
+
 
 #endif

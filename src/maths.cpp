@@ -37,7 +37,7 @@ Vector2 Vector2::operator- (const Vector2 & other) const
     Vector2 vec(x - other.x, y - other.y);
     return vec;
 }
-Vector2 operator* (float multiplier, const Vector2 & multiplicand)
+Vector2 Lurdr::operator* (float multiplier, const Vector2 & multiplicand)
 {
     Vector2 vec(
         multiplier * multiplicand.x,
@@ -159,7 +159,7 @@ Vector3 Vector3::operator- (const Vector3 & other) const
     Vector3 vec(x - other.x, y - other.y, z - other.z);
     return vec;
 }
-Vector3 operator* (float multiplier, const Vector3 & multiplicand)
+Vector3 Lurdr::operator* (float multiplier, const Vector3 & multiplicand)
 {
     Vector3 vec(
         multiplier * multiplicand.x,
@@ -340,7 +340,7 @@ Vector4 Vector4::operator- (const Vector4 & other) const
     Vector4 vec(x - other.x, y - other.y, z - other.z, w - other.w);
     return vec;
 }
-Vector4 operator* (float multiplier, const Vector4 & multiplicand)
+Vector4 Lurdr::operator* (float multiplier, const Vector4 & multiplicand)
 {
     Vector4 vec(
         multiplier * multiplicand.x,

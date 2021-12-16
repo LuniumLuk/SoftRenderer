@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
 #include "global.hpp"
 #include "buffer.hpp"
 #include "image.hpp"

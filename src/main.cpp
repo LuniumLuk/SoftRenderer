@@ -9,6 +9,7 @@
 #include "../include/mesh.hpp"
 #include "../include/buffer.hpp"
 #include "../include/darray.hpp"
+#include "../include/graphics.hpp"
 
 using namespace Lurdr;
 
@@ -145,6 +146,23 @@ int main() {
     printf("%lu\n", sizeof(Vertex));
     printf("%lu\n", sizeof(double));
     printf("%lu\n", sizeof(float));
+    printf("%lu\n", sizeof(int));
+    printf("%lu\n", sizeof(size_t));
+
+    FrameBuffer frame_buffer(512, 512);
+
+    RGBColor white;
+    white.R = 255;
+    white.G = 255;
+    white.B = 255;
+
+    printf("%u, %u, %u\n", white.R, white.G, white.B);
+    drawPoint(frame_buffer, vec2(255, 255), white);
+
+    vec4 a(1,2,3,4);
+    a.print();
+
+    (8 * a).print();
 
     end = clock();
     dur = (double)(end - start);
