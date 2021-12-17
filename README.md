@@ -1,28 +1,52 @@
 # Lu Renderer
 
-A Tiny Renderer relying on minimum dependencies
+A Tiny Renderer designed to rely on minimum dependencies
 
-## Content
+> dependencies:  `stdlib.h`   `stdio.h`   `math.h`   `string.h`   `assert.h`
+
+<img src="images/triangle_rasterization.png" style="zoom:50%;" />
+
+### Content
 
 - basic linear algebra
+
   - vector
   - quaternion
   - matrix
-- Image IO
+
+- IO
   - BMP Format
-- Mesh IO
+
   - OBJ Format
 
-## Compile
+- Graphics
+  - basic rasterization algorithm
 
-### Windows:
+- Others
 
-PowerShell: `mingw32-make`
+  - dynamic array
 
-Command Promot: `mingw32-make`
+### Platform Support
 
-### MacOS:
+- MacOS
 
-ZSH: `make`
+### Compile & Run
 
-MacOS viewer window: `make mac`
+#### MacOS
+
+```shell
+## for test run
+make
+## for viewer application
+make mac
+## run program
+./viewer
+```
+
+#### Windows
+
+```shell
+mingw32-make
+```
+
+then click **viewer.exe** and run

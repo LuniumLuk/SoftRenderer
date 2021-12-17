@@ -50,6 +50,7 @@ public:
     Vector2 operator/ (const float divisor) const;
     bool operator== (const Vector2 & other) const;
     bool operator!= (const Vector2 & other) const;
+    void operator+= (const Vector2 & other);
 
     /* Member Functions */
     float dot(const Vector2 & other) const;
@@ -91,6 +92,7 @@ public:
     Vector3 operator/ (const float divisor) const;
     bool operator== (const Vector3 & other) const;
     bool operator!= (const Vector3 & other) const;
+    void operator+= (const Vector3 & other);
 
     /* Member Functions */
     float dot(const Vector3 & other) const;
@@ -108,6 +110,7 @@ public:
 };
 
 Vector3 operator* (float multiplier, const Vector3 & multiplicand);
+void swap(Vector3 & a, Vector3 & b);
 
 /**
  * Vector4
@@ -136,6 +139,7 @@ public:
     Vector4 operator/ (const float divisor) const;
     bool operator== (const Vector4 & other) const;
     bool operator!= (const Vector4 & other) const;
+    void operator+= (const Vector4 & other);
 
     /* Member Functions */
     float dot(const Vector4 & other) const;

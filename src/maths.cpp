@@ -80,6 +80,11 @@ bool Vector2::operator!= (const Vector2 & other) const
         return true;
     }
 }
+void Vector2::operator+= (const Vector2 & other)
+{
+    x += other.x;
+    y += other.y;
+}
 float Vector2::dot(const Vector2 & other) const
 {
     return x * other.x + y * other.y;
@@ -165,6 +170,12 @@ Vector3 Lurdr::operator* (float multiplier, const Vector3 & multiplicand)
     );
     return vec;
 }
+void Lurdr::swap(Vector3 & a, Vector3 & b)
+{
+    std::swap(a.x, b.x);
+    std::swap(a.y, b.y);
+    std::swap(a.z, b.z);
+}
 Vector3 Vector3::operator* (const float & multiplicand) const
 {
     Vector3 vec(x * multiplicand, y * multiplicand, z * multiplicand);
@@ -200,6 +211,12 @@ bool Vector3::operator!= (const Vector3 & other) const
     {
         return true;
     }
+}
+void Vector3::operator+= (const Vector3 & other)
+{
+    x += other.x;
+    y += other.y;
+    z += other.z;
 }
 float Vector3::dot(const Vector3 & other) const
 {
@@ -383,6 +400,13 @@ bool Vector4::operator!= (const Vector4 & other) const
     {
         return true;
     }
+}
+void Vector4::operator+= (const Vector4 & other)
+{
+    x += other.x;
+    y += other.y;
+    z += other.z;
+    w += other.w;
 }
 float Vector4::dot(const Vector4 & other) const
 {

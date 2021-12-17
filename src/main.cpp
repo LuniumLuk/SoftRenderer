@@ -140,21 +140,19 @@ int main() {
     clock_t start, end;
     start = clock();
 
-    // OBJMesh mesh("assets/bunny.obj");
-    // mesh.printMeshInfo();
 
-    // printf("%lu\n", sizeof(Vertex));
-    // printf("%lu\n", sizeof(double));
-    // printf("%lu\n", sizeof(float));
-    // printf("%lu\n", sizeof(int));
-    // printf("%lu\n", sizeof(size_t));
 
     FrameBuffer frame_buffer(512, 512);
     RGBColor white(255, 255, 255);
+    RGBColor red(255, 0, 0);
+    RGBColor green(0, 255, 0);
+    RGBColor blue(0, 0, 255);
+
     int iter_times = 1000;
     for (int i = 1; i < iter_times; i++)
     {
-        drawTriangle(frame_buffer, vec2(100, 256), vec2(350, 72), vec2(127, 422), white);
+        drawTriangle(frame_buffer, vec2(100, 40), vec2(480, 288), vec2(127, 422), red, green, blue);
+        // drawTriangle(frame_buffer, vec2(100, 256), vec2(350, 72), vec2(127, 422), white);
     }
 
     end = clock();

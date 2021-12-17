@@ -203,16 +203,17 @@ int main(int argc, const char * argv[])
     // _window.image_buffer = u_image.getImageBuffer();
     _window.image_buffer = frame_buffer.colorBuffer();
 
-    Lurdr::RGBColor white(255, 255, 255);
-    Lurdr::RGBColor red(255, 0, 0);
-    Lurdr::RGBColor clay(212, 197, 156);
+    // Demo : colored triangle
 
-    Lurdr::drawLine(frame_buffer, vec2(100, 40), vec2(480, 288), red);
-    Lurdr::drawLine(frame_buffer, vec2(480, 288), vec2(127, 422), red);
-    Lurdr::drawLine(frame_buffer, vec2(127, 422), vec2(100, 40), red);
-    Lurdr::drawTriangle(frame_buffer, vec2(100, 40), vec2(480, 288), vec2(127, 422), clay);
-    // Lurdr::drawPoint(frame_buffer, vec2(255, 255), white);
-    
+    // Lurdr::RGBColor white(255, 255, 255);
+    Lurdr::RGBColor red(255, 0, 0);
+    Lurdr::RGBColor green(0, 255, 0);
+    Lurdr::RGBColor blue(0, 0, 255);
+
+    Lurdr::drawTriangle(frame_buffer, vec2(255, 127), vec2(99, 388), vec2(411, 388), red, green, blue);
+    // Lurdr::drawLine(frame_buffer, vec2(255, 127), vec2(99, 388), white);
+    // Lurdr::drawLine(frame_buffer, vec2(99, 388), vec2(411, 388), white);
+    // Lurdr::drawLine(frame_buffer, vec2(411, 388), vec2(255, 127), white);
 
     // Autorelease Pool:
     // Objects declared in this scope will be automatically
