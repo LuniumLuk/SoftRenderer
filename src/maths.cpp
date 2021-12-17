@@ -84,12 +84,9 @@ float Vector2::dot(const Vector2 & other) const
 {
     return x * other.x + y * other.y;
 }
-Vector2 Vector2::cross(const Vector2 & other) const
+float Vector2::cross(const Vector2 & other) const
 {
-    Vector2 vec(
-        y - other.x,
-        x - other.y );
-    return vec;
+    return x * other.y - y * other.x;
 }
 Vector2 Vector2::lerp(const Vector2 & from, const Vector2 & to, float alpha)
 {
@@ -1206,19 +1203,27 @@ Matrix4 Matrix4::fromAxisAngle(const Vector3 & axis, const float & angle)
     );
     return mat;
 }
+// reference : http://www.songho.ca/opengl/gl_camera.html
 Matrix4 Matrix4::fromLookAt(const Vector3 & eye, const Vector3 & target, const Vector3 & up)
 {
-    Matrix4 mat;
-    // ...
+    Vector3 forward = (eye - target).normalized();
+    Vector3 left = up.cross(forward).normalized();
+    Vector3 upward = forward.cross(left); // cross product of two normalized vector is also normalized
+    Matrix4 mat(
+        left.x,     left.y,     left.z,     -(left.x * eye.x + left.y * eye.y + left.z * eye.z),
+        upward.x,   upward.y,   upward.z,   -(upward.x * eye.x + upward.y * eye.y + upward.z * eye.z),
+        forward.x,  forward.y,  forward.z,  -(forward.x * eye.x + forward.y * eye.y + forward.z * eye.z),
+        0.0f,       0.0f,       0.0f,       1.0f
+    );
     return mat;
 }
 
 Matrix4 Matrix4::translated(const Vector3 & translation) const
 {
     Matrix4 mat(
-        m[0],  m[1],  m[2],  m[3]  + translation.x,
-        m[4],  m[5],  m[6],  m[7]  + translation.y,
-        m[8],  m[9],  m[10], m[11] + translation.z,
+        m[0],  m[1],  m[2],  m[3]  + translation.x * m[0] + translation.y * m[1] + translation.z * m[2],
+        m[4],  m[5],  m[6],  m[7]  + translation.x * m[4] + translation.y * m[5] + translation.z * m[6],
+        m[8],  m[9],  m[10], m[11] + translation.z * m[8] + translation.y * m[9] + translation.z * m[10],
         m[12], m[13], m[14], m[15]
     );
     return mat;
@@ -1230,9 +1235,9 @@ Matrix4 Matrix4::scaled(const Vector3 & scale) const
     assert(abs(scale.z) > EPSILON);
 
     Matrix4 mat(
-        m[0] * scale.x, m[1],           m[2],            m[3],
-        m[4],           m[5] * scale.y, m[6],            m[7],
-        m[8],           m[9],           m[10] * scale.z, m[11],
+        m[0] * scale.x, m[1] * scale.y, m[2] * scale.z,  m[3],
+        m[4] * scale.x, m[5] * scale.y, m[6] * scale.z,  m[7],
+        m[8] * scale.x, m[9] * scale.y, m[10] * scale.z, m[11],
         m[12],          m[13],          m[14],           m[15]
     );
     return mat;
@@ -1250,9 +1255,9 @@ Matrix4 Matrix4::rotated(const Quaternion & rotation) const
 
 void Matrix4::translate(const Vector3 & translation)
 {
-    m[3]  += translation.x;
-    m[7]  += translation.y;
-    m[11] += translation.z;
+    m[3]  += translation.x * m[0] + translation.y * m[1] + translation.z * m[2];
+    m[7]  += translation.x * m[4] + translation.y * m[5] + translation.z * m[6];
+    m[11] += translation.z * m[8] + translation.y * m[9] + translation.z * m[10];
 }
 void Matrix4::scale(const Vector3 & scale)
 {
@@ -1261,7 +1266,13 @@ void Matrix4::scale(const Vector3 & scale)
     assert(abs(scale.z) > EPSILON);
 
     m[0]  *= scale.x;
+    m[1]  *= scale.y;
+    m[2]  *= scale.z;
+    m[4]  *= scale.x;
     m[5]  *= scale.y;
+    m[6]  *= scale.z;
+    m[8]  *= scale.x;
+    m[9]  *= scale.y;
     m[10] *= scale.z;
 }
 void Matrix4::rotate(const Vector3 & axis, const float & angle)

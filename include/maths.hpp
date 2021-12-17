@@ -53,7 +53,7 @@ public:
 
     /* Member Functions */
     float dot(const Vector2 & other) const;
-    Vector2 cross(const Vector2 & other) const;
+    float cross(const Vector2 & other) const;
     float length() const;
     Vector2 normalized() const;
     void normalize();

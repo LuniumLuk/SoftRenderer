@@ -25,4 +25,4 @@ Command Promot: `mingw32-make`
 
 ZSH: `make`
 
-macos viewer window: `make macos`
+MacOS viewer window: `make mac`

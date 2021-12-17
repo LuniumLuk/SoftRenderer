@@ -11,7 +11,7 @@
 #define BI_BM 0x4d42    // ASCII code for 'BM'
 #define BI_FILE_HEADER_SIZE 14L
 
-#define BI_RGB 0    // no compression
+#define BI_RGB  0   // no compression
 #define BI_RLE8 1   // 8bit RLE encoding
 #define BI_RLE4 2   // 4bit RLE encoding
 
@@ -28,14 +28,30 @@ typedef struct RGBCOLOR
     byte_t R;
     byte_t G;
     byte_t B;
+    
+    RGBCOLOR(byte_t r, byte_t g, byte_t b)
+    {
+        R = r;
+        G = g;
+        B = b;
+    }
 } RGBColor;
 
+// for hdr image
 typedef struct RGBECOLOR
 {
     byte_t R;
     byte_t G;
     byte_t B;
     byte_t E;
+
+    RGBECOLOR(byte_t r, byte_t g, byte_t b, byte_t e)
+    {
+        R = r;
+        G = g;
+        B = b;
+        E = e;
+    }
 } RGBEColor;
 
 // BMP File Format

@@ -9,7 +9,7 @@
 #include "../include/mesh.hpp"
 #include "../include/buffer.hpp"
 #include "../include/darray.hpp"
-#include "../include/graphics.hpp"
+#include "../include/rasterizer.hpp"
 
 using namespace Lurdr;
 
@@ -143,26 +143,19 @@ int main() {
     // OBJMesh mesh("assets/bunny.obj");
     // mesh.printMeshInfo();
 
-    printf("%lu\n", sizeof(Vertex));
-    printf("%lu\n", sizeof(double));
-    printf("%lu\n", sizeof(float));
-    printf("%lu\n", sizeof(int));
-    printf("%lu\n", sizeof(size_t));
+    // printf("%lu\n", sizeof(Vertex));
+    // printf("%lu\n", sizeof(double));
+    // printf("%lu\n", sizeof(float));
+    // printf("%lu\n", sizeof(int));
+    // printf("%lu\n", sizeof(size_t));
 
     FrameBuffer frame_buffer(512, 512);
-
-    RGBColor white;
-    white.R = 255;
-    white.G = 255;
-    white.B = 255;
-
-    printf("%u, %u, %u\n", white.R, white.G, white.B);
-    drawPoint(frame_buffer, vec2(255, 255), white);
-
-    vec4 a(1,2,3,4);
-    a.print();
-
-    (8 * a).print();
+    RGBColor white(255, 255, 255);
+    int iter_times = 1000;
+    for (int i = 1; i < iter_times; i++)
+    {
+        drawTriangle(frame_buffer, vec2(100, 256), vec2(350, 72), vec2(127, 422), white);
+    }
 
     end = clock();
     dur = (double)(end - start);
