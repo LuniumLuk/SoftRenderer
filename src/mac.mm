@@ -82,7 +82,6 @@ static void setupEnvironment()
     _NSGetExecutablePath(path, &size);
     *strrchr(path, '/') = '\0';
     chdir(path);
-    chdir("assets");
 }
 void terminateApplication()
 {
@@ -192,6 +191,8 @@ using namespace Lurdr;
 int main(int argc, const char * argv[])
 {
     window_t _window;
+    setupEnvironment();
+
     BMPImage image("assets/lenna.bmp");
     image.printImageInfo();
 

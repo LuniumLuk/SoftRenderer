@@ -402,7 +402,7 @@ void UniformImage::convertColorSpace(const unsigned short mode)
     assert(mode >= 0 && mode < 4);
     if (m_buffer == nullptr)
     {
-        printf("UniformImage : empty buffer");
+        printf("UniformImage : empty buffer\n");
         return;
     }
     if (mode == m_color_space)

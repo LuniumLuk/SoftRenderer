@@ -9,21 +9,18 @@ A Tiny Renderer designed to rely on minimum dependencies
 ### Content
 
 - basic linear algebra
-
   - vector
   - quaternion
   - matrix
 
 - IO
   - BMP Format
-
   - OBJ Format
 
 - Graphics
   - basic rasterization algorithm
 
 - Others
-
   - dynamic array
 
 ### Platform Support
