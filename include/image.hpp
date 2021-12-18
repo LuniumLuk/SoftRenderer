@@ -119,9 +119,9 @@ private:
 public:
     BMPImage(): m_color_tables(nullptr),
                 m_buffer(nullptr),
-                m_filename(nullptr),
                 m_is_loaded(false),
-                m_use_color_table(false) {}
+                m_use_color_table(false),
+                m_filename(nullptr) {}
     BMPImage(const char* filename);
     BMPImage(const BMPImage & image);
     ~BMPImage() { clean(); }

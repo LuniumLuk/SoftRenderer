@@ -34,6 +34,7 @@
 # Target
 viewer
 viewer.dSYM/
+build/
 
 # Others
 .vscode

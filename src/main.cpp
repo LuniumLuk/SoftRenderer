@@ -91,7 +91,7 @@ typedef struct TestStruct
 
 void buffer_test()
 {
-    size_t len = 10000;
+    long len = 10000;
     byte_t * buffer = new byte_t[len];
     for (int i = 0; i < len; i++)
     {
@@ -140,7 +140,7 @@ int main() {
     clock_t start, end;
     start = clock();
 
-
+    printf("Hello, new makefile!\n");
 
     FrameBuffer frame_buffer(512, 512);
     RGBColor white(255, 255, 255);

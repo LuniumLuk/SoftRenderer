@@ -166,7 +166,6 @@ void Lurdr::standardTriangleRasterization(
          * [x2,y2]   [x4,y4]
          *               [x1,y1]
          */
-        long y4 = y2;
         float x4 = x1 + (float)(x3 - x1) * (float)(y2 - y1) / (float)(y3 - y1);
         standardFillFlatTriangle(frame_buffer, y2, y3, x2, x4, x3, color);
         standardFillFlatTriangle(frame_buffer, y2, y1, x2, x4, x1, color);
@@ -220,7 +219,6 @@ void Lurdr::standardTriangleRasterization(
     }
     else
     {
-        long y4 = y2;
         float x4 = x1 + (float)(x3 - x1) * (float)(y2 - y1) / (float)(y3 - y1);
         Vector3 color_v4 = color_v1 + (color_v3 - color_v1) * (float)(y2 - y1) / (float)(y3 - y1);
         standardFillFlatTriangle(frame_buffer, y2, y3, x2, x4, x3, color_v2, color_v4, color_v3);
@@ -393,7 +391,6 @@ void Lurdr::bresenhamTriangleRasterization(const FrameBuffer & frame_buffer, Vec
          * [x2,y2]   [x4,y4]
          *               [x1,y1]
          */
-        long y4 = y2;
         long x4 = x1 + (float)(x3 - x1) * (float)(y2 - y1) / (float)(y3 - y1) + 1.0f - EPSILON;
         bresenhamFillFlatTriangle(frame_buffer, y2, y3, x2, x4, x3, color);
         bresenhamFillFlatTriangle(frame_buffer, y2, y1, x2, x4, x1, color);

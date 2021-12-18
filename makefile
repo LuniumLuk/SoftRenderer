@@ -1,46 +1,48 @@
-OBJECTS = main.o maths.o image.o mesh.o darray.o rasterizer.o
-MACOBJS = maths.o image.o mesh.o darray.o rasterizer.o
-INCLUDES = include/maths.hpp include/image.hpp include/global.hpp include/mesh.hpp include/darray.hpp include/rasterizer.hpp include/buffer.hpp 
-SRCS = src/main.cpp src/maths.cpp src/image.cpp src/mesh.cpp src/rasterizer.cpp
 CC = g++
-CFLAGS = -g -std=c++11
-OBJCFLAGS = -framework Cocoa
-# Windows
-ifeq ($(OS), Windows_NT)
-	SHELL = cmd.exe
-    CCFLAGS += -D WIN32
-    ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
-        @echo "ARCHITECTURE AMD64"
-        CCFLAGS += -D AMD64
-    else
-        ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
-            @echo "ARCHITECTURE AMD64"
-            CCFLAGS += -D AMD64
-        endif
-        ifeq ($(PROCESSOR_ARCHITECTURE),x86)
-            @echo "ARCHITECTURE x86"
-            CCFLAGS += -D IA32
-        endif
-    endif
-endif
+CLANG = clang++
+CFLAGS = -g -std=c++11 -Wall -Wextra
+OBJCFLAGS  := -framework Cocoa
 
-viewer : $(OBJECTS)
-	$(CC) $(CFLAGS) -o viewer $(OBJECTS)
+TARGET = viewer
 
-mesh.o : src/mesh.cpp include/mesh.hpp
-	$(CC) $(CFLAGS) -c src/mesh.cpp
-maths.o : src/maths.cpp include/maths.hpp
-	$(CC) $(CFLAGS) -c src/maths.cpp
-image.o : src/image.cpp include/image.hpp
-	$(CC) $(CFLAGS) -c src/image.cpp
-rasterizer.o : src/rasterizer.cpp include/rasterizer.hpp
-	$(CC) $(CFLAGS) -c src/rasterizer.cpp
-main.o : src/main.cpp $(INCLUDES)
-	$(CC) $(CFLAGS) -c $(SRCS)
+SOURCEDIR  := src
+INCLUDEDIR := include
+BUILDDIR   := build
+SOURCES    := $(wildcard $(addprefix $(SOURCEDIR)/, *.cpp))
+OBJECTS    := $(addprefix $(BUILDDIR)/, $(notdir $(SOURCES:.cpp=.o)))
+INCLUDES   := $(addprefix -I, $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp)))
+# for MacOS
+MACSOURCES := $(SOURCEDIR)/mac.mm
+MACOBJECTS := $(filter-out build/main.o, $(OBJECTS))
 
-.PHONY : clean
-clean :
-	rm *.o
+RM         := rm -f
+MD         := mkdir -p
 
-mac : src/mac.mm $(MACOBJS) $(INCLUDES)
-	clang++ $(OBJCFLAGS) $(CFLAGS) src/mac.mm -o viewer $(MACOBJS)
+all : $(TARGET)
+
+$(TARGET) : $(OBJECTS)
+	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
+
+$(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp
+	@$(MD) $(dir $@)
+	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
+
+info :
+	@echo --- MAKEFILE -------------------
+	@echo TARGET   : [ $(TARGET) ]
+	@echo SOURCES  : [ $(SOURCES) ]
+	@echo INCLUDES : [ $(INCLUDES) ]
+	@echo OBJECTS  : [ $(OBJECTS) ]
+	@echo --- MAC ------------------------
+	@echo SOURCES  : [ $(MACSOURCES) ]
+	@echo OBJECTS  : [ $(MACOBJECTS) ]
+	@echo --------------------------------
+
+.PHONY: clean
+clean:
+	@$(RM) $(TARGET)
+	@$(RM) $(OBJECTS)
+	@echo --- CLEAN COMPLETE -------------
+
+mac : $(MACSOURCES) $(MACOBJECTS)
+	@$(CLANG) $(OBJCFLAGS) $(CFLAGS) -o $(TARGET) $(MACSOURCES) $(MACOBJECTS) $(INCLUDES)

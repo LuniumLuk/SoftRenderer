@@ -141,9 +141,9 @@ size_t BMPImage::getDataLine() const
 }
 BMPImage::BMPImage(const char* filename): m_color_tables(nullptr),
                                           m_buffer(nullptr),
-                                          m_filename(nullptr),
                                           m_is_loaded(false),
-                                          m_use_color_table(false)
+                                          m_use_color_table(false),
+                                          m_filename(nullptr)
 {
     size_t f_len = strlen(filename);
     m_filename = new char[f_len + 1];
@@ -153,9 +153,9 @@ BMPImage::BMPImage(const char* filename): m_color_tables(nullptr),
 }
 BMPImage::BMPImage(const BMPImage & image): m_color_tables(nullptr),
                                             m_buffer(nullptr),
-                                            m_filename(nullptr),
                                             m_is_loaded(false),
-                                            m_use_color_table(false)
+                                            m_use_color_table(false),
+                                            m_filename(nullptr)
 {
     if (image.m_is_loaded == false)
     {

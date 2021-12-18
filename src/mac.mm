@@ -96,14 +96,6 @@ void terminateApplication()
 static void handleKeyEvent(window_t *window, int virtual_key, bool pressed)
 {
     KEY_CODE key;
-    if (pressed)
-    {
-        printf("Key down: [%d]\n", key);
-    }
-    else
-    {
-        printf("Key up: [%d]\n", key);
-    }
     switch (virtual_key) {
         case 0x00: key = KEY_A;     break;
         case 0x02: key = KEY_D;     break;
@@ -111,6 +103,14 @@ static void handleKeyEvent(window_t *window, int virtual_key, bool pressed)
         case 0x0D: key = KEY_W;     break;
         case 0x31: key = KEY_SPACE; break;
         default:   key = KEY_NUM;   break;
+    }
+    if (pressed)
+    {
+        printf("Key down: [%d]\n", key);
+    }
+    else
+    {
+        printf("Key up: [%d]\n", key);
     }
     if (key < KEY_NUM) {
         window->keys[key] = pressed;
@@ -188,7 +188,7 @@ static void updateView(window_t *window)
 
 using namespace Lurdr;
 
-int main(int argc, const char * argv[])
+int main()
 {
     window_t _window;
     setupEnvironment();
