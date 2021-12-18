@@ -1,4 +1,4 @@
-#include "../include/image.hpp"
+#include "image.hpp"
 
 using namespace Lurdr;
 
@@ -89,7 +89,7 @@ void BMPImage::loadImage()
     size_t height = getImageHeight();
     size_t data_line = getDataLine();
 
-    if (data_line == -1)
+    if (data_line == 0)
     {
         printf("BMPImage : unsupported bits per pixel\n");
         clean();
@@ -123,7 +123,6 @@ void BMPImage::clean()
 }
 size_t BMPImage::getDataLine() const
 {
-    ushort_t bits = m_info_header.bits_per_pixel;
     size_t width = m_info_header.width;
     size_t channel_num = getChannelNum();
     if (channel_num < 0)
@@ -136,7 +135,7 @@ size_t BMPImage::getDataLine() const
     }
     else
     {
-        return -1;
+        return 0;
     }
 }
 BMPImage::BMPImage(const char* filename): m_color_tables(nullptr),
@@ -204,8 +203,8 @@ byte_t& BMPImage::operator() (const size_t & row, const size_t & column, const s
     size_t data_line = getDataLine();
     assert(channel_num > 0);
     assert(channel < channel_num);
-    assert(row < getImageHeight());
-    assert(column < getImageWidth());
+    assert(row < (size_t)getImageHeight());
+    assert(column < (size_t)getImageWidth());
     return m_buffer[row * data_line + column * channel_num + channel];
 }
 
@@ -320,8 +319,6 @@ void UniformImage::RGB2BGR_SIMD()
         __uint128_t i;
         byte_t     c[16];
     } mask = { .c = { 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00 }};
-    size_t row_size = m_width * 3;
-    size_t i, j;
     __uint128_t s0, sr, sg, sb;
 
     byte_t *buffer_ptr = m_buffer;

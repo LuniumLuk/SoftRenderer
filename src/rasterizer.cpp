@@ -1,4 +1,4 @@
-#include "../include/rasterizer.hpp"
+#include "rasterizer.hpp"
 
 using namespace Lurdr;
 

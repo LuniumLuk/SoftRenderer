@@ -1,4 +1,4 @@
-#include "../include/maths.hpp"
+#include "maths.hpp"
 
 using namespace Lurdr;
 
@@ -1208,7 +1208,6 @@ Matrix4 Matrix4::fromAxisAngle(const Vector3 & axis, const float & angle)
     assert(abs(axis.x) > EPSILON);
     assert(abs(axis.y) > EPSILON);
     assert(abs(axis.z) > EPSILON);
-    Vector3 normalized = axis.normalized();
 
     float sin = sinf(angle);
     float cos = cosf(angle);

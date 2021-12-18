@@ -3,13 +3,13 @@
 #include <string.h>
 #include <time.h>
 #include <utility>
-#include "../include/global.hpp"
-#include "../include/maths.hpp"
-#include "../include/image.hpp"
-#include "../include/mesh.hpp"
-#include "../include/buffer.hpp"
-#include "../include/darray.hpp"
-#include "../include/rasterizer.hpp"
+#include "global.hpp"
+#include "maths.hpp"
+#include "image.hpp"
+#include "mesh.hpp"
+#include "buffer.hpp"
+#include "darray.hpp"
+#include "rasterizer.hpp"
 
 using namespace Lurdr;
 

@@ -5,14 +5,14 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/global.hpp"
-// #include "../include/maths.hpp"
-#include "../include/image.hpp"
-// #include "../include/mesh.hpp"
-#include "../include/buffer.hpp"
-// #include "../include/darray.hpp"
-#include "../include/rasterizer.hpp"
-#include "../include/platform.hpp"
+#include "global.hpp"
+// #include "maths.hpp"
+#include "image.hpp"
+// #include "mesh.hpp"
+#include "buffer.hpp"
+// #include "darray.hpp"
+#include "rasterizer.hpp"
+#include "platform.hpp"
 
 // window and IO interfaces for MacOS
 // reference : http://glampert.com/2012/11-29/osx-window-without-xcode-and-ib/

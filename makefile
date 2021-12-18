@@ -6,7 +6,7 @@ OBJCFLAGS  := -framework Cocoa
 TARGET = viewer
 
 SOURCEDIR  := src
-INCLUDEDIR := include
+INCLUDEDIR := src
 BUILDDIR   := build
 SOURCES    := $(wildcard $(addprefix $(SOURCEDIR)/, *.cpp))
 OBJECTS    := $(addprefix $(BUILDDIR)/, $(notdir $(SOURCES:.cpp=.o)))
