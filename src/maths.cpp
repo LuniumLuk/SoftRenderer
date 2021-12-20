@@ -726,9 +726,9 @@ Matrix3 Matrix3::IDENTITY = Matrix3( 1.0f, 0.0f, 0.0f,
 
 Matrix3::Matrix3()
 {
-    m[0] = 0.0f; m[1] = 0.0f; m[2] = 0.0f;
-    m[3] = 0.0f; m[4] = 0.0f; m[5] = 0.0f;
-    m[6] = 0.0f; m[7] = 0.0f; m[8] = 0.0f;
+    m[0] = 1.0f; m[1] = 0.0f; m[2] = 0.0f;
+    m[3] = 0.0f; m[4] = 1.0f; m[5] = 0.0f;
+    m[6] = 0.0f; m[7] = 0.0f; m[8] = 1.0f;
 }
 Matrix3::Matrix3(
     const float & m1, const float & m2, const float & m3,
@@ -908,10 +908,10 @@ Matrix4 Matrix4::IDENTITY = Matrix4(
 
 Matrix4::Matrix4()
 {
-    m[0]  = 0.0f; m[1]  = 0.0f; m[2]  = 0.0f; m[3]  = 0.0f; 
-    m[4]  = 0.0f; m[5]  = 0.0f; m[6]  = 0.0f; m[7]  = 0.0f; 
-    m[8]  = 0.0f; m[9]  = 0.0f; m[10] = 0.0f; m[11] = 0.0f; 
-    m[12] = 0.0f; m[13] = 0.0f; m[14] = 0.0f; m[15] = 0.0f; 
+    m[0]  = 1.0f; m[1]  = 0.0f; m[2]  = 0.0f; m[3]  = 0.0f; 
+    m[4]  = 0.0f; m[5]  = 1.0f; m[6]  = 0.0f; m[7]  = 0.0f; 
+    m[8]  = 0.0f; m[9]  = 0.0f; m[10] = 1.0f; m[11] = 0.0f; 
+    m[12] = 0.0f; m[13] = 0.0f; m[14] = 0.0f; m[15] = 1.0f; 
 }
 Matrix4::Matrix4(
     const float & m1,  const float & m2,  const float & m3,  const float & m4,
@@ -1237,6 +1237,22 @@ Matrix4 Matrix4::fromLookAt(const Vector3 & eye, const Vector3 & target, const V
         upward.x,   upward.y,   upward.z,   -(upward.x * eye.x + upward.y * eye.y + upward.z * eye.z),
         forward.x,  forward.y,  forward.z,  -(forward.x * eye.x + forward.y * eye.y + forward.z * eye.z),
         0.0f,       0.0f,       0.0f,       1.0f
+    );
+    return mat;
+}
+
+// reference : http://www.songho.ca/opengl/gl_projectionmatrix.html
+Matrix4 Matrix4::getProjection(const float & fov, const float & aspect, const float & near, const float & far)
+{
+    float z_range = far - near;
+    assert(fov > 0 && aspect > 0);
+    assert(near > 0 && far > 0 && z_range > 0);
+
+    Matrix4 mat(
+        1.0f / (aspect * tanf(fov / 2.0f)), 0.0f,                    0.0f,                    0.0f,
+        0.0f,                               1.0f / tanf(fov / 2.0f), 0.0f,                    0.0f,
+        0.0f,                               1.0f,                    -(near + far) / z_range, -2.0 * far * near / z_range,
+        0.0f,                               0.0f,                    -1.0f,                   0.0f
     );
     return mat;
 }

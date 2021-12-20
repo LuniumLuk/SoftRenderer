@@ -122,6 +122,7 @@ public:
     Vector4(): x(0), y(0), z(0), w(0) {}
     Vector4(float w, float x, float y, float z): x(x), y(y), z(z), w(w) {}
     Vector4(const Vector4 & vec): x(vec.x), y(vec.y), z(vec.z), w(vec.w) {}
+    Vector4(const Vector3 & vec, float w): x(vec.x), y(vec.y), z(vec.z), w(w) {}
 
     /* Static Members */
     static Vector4 UNIT_X;
@@ -268,6 +269,7 @@ public:
     static Matrix4 fromTRS(const Vector3 & translation, const Quaternion & rotation, const Vector3 & scale);
     static Matrix4 fromAxisAngle(const Vector3 & axis, const float & angle);
     static Matrix4 fromLookAt(const Vector3 & eye, const Vector3 & target, const Vector3 & up);
+    static Matrix4 getProjection(const float & fov, const float & aspect, const float & near, const float & far);
 
     Matrix4 translated(const Vector3 & translation) const;
     Matrix4 scaled(const Vector3 & scale) const;

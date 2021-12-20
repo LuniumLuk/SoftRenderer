@@ -140,6 +140,8 @@ public:
     void printImageInfo() const;
     byte_t* & getImageBuffer();
     byte_t* getImageBufferConst() const;
+
+    friend class UniformImage;
 };
 
 class UniformImage

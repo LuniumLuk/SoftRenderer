@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include <utility>
 #include "global.hpp"
 
 namespace Lurdr
@@ -18,6 +19,9 @@ private:
     T       *m_array;
     size_t  m_size;
     size_t  m_capacity;
+
+    size_t qsort_partition(long low, long high, bool (*cmp)(const void *, const void *));
+    void qsort(long low, long high, bool (*cmp)(const void *, const void *));
 public:
     DynamicArray(): m_array(NULL),
                     m_size(0),
@@ -37,6 +41,8 @@ public:
     size_t size() const;
     size_t capacity() const;
     T* data() const;
+
+    void sort(bool (*cmp)(const void *, const void *));
 };
 
 // note : classes with template have to implement their member functions within the header file
@@ -142,6 +148,52 @@ template<typename T>
 T* DynamicArray<T>::data() const
 {
     return m_array;
+}
+
+// implement of quick sort
+// reference : https://www.geeksforgeeks.org/cpp-program-for-quicksort/
+template<typename T>
+size_t DynamicArray<T>::qsort_partition(long low, long high, bool (*cmp)(const void *, const void *))
+{
+    T &pivot = m_array[high];
+    long i = low;
+    long j = high - 1;
+    while (true)
+    {
+        while (!cmp(&m_array[i], &pivot) && i < high)
+        {
+            i++;
+        }
+        while (cmp(&m_array[j], &pivot) && j > low)
+        {
+            j--;
+        }
+
+        if (i >= j)
+        {
+            std::swap(m_array[i], m_array[high]);
+            return i;
+        }
+
+        std::swap(m_array[i], m_array[j]);
+    }
+}
+template<typename T>
+void DynamicArray<T>::qsort(long low, long high, bool (*cmp)(const void *, const void *))
+{
+    if (low < high)
+    {
+        long pivot = qsort_partition(low, high, cmp);
+
+        qsort(low, pivot - 1, cmp);
+        qsort(pivot + 1, high, cmp);
+    }
+}
+
+template<typename T>
+void DynamicArray<T>::sort(bool (*cmp)(const void *, const void *))
+{
+    qsort(0, m_size - 1, cmp);
 }
 
 }

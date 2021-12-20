@@ -27,6 +27,10 @@ $(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp
 	@$(MD) $(dir $@)
 	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
+debug: clean debug_compile
+debug_compile: CFLAGS += -DDEBUG
+debug_compile: $(TARGET);
+
 info :
 	@echo --- MAKEFILE -------------------
 	@echo TARGET   : [ $(TARGET) ]

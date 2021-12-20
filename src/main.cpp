@@ -135,25 +135,59 @@ void image_test()
     printf("Read %d 512 * 512 Images Use Time: %fs\n", iter_times, (dur / CLOCKS_PER_SEC));
 }
 
+bool cmp(const void * a, const void * b)
+{
+
+    return *(int*)a > *(int*)b;
+}
+
 int main() {
     double dur;
     clock_t start, end;
     start = clock();
 
-    printf("Hello, new makefile!\n");
+    // printf("Hello, new makefile!\n");
 
-    FrameBuffer frame_buffer(512, 512);
-    RGBColor white(255, 255, 255);
-    RGBColor red(255, 0, 0);
-    RGBColor green(0, 255, 0);
-    RGBColor blue(0, 0, 255);
+    // FrameBuffer frame_buffer(512, 512);
+    // RGBColor white(255, 255, 255);
+    // RGBColor red(255, 0, 0);
+    // RGBColor green(0, 255, 0);
+    // RGBColor blue(0, 0, 255);
 
-    int iter_times = 1000;
-    for (int i = 1; i < iter_times; i++)
+    // int iter_times = 1000;
+    // for (int i = 1; i < iter_times; i++)
+    // {
+    //     drawTriangle(frame_buffer, vec2(100, 40), vec2(480, 288), vec2(127, 422), red, green, blue);
+    //     // drawTriangle(frame_buffer, vec2(100, 256), vec2(350, 72), vec2(127, 422), white);
+    // }
+
+    // OBJMesh obj_mesh("assets/bunny.obj");
+    // obj_mesh.printMeshInfo();
+    // UniformMesh uni_mesh(obj_mesh);
+    // uni_mesh.printMeshInfo();
+
+    DynamicArray<int> array;
+    array.push_back(1);
+    array.push_back(4);
+    array.push_back(5);
+    array.push_back(2);
+    array.push_back(21);
+    array.push_back(12);
+    array.push_back(22);
+    array.push_back(23);
+    array.push_back(3);
+
+    array.sort(cmp);
+
+    for (size_t i = 0; i < array.size(); i++)
     {
-        drawTriangle(frame_buffer, vec2(100, 40), vec2(480, 288), vec2(127, 422), red, green, blue);
-        // drawTriangle(frame_buffer, vec2(100, 256), vec2(350, 72), vec2(127, 422), white);
+        printf("%d\n", array[i]);
     }
+    
+
+#ifdef DEBUG
+    printf("DEBUG MODE!\n");
+#endif
 
     end = clock();
     dur = (double)(end - start);

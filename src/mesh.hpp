@@ -44,6 +44,8 @@ public:
     ~OBJMesh();
 
     void printMeshInfo() const;
+
+    friend class UniformMesh;
 };
 
 struct Vertex
@@ -60,7 +62,22 @@ typedef struct Vertex vertex;
 class UniformMesh
 {
 private:
+    Vertex  *m_vertices;
+    size_t  m_vertex_count;
+    bool    m_has_tex_coords;
+    bool    m_has_vertex_normals;
+    Vector3 m_mesh_center;
 public:
+    UniformMesh();
+    UniformMesh(const OBJMesh & obj_mesh);
+    UniformMesh(const UniformMesh & uni_mesh);
+    ~UniformMesh();
+
+    Vertex * getVertices() const;
+    size_t getFaceCount() const;
+    size_t getVertexCount() const;
+    void printMeshInfo() const;
+    Vector3 getCenter() const;
 };
 
 

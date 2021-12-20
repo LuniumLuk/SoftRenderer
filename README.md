@@ -2,7 +2,7 @@
 
 A Tiny Renderer designed to rely on minimum dependencies
 
-> dependencies:  `stdlib.h`   `stdio.h`   `math.h`   `string.h`   `assert.h`
+> dependencies:  `stdlib.h`   `stdio.h`   `math.h`   `string.h`   `assert.h`   `utility`
 
 <img src="images/triangle_rasterization.png" width="400px" />
 
