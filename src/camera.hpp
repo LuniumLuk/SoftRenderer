@@ -22,6 +22,8 @@ private:
 public:
     Camera();
     void setTransform(const Vector3 & position, const Vector3 & target);
+    void setAspect(float aspect);
+    void setFOV(float fov);
     Vector3 getPosition() const;
     Vector3 getForward() const;
     Vector3 getUp() const;

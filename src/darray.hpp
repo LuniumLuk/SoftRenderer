@@ -184,7 +184,7 @@ void DynamicArray<T>::qsort(long low, long high, bool (*cmp)(const void *, const
     if (low < high)
     {
         long pivot = qsort_partition(low, high, cmp);
-
+        
         qsort(low, pivot - 1, cmp);
         qsort(pivot + 1, high, cmp);
     }

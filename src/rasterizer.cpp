@@ -29,10 +29,15 @@ void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, R
     long y1 = v1.y;
     long x2 = v2.x;
     long y2 = v2.y;
-    assert(x1 >= 0 && x1 <= frame_buffer.getWidth());
-    assert(y1 >= 0 && y1 <= frame_buffer.getHeight());
-    assert(x2 >= 0 && x2 <= frame_buffer.getWidth());
-    assert(y2 >= 0 && y2 <= frame_buffer.getHeight());
+    bool x1_valid = x1 >= 0 && x1 <= frame_buffer.getWidth();
+    bool y1_valid = y1 >= 0 && y1 <= frame_buffer.getHeight();
+    bool x2_valid = x2 >= 0 && x2 <= frame_buffer.getWidth();
+    bool y2_valid = y2 >= 0 && y2 <= frame_buffer.getHeight();
+
+    if (!(x1_valid && y1_valid && x2_valid && y2_valid))
+    {
+        return;
+    }
 
     long dx = abs(x2 - x1);
     long dy = -abs(y2 - y1);

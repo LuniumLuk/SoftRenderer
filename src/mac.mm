@@ -6,13 +6,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include "global.hpp"
-// #include "maths.hpp"
+#include "maths.hpp"
 #include "image.hpp"
-// #include "mesh.hpp"
+#include "mesh.hpp"
 #include "buffer.hpp"
-// #include "darray.hpp"
+#include "darray.hpp"
 #include "rasterizer.hpp"
 #include "platform.hpp"
+#include "camera.hpp"
+#include "scene.hpp"
+
+using namespace Lurdr;
 
 // window and IO interfaces for MacOS
 // reference : http://glampert.com/2012/11-29/osx-window-without-xcode-and-ib/
@@ -186,20 +190,29 @@ static void updateView(window_t *window)
     [[window->handle contentView] setNeedsDisplay:YES];  /* invoke drawRect */
 }
 
-using namespace Lurdr;
-
 int main()
 {
     window_t _window;
     setupEnvironment();
 
-    BMPImage image("assets/lenna.bmp");
-    image.printImageInfo();
+    Lurdr::FrameBuffer frame_buffer(512, 512);
 
-    UniformImage u_image(image);
-    u_image.convertColorSpace(COLOR_RGB);
+    Lurdr::OBJMesh obj_mesh("assets/simple.obj");
+    Lurdr::UniformMesh uni_mesh(obj_mesh);
+    uni_mesh.printMeshInfo();
 
-    FrameBuffer frame_buffer(512, 512);
+    Lurdr::Model model;
+    model.addMesh(&uni_mesh);
+    model.setTransform(Matrix4::IDENTITY);
+
+    Lurdr::Scene scene;
+    scene.addModel(&model);
+
+    Lurdr::Camera camera;
+    camera.setTransform(Vector3(1.5f, -1.5f, -2.0f), Vector3(1.5f, -1.0f, 0.0f));
+    camera.setAspect(1.0f);
+    camera.setFOV(PI / 5);
+    scene.drawScene(frame_buffer, camera);
 
     // _window.image_buffer = u_image.getImageBuffer();
     _window.image_buffer = frame_buffer.colorBuffer();
@@ -207,11 +220,11 @@ int main()
     // Demo : colored triangle
 
     // Lurdr::RGBColor white(255, 255, 255);
-    Lurdr::RGBColor red(255, 0, 0);
-    Lurdr::RGBColor green(0, 255, 0);
-    Lurdr::RGBColor blue(0, 0, 255);
+    // Lurdr::RGBColor red(255, 0, 0);
+    // Lurdr::RGBColor green(0, 255, 0);
+    // Lurdr::RGBColor blue(0, 0, 255);
 
-    Lurdr::drawTriangle(frame_buffer, vec2(255, 127), vec2(99, 388), vec2(411, 388), red, green, blue);
+    // Lurdr::drawTriangle(frame_buffer, vec2(255, 127), vec2(99, 388), vec2(411, 388), red, green, blue);
     // Lurdr::drawLine(frame_buffer, vec2(255, 127), vec2(99, 388), white);
     // Lurdr::drawLine(frame_buffer, vec2(99, 388), vec2(411, 388), white);
     // Lurdr::drawLine(frame_buffer, vec2(411, 388), vec2(255, 127), white);

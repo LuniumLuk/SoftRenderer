@@ -185,7 +185,7 @@ UniformMesh::UniformMesh(const OBJMesh & obj_mesh)
     for (size_t i = 0; i < m_vertex_count; i++)
     {
         Vertex v;
-        v.position = obj_mesh.m_vs[obj_mesh.m_fs[i]];
+        v.position = obj_mesh.m_vs[obj_mesh.m_fs[i] - 1];
         accumulated_position += v.position;
         if (m_has_tex_coords)
         {

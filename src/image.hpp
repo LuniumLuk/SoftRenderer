@@ -23,37 +23,6 @@
 namespace Lurdr
 {
 
-typedef struct RGBCOLOR
-{
-    byte_t R;
-    byte_t G;
-    byte_t B;
-    
-    RGBCOLOR(byte_t r, byte_t g, byte_t b)
-    {
-        R = r;
-        G = g;
-        B = b;
-    }
-} RGBColor;
-
-// for hdr image
-typedef struct RGBECOLOR
-{
-    byte_t R;
-    byte_t G;
-    byte_t B;
-    byte_t E;
-
-    RGBECOLOR(byte_t r, byte_t g, byte_t b, byte_t e)
-    {
-        R = r;
-        G = g;
-        B = b;
-        E = e;
-    }
-} RGBEColor;
-
 // BMP File Format
 // reference : http://www.ece.ualberta.ca/~elliott/ee552/studentAppNotes/2003_w/misc/bmp_file_format/bmp_file_format.htm
 // also based on my previous course assignment in DIP (digital image processing, ZJU, lectured by M. Song)

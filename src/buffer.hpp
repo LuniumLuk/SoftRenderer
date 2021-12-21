@@ -10,6 +10,8 @@
 namespace Lurdr
 {
 
+// a discussion over size_t & long
+// http://cplusplus.com/forum/beginner/87153/
 class FrameBuffer
 {
 private:
@@ -18,35 +20,17 @@ private:
     byte_t *m_color_buffer;
     float  *m_depth_buffer;
 public:
-    FrameBuffer() {}
-    FrameBuffer(long width, long height): m_width(width), m_height(height)
-    {
-        long buffer_size = m_width * m_height;
-        m_color_buffer = new byte_t[buffer_size * 3];
-        m_depth_buffer = new float[buffer_size];
-    }
-    ~FrameBuffer()
-    {
-        delete[] m_color_buffer;
-        delete[] m_depth_buffer;
-    }
+    FrameBuffer();
+    FrameBuffer(long width, long height);
+    ~FrameBuffer();
 
-    long getHeight() const
-    {
-        return m_height;
-    }
-    long getWidth() const
-    {
-        return m_width;
-    }
-    byte_t* colorBuffer() const
-    {
-        return m_color_buffer;
-    }
-    float* depthBuffer() const
-    {
-        return m_depth_buffer;
-    }
+    long getHeight() const;
+    long getWidth() const;
+    byte_t* colorBuffer() const;
+    float* depthBuffer() const;
+
+    void clearColorBuffer(const RGBCOLOR & color) const;
+    void clearDepthBuffer(const float & depth) const;
 };
 
 }

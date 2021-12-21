@@ -10,6 +10,7 @@
 #include "buffer.hpp"
 #include "darray.hpp"
 #include "rasterizer.hpp"
+#include "scene.hpp"
 
 using namespace Lurdr;
 
@@ -137,7 +138,6 @@ void image_test()
 
 bool cmp(const void * a, const void * b)
 {
-
     return *(int*)a > *(int*)b;
 }
 
@@ -145,44 +145,30 @@ int main() {
     double dur;
     clock_t start, end;
     start = clock();
+#ifdef DEBUG
+    printf("-------- MAIN TEST (DEBUG) ---------\n");
+#else
+    printf("------------ MAIN TEST -------------\n");
+#endif
 
-    // printf("Hello, new makefile!\n");
 
-    // FrameBuffer frame_buffer(512, 512);
-    // RGBColor white(255, 255, 255);
-    // RGBColor red(255, 0, 0);
-    // RGBColor green(0, 255, 0);
-    // RGBColor blue(0, 0, 255);
+    FrameBuffer frame_buffer(512, 512);
 
-    // int iter_times = 1000;
-    // for (int i = 1; i < iter_times; i++)
-    // {
-    //     drawTriangle(frame_buffer, vec2(100, 40), vec2(480, 288), vec2(127, 422), red, green, blue);
-    //     // drawTriangle(frame_buffer, vec2(100, 256), vec2(350, 72), vec2(127, 422), white);
-    // }
+    OBJMesh obj_mesh("assets/bunny.obj");
+    UniformMesh uni_mesh(obj_mesh);
+    uni_mesh.printMeshInfo();
 
-    // OBJMesh obj_mesh("assets/bunny.obj");
-    // obj_mesh.printMeshInfo();
-    // UniformMesh uni_mesh(obj_mesh);
-    // uni_mesh.printMeshInfo();
+    Model model;
+    model.addMesh(&uni_mesh);
+    model.setTransform(Matrix4::IDENTITY);
 
-    DynamicArray<int> array;
-    array.push_back(1);
-    array.push_back(4);
-    array.push_back(5);
-    array.push_back(2);
-    array.push_back(21);
-    array.push_back(12);
-    array.push_back(22);
-    array.push_back(23);
-    array.push_back(3);
+    Scene scene;
+    scene.addModel(&model);
 
-    array.sort(cmp);
+    Camera camera;
+    camera.setTransform(Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f));
 
-    for (size_t i = 0; i < array.size(); i++)
-    {
-        printf("%d\n", array[i]);
-    }
+    scene.drawScene(frame_buffer, camera);
     
 
 #ifdef DEBUG
@@ -192,6 +178,8 @@ int main() {
     end = clock();
     dur = (double)(end - start);
     printf("Use Time: %9.3fms\n", (dur * 1000 / CLOCKS_PER_SEC));
+
+    printf("------------------------------------\n");
 
     return 0;
 }

@@ -120,7 +120,7 @@ class Vector4
 public:
     float x, y, z, w;
     Vector4(): x(0), y(0), z(0), w(0) {}
-    Vector4(float w, float x, float y, float z): x(x), y(y), z(z), w(w) {}
+    Vector4(float x, float y, float z, float w): x(x), y(y), z(z), w(w) {}
     Vector4(const Vector4 & vec): x(vec.x), y(vec.y), z(vec.z), w(vec.w) {}
     Vector4(const Vector3 & vec, float w): x(vec.x), y(vec.y), z(vec.z), w(w) {}
 

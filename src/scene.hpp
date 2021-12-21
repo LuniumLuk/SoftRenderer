@@ -5,12 +5,12 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
-#include "image.hpp"
 #include "buffer.hpp"
 #include "global.hpp"
 #include "maths.hpp"
 #include "camera.hpp"
 #include "mesh.hpp"
+#include "rasterizer.hpp"
 
 namespace Lurdr
 {
@@ -26,12 +26,15 @@ private:
     // Program     m_program; // shader programs
 public:
     Model();
-    ~Model();
+    ~Model() {}
 
+    void addMesh(UniformMesh * mesh);
+    void setTransform(const Matrix4 & transfrom);
+    void setOpaque(bool opaque);
     Vector3 getMeshCenter() const;
     Matrix4 getTransform() const;
     void setDistance(float dist);
-    void draw(const FrameBuffer & frame_buffer); // add shader program here
+    void draw(const FrameBuffer & frame_buffer, const Camera & camera); // add shader program later
 
     static bool compare_distance(const void* a, const void* b);
 };
@@ -41,16 +44,18 @@ class Scene
 private:
     RGBCOLOR                m_background;
     DynamicArray<Model*>    m_models;
-    float                   m_ambient_intensity;
+    // float                   m_ambient_intensity;
 
     /* shadow mapping */
-    FrameBuffer *shadow_buffer;
+    // FrameBuffer *m_shadow_buffer;
     // texture_t *shadow_map;
 public:
     Scene();
-    ~Scene();
+    ~Scene() {}
 
-    void sort_model(const Matrix4 & view_matrix);
+    void addModel(Model * model);
+    void sortModels(const Matrix4 & view_matrix);
+    void drawScene(const FrameBuffer & frame_buffer, const Camera & camera);
 };
 
 

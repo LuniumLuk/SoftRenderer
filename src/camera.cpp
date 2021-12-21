@@ -7,7 +7,7 @@ Camera::Camera()
     m_position  = Vector3::UNIT_Z;
     m_target    = Vector3::ZERO;
     m_up        = Vector3::UNIT_Y;
-    m_FOV       = PI / 3; // 60 degree
+    m_FOV       = PI / 3; // 90 degree
     m_aspect    = 1.0f;
     m_near      = 0.1f;
     m_far       = 1000.0f;
@@ -19,6 +19,17 @@ void Camera::setTransform(const Vector3 & position, const Vector3 & target)
     m_position = position;
     m_target = target;
 }
+
+void Camera::setAspect(float aspect)
+{
+    m_aspect = aspect;
+}
+
+void Camera::setFOV(float fov)
+{
+    m_FOV = fov;
+}
+
 
 Vector3 Camera::getPosition() const
 {

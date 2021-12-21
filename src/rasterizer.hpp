@@ -7,7 +7,6 @@
 #include <math.h>
 #include "global.hpp"
 #include "buffer.hpp"
-#include "image.hpp"
 
 namespace Lurdr
 {

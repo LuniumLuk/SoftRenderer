@@ -11,6 +11,7 @@ BUILDDIR   := build
 SOURCES    := $(wildcard $(addprefix $(SOURCEDIR)/, *.cpp))
 OBJECTS    := $(addprefix $(BUILDDIR)/, $(notdir $(SOURCES:.cpp=.o)))
 INCLUDES   := $(addprefix -I, $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp)))
+HEADERS    := $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp))
 # for MacOS
 MACSOURCES := $(SOURCEDIR)/mac.mm
 MACOBJECTS := $(filter-out build/main.o, $(OBJECTS))
@@ -23,7 +24,7 @@ all : $(TARGET)
 $(TARGET) : $(OBJECTS)
 	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
 
-$(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp
+$(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp $(HEADERS)
 	@$(MD) $(dir $@)
 	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
