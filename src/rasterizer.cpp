@@ -39,8 +39,8 @@ void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, R
         return;
     }
 
-    long dx = abs(x2 - x1);
-    long dy = -abs(y2 - y1);
+    long dx = fabs(x2 - x1);
+    long dy = -fabs(y2 - y1);
     int sx = x1 < x2 ? 1 : -1;
     int sy = y1 < y2 ? 1 : -1;
     long err = dx + dy; 
@@ -414,9 +414,9 @@ void Lurdr::bresenhamFillFlatTriangle(const FrameBuffer & frame_buffer, long y12
     {
         std::swap(x1, x2);
     }
-    long dx1 = abs(x3 - x1);
-    long dx2 = abs(x3 - x2);
-    long dy = -abs(y3 - y12);
+    long dx1 = fabs(x3 - x1);
+    long dx2 = fabs(x3 - x2);
+    long dy = -fabs(y3 - y12);
     int sx1 = x1 < x3 ? 1 : -1;
     int sx2 = x2 < x3 ? 1 : -1;
     int sy = y12 < y3 ? 1 : -1;
@@ -499,8 +499,8 @@ void Lurdr::fillTriangleTable(long * x_left, long * x_right, long x1, long y1, l
         std::swap(x1, x2);
         std::swap(y1, y2);
     }
-    long dx = abs(x2 - x1);
-    long dy = -abs(y2 - y1);
+    long dx = fabs(x2 - x1);
+    long dy = -fabs(y2 - y1);
     int sx = x1 < x2 ? 1 : -1;
     int sy = y1 < y2 ? 1 : -1;
     long err = dx + dy; 

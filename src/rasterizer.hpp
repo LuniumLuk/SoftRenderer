@@ -13,6 +13,9 @@ namespace Lurdr
 
 /**
  * basic buffer access api
+ * 
+ * “A chain is no stronger than its weakest link.”
+ *  —- Anonymous --
  */
 void drawPixel(
     const FrameBuffer & frame_buffer,

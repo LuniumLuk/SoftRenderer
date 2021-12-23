@@ -66,7 +66,7 @@ void BMPImage::loadImage()
     fread(&m_info_header, sizeof(BMPInfoHeader), 1, fp);
     if (m_info_header.height < 0)
     {
-        m_info_header.height = abs(m_info_header.height);
+        m_info_header.height = fabs(m_info_header.height);
     }
 
     if (m_info_header.bits_per_pixel <= 8)

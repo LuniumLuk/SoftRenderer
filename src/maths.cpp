@@ -52,15 +52,15 @@ Vector2 Vector2::operator* (const float & multiplicand) const
 }
 Vector2 Vector2::operator/ (const float divisor) const
 {
-    assert(abs(divisor) > EPSILON);
+    assert(fabs(divisor) > EPSILON);
     float factor = 1.0f / divisor;
     Vector2 vec(x * factor, y * factor);
     return vec;
 }
 bool Vector2::operator== (const Vector2 & other) const
 {
-    if ( abs(x - other.x) <= EPSILON * max(max(abs(x), abs(other.x)), 1.0f)
-      && abs(y - other.y) <= EPSILON * max(max(abs(y), abs(other.y)), 1.0f) )
+    if ( fabs(x - other.x) <= EPSILON * max(max(fabs(x), fabs(other.x)), 1.0f)
+      && fabs(y - other.y) <= EPSILON * max(max(fabs(y), fabs(other.y)), 1.0f) )
     {
         return true;
     }
@@ -114,7 +114,7 @@ void Vector2::print() const
 Vector2 Vector2::normalized() const
 {
     float len = length();
-    assert(abs(len) > EPSILON);
+    assert(fabs(len) > EPSILON);
     float factor = 1.0f / len;
     Vector2 vec(
         x * factor,
@@ -125,7 +125,7 @@ Vector2 Vector2::normalized() const
 void Vector2::normalize()
 {
     float len = length();
-    assert(abs(len) > EPSILON);
+    assert(fabs(len) > EPSILON);
     float factor = 1.0f / len;
     x *= factor;
     y *= factor;
@@ -183,16 +183,16 @@ Vector3 Vector3::operator* (const float & multiplicand) const
 }
 Vector3 Vector3::operator/ (const float divisor) const
 {
-    assert(abs(divisor) > EPSILON);
+    assert(fabs(divisor) > EPSILON);
     float factor = 1.0f / divisor;
     Vector3 vec(x * factor, y * factor, z * factor);
     return vec;
 }
 bool Vector3::operator== (const Vector3 & other) const
 {
-    if ( abs(x - other.x) <= EPSILON * max(max(abs(x), abs(other.x)), 1.0f)
-      && abs(y - other.y) <= EPSILON * max(max(abs(y), abs(other.y)), 1.0f)
-      && abs(z - other.z) <= EPSILON * max(max(abs(z), abs(other.z)), 1.0f) )
+    if ( fabs(x - other.x) <= EPSILON * max(max(fabs(x), fabs(other.x)), 1.0f)
+      && fabs(y - other.y) <= EPSILON * max(max(fabs(y), fabs(other.y)), 1.0f)
+      && fabs(z - other.z) <= EPSILON * max(max(fabs(z), fabs(other.z)), 1.0f) )
     {
         return true;
     }
@@ -238,7 +238,7 @@ float Vector3::length() const
 Vector3 Vector3::normalized() const
 {
     float len = length();
-    assert(abs(len) > EPSILON);
+    assert(fabs(len) > EPSILON);
     float factor = 1.0f / len;
     Vector3 vec(
         x * factor,
@@ -250,7 +250,7 @@ Vector3 Vector3::normalized() const
 void Vector3::normalize()
 {
     float len = length();
-    assert(abs(len) > EPSILON);
+    assert(fabs(len) > EPSILON);
     float factor = 1.0f / len;
     x *= factor;
     y *= factor;
@@ -371,17 +371,17 @@ Vector4 Vector4::operator* (const float & multiplicand) const
 }
 Vector4 Vector4::operator/ (const float divisor) const
 {
-    assert(abs(divisor) > EPSILON);
+    assert(fabs(divisor) > EPSILON);
     float factor = 1.0f / divisor;
     Vector4 vec(x * factor, y * factor, z * factor, w * factor);
     return vec;
 }
 bool Vector4::operator== (const Vector4 & other) const
 {
-    if ( abs(x - other.x) <= EPSILON * max(max(abs(x), abs(other.x)), 1.0f)
-      && abs(y - other.y) <= EPSILON * max(max(abs(y), abs(other.y)), 1.0f)
-      && abs(z - other.z) <= EPSILON * max(max(abs(z), abs(other.z)), 1.0f)
-      && abs(w - other.w) <= EPSILON * max(max(abs(w), abs(other.w)), 1.0f) )
+    if ( fabs(x - other.x) <= EPSILON * max(max(fabs(x), fabs(other.x)), 1.0f)
+      && fabs(y - other.y) <= EPSILON * max(max(fabs(y), fabs(other.y)), 1.0f)
+      && fabs(z - other.z) <= EPSILON * max(max(fabs(z), fabs(other.z)), 1.0f)
+      && fabs(w - other.w) <= EPSILON * max(max(fabs(w), fabs(other.w)), 1.0f) )
     {
         return true;
     }
@@ -419,7 +419,7 @@ float Vector4::length() const
 Vector4 Vector4::normalized() const
 {
     float len = length();
-    assert(abs(len) > EPSILON);
+    assert(fabs(len) > EPSILON);
     float factor = 1.0f / len;
     Vector4 vec(
         x * factor,
@@ -432,7 +432,7 @@ Vector4 Vector4::normalized() const
 void Vector4::normalize()
 {
     float len = length();
-    assert(abs(len) > EPSILON);
+    assert(fabs(len) > EPSILON);
     float factor = 1.0f / len;
     x *= factor;
     y *= factor;
@@ -486,10 +486,10 @@ Quaternion Quaternion::operator* (const Quaternion & other) const
 }
 bool Quaternion::operator== (const Quaternion & other) const
 {
-    if ( abs(x - other.x) <= EPSILON * max(max(abs(x), abs(other.x)), 1.0f)
-      && abs(y - other.y) <= EPSILON * max(max(abs(y), abs(other.y)), 1.0f)
-      && abs(z - other.z) <= EPSILON * max(max(abs(z), abs(other.z)), 1.0f)
-      && abs(w - other.w) <= EPSILON * max(max(abs(w), abs(other.w)), 1.0f) )
+    if ( fabs(x - other.x) <= EPSILON * max(max(fabs(x), fabs(other.x)), 1.0f)
+      && fabs(y - other.y) <= EPSILON * max(max(fabs(y), fabs(other.y)), 1.0f)
+      && fabs(z - other.z) <= EPSILON * max(max(fabs(z), fabs(other.z)), 1.0f)
+      && fabs(w - other.w) <= EPSILON * max(max(fabs(w), fabs(other.w)), 1.0f) )
     {
         return true;
     }
@@ -518,7 +518,7 @@ float Quaternion::dot(const Quaternion & other) const
 Quaternion Quaternion::normalized() const
 {
     float len = sqrtf(dot(*this));
-    assert(abs(len) > EPSILON);
+    assert(fabs(len) > EPSILON);
     float factor = 1.0f / len;
     Quaternion quat(
         x * factor,
@@ -531,7 +531,7 @@ Quaternion Quaternion::normalized() const
 void Quaternion::normalize()
 {
     float len = sqrtf(dot(*this));
-    assert(abs(len) > EPSILON);
+    assert(fabs(len) > EPSILON);
     float factor = 1.0f / len;
     x *= factor;
     y *= factor;
@@ -545,7 +545,7 @@ Vector3 Quaternion::toEulerAngles() const
     float roll = atan2(2.0f * (w * x + y * z), 1.0f - 2.0f * (x * x + y * y));
     float p = 2.0f * (w * y - x * z);
     float pitch;
-    if (abs(p) >= 1.0f)
+    if (fabs(p) >= 1.0f)
     {
         // handle 90 degree rotation
         pitch = copysign(PI / 2.0f, p);
@@ -563,7 +563,7 @@ Vector3 Quaternion::toEulerAngles() const
 Quaternion Quaternion::inversed() const
 {
     float q = dot(*this);
-    assert(abs(q) > EPSILON);
+    assert(fabs(q) > EPSILON);
     float factor = 1.0f / q;
     Quaternion quat(
         -x * factor,
@@ -801,7 +801,7 @@ Vector3 Matrix3::operator* (const Vector3 & other) const
 }
 Matrix3 Matrix3::operator/ (const float & divisor) const
 {
-    assert(abs(divisor) > EPSILON);
+    assert(fabs(divisor) > EPSILON);
     float factor = 1.0f / divisor;
     Matrix3 mat(
         m[0] * factor, m[1] * factor, m[2] * factor,
@@ -812,15 +812,15 @@ Matrix3 Matrix3::operator/ (const float & divisor) const
 }
 bool Matrix3::operator== (const Matrix3 & other) const
 {
-    if ( abs(m[0] - other.m[0]) <= EPSILON * max(max(abs(m[0]), abs(other.m[0])), 1.0f)
-      && abs(m[1] - other.m[1]) <= EPSILON * max(max(abs(m[1]), abs(other.m[1])), 1.0f)
-      && abs(m[2] - other.m[2]) <= EPSILON * max(max(abs(m[2]), abs(other.m[2])), 1.0f)
-      && abs(m[3] - other.m[3]) <= EPSILON * max(max(abs(m[3]), abs(other.m[3])), 1.0f) 
-      && abs(m[4] - other.m[4]) <= EPSILON * max(max(abs(m[4]), abs(other.m[4])), 1.0f) 
-      && abs(m[5] - other.m[5]) <= EPSILON * max(max(abs(m[5]), abs(other.m[5])), 1.0f) 
-      && abs(m[6] - other.m[6]) <= EPSILON * max(max(abs(m[6]), abs(other.m[6])), 1.0f) 
-      && abs(m[7] - other.m[7]) <= EPSILON * max(max(abs(m[7]), abs(other.m[7])), 1.0f) 
-      && abs(m[8] - other.m[8]) <= EPSILON * max(max(abs(m[8]), abs(other.m[8])), 1.0f) )
+    if ( fabs(m[0] - other.m[0]) <= EPSILON * max(max(fabs(m[0]), fabs(other.m[0])), 1.0f)
+      && fabs(m[1] - other.m[1]) <= EPSILON * max(max(fabs(m[1]), fabs(other.m[1])), 1.0f)
+      && fabs(m[2] - other.m[2]) <= EPSILON * max(max(fabs(m[2]), fabs(other.m[2])), 1.0f)
+      && fabs(m[3] - other.m[3]) <= EPSILON * max(max(fabs(m[3]), fabs(other.m[3])), 1.0f) 
+      && fabs(m[4] - other.m[4]) <= EPSILON * max(max(fabs(m[4]), fabs(other.m[4])), 1.0f) 
+      && fabs(m[5] - other.m[5]) <= EPSILON * max(max(fabs(m[5]), fabs(other.m[5])), 1.0f) 
+      && fabs(m[6] - other.m[6]) <= EPSILON * max(max(fabs(m[6]), fabs(other.m[6])), 1.0f) 
+      && fabs(m[7] - other.m[7]) <= EPSILON * max(max(fabs(m[7]), fabs(other.m[7])), 1.0f) 
+      && fabs(m[8] - other.m[8]) <= EPSILON * max(max(fabs(m[8]), fabs(other.m[8])), 1.0f) )
     {
         return true;
     }
@@ -853,7 +853,7 @@ Matrix3 Matrix3::hadamard(const Matrix3 & other) const
 Matrix3 Matrix3::inversed() const
 {
     float det = (*this).det();
-    assert(abs(det) > EPSILON);
+    assert(fabs(det) > EPSILON);
 
     float factor = 1.0f / det;
     float a1 = m[4] * m[8] - m[5] * m[7];
@@ -995,7 +995,7 @@ Vector4 Matrix4::operator* (const Vector4 & other) const
 }
 Matrix4 Matrix4::operator/ (const float & divisor) const
 {
-    assert(abs(divisor) > EPSILON);
+    assert(fabs(divisor) > EPSILON);
     float factor = 1.0f / divisor;
     Matrix4 mat(
         m[0]  * factor, m[1]  * factor, m[2]  * factor, m[3] * factor,
@@ -1007,22 +1007,22 @@ Matrix4 Matrix4::operator/ (const float & divisor) const
 }
 bool Matrix4::operator== (const Matrix4 & other) const
 {
-    if ( abs(m[0] - other.m[0]) <= EPSILON * max(max(abs(m[0]), abs(other.m[0])), 1.0f)
-      && abs(m[1] - other.m[1]) <= EPSILON * max(max(abs(m[1]), abs(other.m[1])), 1.0f)
-      && abs(m[2] - other.m[2]) <= EPSILON * max(max(abs(m[2]), abs(other.m[2])), 1.0f)
-      && abs(m[3] - other.m[3]) <= EPSILON * max(max(abs(m[3]), abs(other.m[3])), 1.0f) 
-      && abs(m[4] - other.m[4]) <= EPSILON * max(max(abs(m[4]), abs(other.m[4])), 1.0f) 
-      && abs(m[5] - other.m[5]) <= EPSILON * max(max(abs(m[5]), abs(other.m[5])), 1.0f) 
-      && abs(m[6] - other.m[6]) <= EPSILON * max(max(abs(m[6]), abs(other.m[6])), 1.0f) 
-      && abs(m[7] - other.m[7]) <= EPSILON * max(max(abs(m[7]), abs(other.m[7])), 1.0f) 
-      && abs(m[8] - other.m[8]) <= EPSILON * max(max(abs(m[8]), abs(other.m[8])), 1.0f)
-      && abs(m[9] - other.m[9]) <= EPSILON * max(max(abs(m[9]), abs(other.m[9])), 1.0f)
-      && abs(m[10] - other.m[10]) <= EPSILON * max(max(abs(m[10]), abs(other.m[10])), 1.0f)
-      && abs(m[11] - other.m[11]) <= EPSILON * max(max(abs(m[11]), abs(other.m[11])), 1.0f)
-      && abs(m[12] - other.m[12]) <= EPSILON * max(max(abs(m[12]), abs(other.m[12])), 1.0f) 
-      && abs(m[13] - other.m[13]) <= EPSILON * max(max(abs(m[13]), abs(other.m[13])), 1.0f) 
-      && abs(m[14] - other.m[14]) <= EPSILON * max(max(abs(m[14]), abs(other.m[14])), 1.0f) 
-      && abs(m[15] - other.m[15]) <= EPSILON * max(max(abs(m[15]), abs(other.m[15])), 1.0f) )
+    if ( fabs(m[0] - other.m[0]) <= EPSILON * max(max(fabs(m[0]), fabs(other.m[0])), 1.0f)
+      && fabs(m[1] - other.m[1]) <= EPSILON * max(max(fabs(m[1]), fabs(other.m[1])), 1.0f)
+      && fabs(m[2] - other.m[2]) <= EPSILON * max(max(fabs(m[2]), fabs(other.m[2])), 1.0f)
+      && fabs(m[3] - other.m[3]) <= EPSILON * max(max(fabs(m[3]), fabs(other.m[3])), 1.0f) 
+      && fabs(m[4] - other.m[4]) <= EPSILON * max(max(fabs(m[4]), fabs(other.m[4])), 1.0f) 
+      && fabs(m[5] - other.m[5]) <= EPSILON * max(max(fabs(m[5]), fabs(other.m[5])), 1.0f) 
+      && fabs(m[6] - other.m[6]) <= EPSILON * max(max(fabs(m[6]), fabs(other.m[6])), 1.0f) 
+      && fabs(m[7] - other.m[7]) <= EPSILON * max(max(fabs(m[7]), fabs(other.m[7])), 1.0f) 
+      && fabs(m[8] - other.m[8]) <= EPSILON * max(max(fabs(m[8]), fabs(other.m[8])), 1.0f)
+      && fabs(m[9] - other.m[9]) <= EPSILON * max(max(fabs(m[9]), fabs(other.m[9])), 1.0f)
+      && fabs(m[10] - other.m[10]) <= EPSILON * max(max(fabs(m[10]), fabs(other.m[10])), 1.0f)
+      && fabs(m[11] - other.m[11]) <= EPSILON * max(max(fabs(m[11]), fabs(other.m[11])), 1.0f)
+      && fabs(m[12] - other.m[12]) <= EPSILON * max(max(fabs(m[12]), fabs(other.m[12])), 1.0f) 
+      && fabs(m[13] - other.m[13]) <= EPSILON * max(max(fabs(m[13]), fabs(other.m[13])), 1.0f) 
+      && fabs(m[14] - other.m[14]) <= EPSILON * max(max(fabs(m[14]), fabs(other.m[14])), 1.0f) 
+      && fabs(m[15] - other.m[15]) <= EPSILON * max(max(fabs(m[15]), fabs(other.m[15])), 1.0f) )
     {
         return true;
     }
@@ -1056,7 +1056,7 @@ Matrix4 Matrix4::hadamard(const Matrix4 & other) const
 Matrix4 Matrix4::inversed() const
 {
     float det = (*this).det();
-    assert(abs(det) > EPSILON);
+    assert(fabs(det) > EPSILON);
     float factor = 1.0f / det;
     float m11 = Matrix3(m[5],  m[6],  m[7], 
                         m[9],  m[10], m[11], 
@@ -1176,9 +1176,9 @@ Matrix4 Matrix4::fromQuaternion(const Quaternion & quat)
 // reference : http://www.songho.ca/opengl/gl_quaternion.html
 Matrix4 Matrix4::fromTRS(const Vector3 & translation, const Quaternion & rotation, const Vector3 & scale)
 {
-    assert(abs(scale.x) > EPSILON);
-    assert(abs(scale.y) > EPSILON);
-    assert(abs(scale.z) > EPSILON);
+    assert(fabs(scale.x) > EPSILON);
+    assert(fabs(scale.y) > EPSILON);
+    assert(fabs(scale.z) > EPSILON);
 
     float xx = rotation.x * rotation.x;
     float xy = rotation.x * rotation.y;
@@ -1205,9 +1205,9 @@ Matrix4 Matrix4::fromTRS(const Vector3 & translation, const Quaternion & rotatio
 // reference : https://en.wikipedia.org/wiki/Rotation_matrix
 Matrix4 Matrix4::fromAxisAngle(const Vector3 & axis, const float & angle)
 {
-    assert(abs(axis.x) > EPSILON);
-    assert(abs(axis.y) > EPSILON);
-    assert(abs(axis.z) > EPSILON);
+    assert(fabs(axis.x) > EPSILON);
+    assert(fabs(axis.y) > EPSILON);
+    assert(fabs(axis.z) > EPSILON);
 
     float sin = sinf(angle);
     float cos = cosf(angle);
@@ -1269,9 +1269,9 @@ Matrix4 Matrix4::translated(const Vector3 & translation) const
 }
 Matrix4 Matrix4::scaled(const Vector3 & scale) const
 {
-    assert(abs(scale.x) > EPSILON);
-    assert(abs(scale.y) > EPSILON);
-    assert(abs(scale.z) > EPSILON);
+    assert(fabs(scale.x) > EPSILON);
+    assert(fabs(scale.y) > EPSILON);
+    assert(fabs(scale.z) > EPSILON);
 
     Matrix4 mat(
         m[0] * scale.x, m[1] * scale.y, m[2] * scale.z,  m[3],
@@ -1300,9 +1300,9 @@ void Matrix4::translate(const Vector3 & translation)
 }
 void Matrix4::scale(const Vector3 & scale)
 {
-    assert(abs(scale.x) > EPSILON);
-    assert(abs(scale.y) > EPSILON);
-    assert(abs(scale.z) > EPSILON);
+    assert(fabs(scale.x) > EPSILON);
+    assert(fabs(scale.y) > EPSILON);
+    assert(fabs(scale.z) > EPSILON);
 
     m[0]  *= scale.x;
     m[1]  *= scale.y;

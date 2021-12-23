@@ -6,6 +6,7 @@
 #include <string.h>
 #include <assert.h>
 #include <utility>
+#include "maths.hpp"
 #include "global.hpp"
 
 #define BI_BM 0x4d42    // ASCII code for 'BM'
