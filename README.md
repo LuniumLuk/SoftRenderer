@@ -10,7 +10,7 @@ I intend to implement a shader-based rendered from scratch using c++ and its bas
 
 <img src="images/triangle_rasterization.webp" width="400px" />
 
-<img src="images/wireframe_bunny.webp" width="400px" />
+<img src="images/wireframe_bunny.gif" width="400px" />
 
 ### Content
 

@@ -8,13 +8,6 @@
 #include <string.h>
 #include "global.hpp"
 
-#define min(a,b) ((a)<(b)?(a):(b))
-#define max(a,b) ((a)>(b)?(a):(b))
-#define clamp(a,b,c) min(max((a),(b)),(c))
-
-#define PI 3.14159265358979323846264338327950288f
-#define EPSILON 1e-6f
-
 namespace Lurdr
 {
 

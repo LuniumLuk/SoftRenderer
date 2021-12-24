@@ -4,6 +4,13 @@
 namespace Lurdr
 {
 
+#define min(a,b) ((a)<(b)?(a):(b))
+#define max(a,b) ((a)>(b)?(a):(b))
+#define clamp(a,b,c) min(max((a),(b)),(c))
+
+#define PI 3.14159265358979323846264338327950288f
+#define EPSILON 1e-6f
+
 // x86_64
 typedef unsigned char  byte_t;   // 1 bytes
 typedef unsigned short ushort_t; // 2 bytes
@@ -22,7 +29,16 @@ typedef struct RGBCOLOR
         G = g;
         B = b;
     }
+    RGBCOLOR(float r, float g, float b)
+    {
+        R = clamp(r, 0, 255);
+        G = clamp(g, 0, 255);
+        B = clamp(b, 0, 255);
+    }
 } RGBColor;
+
+const RGBColor COLOR_WHITE(255.0f, 255.0f, 255.0f);
+const RGBColor COLOR_BLACK(0.0f, 0.0f, 0.0f);
 
 // for hdr image
 typedef struct RGBECOLOR

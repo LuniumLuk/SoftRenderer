@@ -42,12 +42,14 @@ int main() {
     printf("------------ MAIN -------------\n");
 #endif
 
+    initializeApplication();
+
     OBJMesh obj_mesh("assets/bunny.obj");
     UniformMesh uni_mesh(obj_mesh);
     uni_mesh.printMeshInfo();
 
     camera_tar = uni_mesh.getCenter();
-    camera_dir = Vector3::UNIT_Z;
+    camera_dir = Vector3(0.0f, 0.0f, 0.2f);
     camera_pos = camera_tar + camera_dir.rotatedFromAxisAngle(Vector3::UNIT_Y, rotate_angle);
 
     model.addMesh(&uni_mesh);
@@ -56,9 +58,7 @@ int main() {
     camera.setTransform(camera_pos, camera_tar);
     scene.drawScene(frame_buffer, camera);
 
-    initializeApplication();
-
-    const char * title = "viewer @ Lu Renderer";
+    const char * title = "Viewer @ Lu Renderer";
     window = createWindow(title, 512, 512, frame_buffer.colorBuffer());
 
     setKeyboardCallback(window, keyboardEventCallback);
@@ -86,26 +86,26 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
                 rotate_angle -= 0.05f;
                 break;
             case KEY_S:
-                camera_dir.z += 0.05f;
+                camera_dir.z += 0.02f;
                 break;
             case KEY_D:
                 rotate_angle += 0.05f;
                 break;
             case KEY_W:
-                if (camera_dir.z > 0.05f)
+                if (camera_dir.z > 0.02f)
                 {
-                    camera_dir.z -= 0.05f;
+                    camera_dir.z -= 0.02f;
                 }
                 break;
             case KEY_SPACE:
                 printf("Press SPACE\n");
-                break;
+                return;
             default:
-                break;
+                return;
         }
+        camera_pos = camera_tar + camera_dir.rotatedFromAxisAngle(Vector3::UNIT_Y, rotate_angle);
         camera.setTransform(camera_pos, camera_tar);
         scene.drawScene(frame_buffer, camera);
-        camera_pos = camera_tar + camera_dir.rotatedFromAxisAngle(Vector3::UNIT_Y, rotate_angle);
         updateView(window);
     }
 }

@@ -42,7 +42,8 @@ void drawPixel(
     const FrameBuffer & frame_buffer,
     const long & x,
     const long & y,
-    const RGBColor & color );
+    const RGBColor & color,
+    const float & depth );
 void drawScanLine(
     const FrameBuffer & frame_buffer,
     const long & x1,
@@ -62,7 +63,7 @@ void drawScanLine(
  */
 void drawPoint(const FrameBuffer & frame_buffer, Vector2 position, RGBColor color);
 void drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RGBColor color);
-void drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RGBColor color1, RGBColor color2);
+void drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RGBColor color1, RGBColor color2, float z1, float z2);
 
 /**
  * triangle rasterization methods

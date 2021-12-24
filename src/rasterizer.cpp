@@ -10,16 +10,23 @@ void Lurdr::drawPoint(const FrameBuffer & frame_buffer, Vector2 position, RGBCol
     assert(pos_x >= 0 && pos_x < frame_buffer.getWidth());
     assert(pos_y >= 0 && pos_y < frame_buffer.getHeight());
 
-    drawPixel(frame_buffer, pos_x, pos_y, color);
+    drawPixel(frame_buffer, pos_x, pos_y, color, 1.0f);
 }
 
-void Lurdr::drawPixel(const FrameBuffer & frame_buffer, const long & x, const long & y, const RGBColor & color)
+void Lurdr::drawPixel(const FrameBuffer & frame_buffer, const long & x, const long & y, const RGBColor & color, const float & depth)
 {
+    long depth_buffer_pos = frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x;
+    float d = clamp(depth, -1.0f, 1.0f);
+    if (frame_buffer.depthBuffer()[depth_buffer_pos] <= d)
+    {
+        return;
+    }
+    frame_buffer.depthBuffer()[depth_buffer_pos] = d;
     byte_t *color_buffer = frame_buffer.colorBuffer();
-    long buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 3;
-    color_buffer[buffer_pos++] = color.R;
-    color_buffer[buffer_pos++] = color.G;
-    color_buffer[buffer_pos] = color.B;
+    long color_buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 3;
+    color_buffer[color_buffer_pos++] = color.R;
+    color_buffer[color_buffer_pos++] = color.G;
+    color_buffer[color_buffer_pos] = color.B;
 }
 
 // reference : https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
@@ -48,7 +55,7 @@ void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, R
 
     while (true)
     {
-        drawPixel(frame_buffer, x1, y1, color);
+        drawPixel(frame_buffer, x1, y1, color, 1.0f);
 
         if (x1 == x2 && y1 == y2) break;
 
@@ -66,7 +73,7 @@ void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, R
     }
 }
 
-void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RGBColor color1, RGBColor color2)
+void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RGBColor color1, RGBColor color2, float z1, float z2)
 {
     long x1 = v1.x;
     long y1 = v1.y;
@@ -89,17 +96,27 @@ void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, R
     long err = dx + dy; 
     long e2;
 
-    float dR = (float)(color2.R - color1.R) / dx;
-    float dG = (float)(color2.G - color1.G) / dx;
-    float dB = (float)(color2.B - color1.B) / dx;
+    float dR = 0.0f;
+    float dG = 0.0f;
+    float dB = 0.0f;
+    float dz = 0.0f;
+
     float R = color1.R;
     float G = color1.G;
     float B = color1.B;
 
+    float dxf = fabs(x2 - x1);
+    if (dxf > EPSILON)
+    {
+        dR = (float)(color2.R - color1.R) / dxf;
+        dG = (float)(color2.G - color1.G) / dxf;
+        dB = (float)(color2.B - color1.B) / dxf;
+        dz = (z2 - z1) / dxf;
+    }
 
     while (true)
     {
-        drawPixel(frame_buffer, x1, y1, RGBColor(R, G, B));
+        drawPixel(frame_buffer, x1, y1, RGBColor(R, G, B), z1);
 
         if (x1 == x2 && y1 == y2) break;
 
@@ -117,6 +134,8 @@ void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, R
             R += dR;
             G += dG;
             B += dB;
+
+            z1 += dz;
         }
     }
 }
@@ -400,7 +419,7 @@ void Lurdr::barycentricTriangleRasterization(const FrameBuffer & frame_buffer, V
 
             if (s >= 0 && t >= 0 && s + t <= 1)
             {
-                drawPixel(frame_buffer, x, y, color);
+                drawPixel(frame_buffer, x, y, color, 1.0f);
             }
         }
     }
@@ -649,5 +668,5 @@ RGBCOLOR Lurdr::getColorMap(float value, float lower, float upper, COLORMAP_TYPE
         default:
             break;
     }
-    return RGBCOLOR(0, 0, 0);
+    return COLOR_BLACK;
 }

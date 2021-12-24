@@ -99,16 +99,22 @@ void Model::draw(const FrameBuffer & frame_buffer, const Camera & camera)
         Vector2 v2_clip = screenMapping(v2_proj, frame_buffer);
         Vector2 v3_clip = screenMapping(v3_proj, frame_buffer);
 
-        drawLine(frame_buffer, v1_clip, v2_clip, 
-            getColorMap(v1_proj.z, min_z, max_z, COLORMAP_PARULA), getColorMap(v2_proj.z, min_z, max_z, COLORMAP_PARULA));
+        drawLine(frame_buffer, v1_clip, v2_clip,
+            getColorMap(v1_proj.z, min_z, max_z, COLORMAP_PARULA),
+            getColorMap(v2_proj.z, min_z, max_z, COLORMAP_PARULA),
+            v1_proj.z, v2_proj.z );
         drawLine(frame_buffer, v2_clip, v3_clip,
-            getColorMap(v2_proj.z, min_z, max_z, COLORMAP_PARULA), getColorMap(v3_proj.z, min_z, max_z, COLORMAP_PARULA));
+            getColorMap(v2_proj.z, min_z, max_z, COLORMAP_PARULA),
+            getColorMap(v3_proj.z, min_z, max_z, COLORMAP_PARULA),
+            v2_proj.z, v3_proj.z );
         drawLine(frame_buffer, v3_clip, v1_clip,
-            getColorMap(v3_proj.z, min_z, max_z, COLORMAP_PARULA), getColorMap(v1_proj.z, min_z, max_z, COLORMAP_PARULA));
+            getColorMap(v3_proj.z, min_z, max_z, COLORMAP_PARULA),
+            getColorMap(v1_proj.z, min_z, max_z, COLORMAP_PARULA),
+            v3_proj.z, v1_proj.z );
     }
 }
 
-Scene::Scene(): m_background(RGBCOLOR(0, 0, 0)) {}
+Scene::Scene(): m_background(COLOR_BLACK) {}
 
 void Scene::addModel(Model * model)
 {
