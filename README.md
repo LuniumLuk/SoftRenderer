@@ -2,6 +2,10 @@
 
 A Tiny Renderer designed to rely on minimum dependencies
 
+Meanwhile, this project also serve as practice while learning the book 'Real-Time Rendering'
+
+I intend to implement a shader-based rendered from scratch using c++ and its basic libraries only
+
 > dependencies:  `stdlib.h`   `stdio.h`   `math.h`   `string.h`   `assert.h`   `utility`
 
 <img src="images/triangle_rasterization.png" width="400px" />
