@@ -8,7 +8,9 @@ I intend to implement a shader-based rendered from scratch using c++ and its bas
 
 > dependencies:  `stdlib.h`   `stdio.h`   `math.h`   `string.h`   `assert.h`   `utility`
 
-<img src="images/triangle_rasterization.png" width="400px" />
+<img src="images/triangle_rasterization.webp" width="400px" />
+
+<img src="images/wireframe_bunny.webp" width="400px" />
 
 ### Content
 
@@ -23,6 +25,7 @@ I intend to implement a shader-based rendered from scratch using c++ and its bas
 
 - Graphics
   - basic rasterization algorithm
+  - colormap
 
 - Others
   - dynamic array

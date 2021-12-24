@@ -1251,7 +1251,7 @@ Matrix4 Matrix4::getProjection(const float & fov, const float & aspect, const fl
     Matrix4 mat(
         1.0f / (aspect * tanf(fov / 2.0f)), 0.0f,                    0.0f,                    0.0f,
         0.0f,                               1.0f / tanf(fov / 2.0f), 0.0f,                    0.0f,
-        0.0f,                               1.0f,                    -(near + far) / z_range, -2.0 * far * near / z_range,
+        0.0f,                               0.0f,                    -(near + far) / z_range, -2.0 * far * near / z_range,
         0.0f,                               0.0f,                    -1.0f,                   0.0f
     );
     return mat;

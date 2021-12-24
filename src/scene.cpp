@@ -59,31 +59,52 @@ bool Model::compare_distance(const void* a, const void* b)
     }
 }
 
+Vector2 screenMapping(const Vector3 & src, const FrameBuffer & frame_buffer)
+{
+    Vector2 vec(
+        (src.x + 1.0f) * frame_buffer.getWidth() / 2.0f,
+        (src.y + 1.0f) * frame_buffer.getHeight() / 2.0f
+    );
+    return vec;
+}
+
 void Model::draw(const FrameBuffer & frame_buffer, const Camera & camera)
 {
     Vertex *mesh_vertices = m_mesh->getVertices();
     Matrix4 object_to_projection_matrix = camera.getProjectMatrix() * camera.getViewMatrix() * m_transform;
-    // Matrix4 object_to_projection_matrix = camera.getViewMatrix() * m_transform;
-    // draw wireframe
 
-    object_to_projection_matrix.print();
+    BoundingBox bounding_box = m_mesh->getBoundingBox();
+    Vector4 coords_min = Vector4(bounding_box.min_x, bounding_box.min_y, bounding_box.min_z, 1.0f);
+    Vector4 coords_max = Vector4(bounding_box.max_x, bounding_box.max_y, bounding_box.max_z, 1.0f);
+
+    coords_min = object_to_projection_matrix * coords_min;
+    coords_max = object_to_projection_matrix * coords_max;
+
+    float min_z = coords_min.z / coords_min.w;
+    float max_z = coords_max.z / coords_max.w;
+    if (min_z < max_z) std::swap(min_z, max_z);
+
+    // draw wireframe
     for (size_t i = 0; i < m_mesh->getVertexCount(); i += 3)
     {
         Vector4 v1 = object_to_projection_matrix * Vector4(mesh_vertices[i].position, 1.0f);
         Vector4 v2 = object_to_projection_matrix * Vector4(mesh_vertices[i + 1].position, 1.0f);
         Vector4 v3 = object_to_projection_matrix * Vector4(mesh_vertices[i + 2].position, 1.0f);
 
-        Vector2 v1_proj = Vector2(v1.x, v1.y) * 256.0f / v1.w;
-        Vector2 v2_proj = Vector2(v2.x, v2.y) * 256.0f / v1.w;
-        Vector2 v3_proj = Vector2(v3.x, v3.y) * 256.0f / v1.w;
+        Vector3 v1_proj = Vector3(v1.x, v1.y, v1.z) / v1.w;
+        Vector3 v2_proj = Vector3(v2.x, v2.y, v2.z) / v2.w;
+        Vector3 v3_proj = Vector3(v3.x, v3.y, v3.z) / v3.w;
 
-        v1_proj.print();
-        v2_proj.print();
-        v3_proj.print();
-        RGBCOLOR color(255 * i / m_mesh->getFaceCount(), 255, 0);
-        drawLine(frame_buffer, v1_proj, v2_proj, color);
-        drawLine(frame_buffer, v2_proj, v3_proj, color);
-        drawLine(frame_buffer, v3_proj, v1_proj, color);
+        Vector2 v1_clip = screenMapping(v1_proj, frame_buffer);
+        Vector2 v2_clip = screenMapping(v2_proj, frame_buffer);
+        Vector2 v3_clip = screenMapping(v3_proj, frame_buffer);
+
+        drawLine(frame_buffer, v1_clip, v2_clip, 
+            getColorMap(v1_proj.z, min_z, max_z, COLORMAP_PARULA), getColorMap(v2_proj.z, min_z, max_z, COLORMAP_PARULA));
+        drawLine(frame_buffer, v2_clip, v3_clip,
+            getColorMap(v2_proj.z, min_z, max_z, COLORMAP_PARULA), getColorMap(v3_proj.z, min_z, max_z, COLORMAP_PARULA));
+        drawLine(frame_buffer, v3_clip, v1_clip,
+            getColorMap(v3_proj.z, min_z, max_z, COLORMAP_PARULA), getColorMap(v1_proj.z, min_z, max_z, COLORMAP_PARULA));
     }
 }
 
@@ -110,6 +131,11 @@ void Scene::sortModels(const Matrix4 & view_matrix)
         }
     }
     m_models.sort(Model::compare_distance);
+}
+
+void Scene::setBackground(const RGBCOLOR & color)
+{
+    m_background = color;
 }
 
 void Scene::drawScene(const FrameBuffer & frame_buffer, const Camera & camera)

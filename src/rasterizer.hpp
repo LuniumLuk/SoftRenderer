@@ -8,8 +8,29 @@
 #include "global.hpp"
 #include "buffer.hpp"
 
+#define COLOR_MAP_SIZE 9
+
 namespace Lurdr
 {
+
+enum COLORMAP_TYPE
+{
+    COLORMAP_PARULA,
+    COLORMAP_NUM
+};
+
+const Vector3 parula_colormap[COLOR_MAP_SIZE] =
+{
+    Vector3(0x35, 0x2a, 0x87),
+    Vector3(0x03, 0x63, 0xe1),
+    Vector3(0x14, 0x85, 0xd4),
+    Vector3(0x06, 0xa7, 0xc6),
+    Vector3(0x38, 0xb9, 0x9e),
+    Vector3(0x92, 0xbf, 0x73),
+    Vector3(0xd9, 0xba, 0x56),
+    Vector3(0xfc, 0xce, 0x2e),
+    Vector3(0xf9, 0xfb, 0x0e)
+};
 
 /**
  * basic buffer access api
@@ -41,6 +62,7 @@ void drawScanLine(
  */
 void drawPoint(const FrameBuffer & frame_buffer, Vector2 position, RGBColor color);
 void drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RGBColor color);
+void drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RGBColor color1, RGBColor color2);
 
 /**
  * triangle rasterization methods
@@ -103,6 +125,9 @@ void improvedBresenhamTriangleRasterization(const FrameBuffer & frame_buffer, Ve
 void fillTriangleTable(long * x_left, long * x_right, long x1, long y1, long x2, long y2, long y_min);
 
 void drawTexture(const FrameBuffer & frame_buffer); // ...
+
+RGBCOLOR getColorFromScheme(float percentage, const Vector3 * colormap);
+RGBCOLOR getColorMap(float value, float lower, float upper, COLORMAP_TYPE type);
 
 }
 

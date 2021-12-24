@@ -1,48 +1,33 @@
 #include "Cocoa/Cocoa.h"
-#include <mach-o/dyld.h> // dynamic loader lib
-// #include <mach/mach_time.h>
+#include <mach-o/dyld.h>
+#include <mach/mach_time.h>
 #include <unistd.h>
-#include <assert.h>
-#include <stdlib.h>
-#include <string.h>
-#include "global.hpp"
-#include "maths.hpp"
-#include "image.hpp"
-#include "mesh.hpp"
-#include "buffer.hpp"
-#include "darray.hpp"
-#include "rasterizer.hpp"
 #include "platform.hpp"
-#include "camera.hpp"
-#include "scene.hpp"
 
 using namespace Lurdr;
+
+#define PATH_SIZE 256
 
 // window and IO interfaces for MacOS
 // reference : http://glampert.com/2012/11-29/osx-window-without-xcode-and-ib/
 // & https://github.com/zauonlok/renderer/blob/master/renderer/platforms/macos.m
-
-struct window
+struct Lurdr::APPWINDOW
 {
-    NSWindow *handle;
-    byte_t* image_buffer;
-    // image_t *surface;
-    /* common data */
-    // int should_close;
-    bool keys[KEY_NUM];
-    // char buttons[BUTTON_NUM];
-    void (*keyCallback)(window_t *window, KEY_CODE key, bool pressed);
-    // void (*buttonCallback)(window_t *window, MOUSE_BUTTON button, bool pressed);
-    // void (*scrollCallback)(window_t *window, float offset);
-    // callbacks_t callbacks;
-    // void *userdata;
+    NSWindow   *handle;
+    byte_t      *surface;
+    bool        keys[KEY_NUM];
+    bool        buttons[BUTTON_NUM];
+    void        (*keyboardCallback)(AppWindow *window, KEY_CODE key, bool pressed);
+    void        (*mouseButtonCallback)(AppWindow *window, MOUSE_BUTTON button, bool pressed);
+    void        (*mouseScrollCallback)(AppWindow *window, float offset);
+    void        (*mouseDragCallback)(AppWindow *window, float x, float y);
 };
 
-#define PATH_SIZE 256
+NSAutoreleasePool *g_auto_release_pool;
 
-// reference : https://github.com/zauonlok/renderer/blob/master/renderer/platforms/macos.m
-static void createMenuBar()
+static void initializeMenuBar()
 {
+    // reference : https://github.com/zauonlok/renderer/blob/master/renderer/platforms/macos.m
     NSMenu *menu_bar, *app_menu;
     NSMenuItem *app_menu_item, *quit_menu_item;
     NSString *app_name, *quit_title;
@@ -63,41 +48,48 @@ static void createMenuBar()
                                           keyEquivalent:@"q"] autorelease];
     [app_menu addItem:quit_menu_item];
 }
-// global variables
-static NSAutoreleasePool *g_auto_release_pool;
 
-// note : static function makes this function visible by linker
-// occupying the signature in the function definition pool
-static void createApplication()
-{
-    if (NSApp == nil) {
-        g_auto_release_pool = [[NSAutoreleasePool alloc] init];
-        [NSApplication sharedApplication];
-        [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
-        createMenuBar();
-        [NSApp finishLaunching];
-    }
-}
-static void setupEnvironment()
+static void initializeWorkingDirectory()
 {
     char path[PATH_SIZE];
     uint32_t size = PATH_SIZE;
-    // returns a full path to the executable
     _NSGetExecutablePath(path, &size);
     *strrchr(path, '/') = '\0';
     chdir(path);
 }
-void terminateApplication()
+
+void Lurdr::initializeApplication()
+{
+    if (NSApp == nil) {
+        // Autorelease Pool:
+        // Objects declared in this scope will be automatically released at the end of it, when the pool is 'drained'.
+        g_auto_release_pool = [[NSAutoreleasePool alloc] init];
+        // Create a shared app instance.
+        // This will initialize the global variable 'NSApp' with the application instance.
+        [NSApplication sharedApplication];
+        [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+
+        initializeWorkingDirectory();
+        initializeMenuBar();
+
+        [NSApp finishLaunching];
+    }
+}
+
+void Lurdr::terminateApplication()
 {
     assert(g_auto_release_pool != NULL);
     [g_auto_release_pool drain];
     g_auto_release_pool = [[NSAutoreleasePool alloc] init];
 }
 
+void Lurdr::updateView(AppWindow *window)
+{
+    [[window->handle contentView] setNeedsDisplay:YES];  // invoke drawRect
+}
 
-
-// virtual-key codes : https://stackoverflow.com/questions/3202629/where-can-i-find-a-list-of-mac-virtual-key-codes
-static void handleKeyEvent(window_t *window, int virtual_key, bool pressed)
+// virtual-key codes reference : https://stackoverflow.com/questions/3202629/where-can-i-find-a-list-of-mac-virtual-key-codes
+void handleKeyEvent(AppWindow *window, int virtual_key, bool pressed)
 {
     KEY_CODE key;
     switch (virtual_key) {
@@ -108,25 +100,22 @@ static void handleKeyEvent(window_t *window, int virtual_key, bool pressed)
         case 0x31: key = KEY_SPACE; break;
         default:   key = KEY_NUM;   break;
     }
-    if (pressed)
+    if (key < KEY_NUM)
     {
-        printf("Key down: [%d]\n", key);
-    }
-    else
-    {
-        printf("Key up: [%d]\n", key);
-    }
-    if (key < KEY_NUM) {
         window->keys[key] = pressed;
-        // if (window->callbacks.key_callback) {
-        //     window->callbacks.key_callback(window, key, pressed);
-        // }
+        if (window->keyboardCallback)
+        {
+            window->keyboardCallback(window, key, pressed);
+        }
     }
 }
 
-static void handleMouseDrag(window_t *window, float x, float y)
+void handleMouseDrag(AppWindow *window, float x, float y)
 {
-    printf("Mouse Position: [%6.2f, %6.2f]\n", x, y);
+    if (window->mouseDragCallback)
+    {
+        window->mouseDragCallback(window, x, y);
+    }
 }
 
 @interface ContentView : NSView
@@ -134,10 +123,10 @@ static void handleMouseDrag(window_t *window, float x, float y)
 
 @implementation ContentView
 {
-    window_t *_window;
+    AppWindow* _window;
 }
 
-- (instancetype)initWithWindow:(window_t *)window
+- (instancetype)initWithWindow:(AppWindow*)window
 {
     self = [super init];
     if (self != nil)
@@ -168,7 +157,7 @@ static void handleMouseDrag(window_t *window, float x, float y)
 - (void)drawRect:(NSRect)dirtyRect
 {
     NSBitmapImageRep *rep = [[[NSBitmapImageRep alloc]
-            initWithBitmapDataPlanes:&(_window->image_buffer)
+            initWithBitmapDataPlanes:&(_window->surface)
                           pixelsWide:512
                           pixelsHigh:512
                        bitsPerSample:8
@@ -185,75 +174,10 @@ static void handleMouseDrag(window_t *window, float x, float y)
 
 @end
 
-static void updateView(window_t *window)
+AppWindow* Lurdr::createWindow(const char *title, int width, int height, unsigned char *surface_buffer)
 {
-    [[window->handle contentView] setNeedsDisplay:YES];  /* invoke drawRect */
-}
-
-int main()
-{
-    window_t _window;
-    setupEnvironment();
-
-    Lurdr::FrameBuffer frame_buffer(512, 512);
-
-    Lurdr::OBJMesh obj_mesh("assets/simple.obj");
-    Lurdr::UniformMesh uni_mesh(obj_mesh);
-    uni_mesh.printMeshInfo();
-
-    Lurdr::Model model;
-    model.addMesh(&uni_mesh);
-    model.setTransform(Matrix4::IDENTITY);
-
-    Lurdr::Scene scene;
-    scene.addModel(&model);
-
-    Lurdr::Camera camera;
-    camera.setTransform(Vector3(1.5f, -1.5f, -2.0f), Vector3(1.5f, -1.0f, 0.0f));
-    camera.setAspect(1.0f);
-    camera.setFOV(PI / 5);
-    scene.drawScene(frame_buffer, camera);
-
-    // _window.image_buffer = u_image.getImageBuffer();
-    _window.image_buffer = frame_buffer.colorBuffer();
-
-    // Demo : colored triangle
-
-    // Lurdr::RGBColor white(255, 255, 255);
-    // Lurdr::RGBColor red(255, 0, 0);
-    // Lurdr::RGBColor green(0, 255, 0);
-    // Lurdr::RGBColor blue(0, 0, 255);
-
-    // Lurdr::drawTriangle(frame_buffer, vec2(255, 127), vec2(99, 388), vec2(411, 388), red, green, blue);
-    // Lurdr::drawLine(frame_buffer, vec2(255, 127), vec2(99, 388), white);
-    // Lurdr::drawLine(frame_buffer, vec2(99, 388), vec2(411, 388), white);
-    // Lurdr::drawLine(frame_buffer, vec2(411, 388), vec2(255, 127), white);
-
-    // Autorelease Pool:
-    // Objects declared in this scope will be automatically
-    // released at the end of it, when the pool is "drained".
-    g_auto_release_pool = [[NSAutoreleasePool alloc] init];
-
-    // Create a shared app instance.
-    // This will initialize the global variable
-    // 'NSApp' with the application instance.
-    [NSApplication sharedApplication];
-
-    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
-    [NSApp finishLaunching];
-
-    //
-    // Create a window:
-    //
-
-    // Style flags:
     NSUInteger windowStyle = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable;
 
-    const char *title = "Viewer @ Lu Renderer";
-    int width = 512;
-    int height = 512;
-
-    // Window bounds (x, y, width, height).
     NSRect windowRect = NSMakeRect(0, 0, width, height);
     NSWindow * handle = [[NSWindow alloc] initWithContentRect:windowRect
                                           styleMask:windowStyle
@@ -261,27 +185,47 @@ int main()
                                           defer:NO];
     assert(handle != nil);
     [handle autorelease];
-   
+
+    AppWindow *window = new AppWindow();
+    window->handle = handle;
+    window->surface = surface_buffer;
+
     ContentView *view;
-    view = [[[ContentView alloc] initWithWindow:&_window] autorelease];
+    view = [[[ContentView alloc] initWithWindow:window] autorelease];
 
     [handle setTitle:[NSString stringWithUTF8String:title]];
     [handle setColorSpace:[NSColorSpace genericRGBColorSpace]];
-   
     [handle setContentView:view];
-    // [handle makeFirstResponder:view];
-
-    // Window controller:
-    NSWindowController * windowController = [[NSWindowController alloc] initWithWindow:handle];
-    [windowController autorelease];
-
-    createMenuBar();
-
-    // Show window and run event loop.
+    [handle makeFirstResponder:view];
     [handle orderFrontRegardless];
+
+    return window;
+}
+
+void Lurdr::runApplication()
+{
     [NSApp run];
+}
 
-    [g_auto_release_pool drain];
+/**
+ * input & callback registrations
+ */
+void Lurdr::setKeyboardCallback(AppWindow *window, void(*callback)(AppWindow*, KEY_CODE, bool))
+{
+    window->keyboardCallback = callback;
+}
 
-    return 0;
+void Lurdr::setMouseButtonCallback(AppWindow *window, void(*callback)(AppWindow*, MOUSE_BUTTON, bool))
+{
+    window->mouseButtonCallback = callback;
+}
+
+void Lurdr::setMouseScrollCallback(AppWindow *window, void(*callback)(AppWindow*, float))
+{
+    window->mouseScrollCallback = callback;
+}
+
+void Lurdr::setMouseDragCallback(AppWindow *window, void(*callback)(AppWindow*, float, float))
+{
+    window->mouseDragCallback = callback;
 }

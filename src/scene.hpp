@@ -61,6 +61,8 @@ public:
     void addModel(Model * model);
     void sortModels(const Matrix4 & view_matrix);
     void drawScene(const FrameBuffer & frame_buffer, const Camera & camera);
+
+    void setBackground(const RGBCOLOR & color);
 };
 
 

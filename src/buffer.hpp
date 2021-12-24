@@ -17,6 +17,7 @@ class FrameBuffer
 private:
     long   m_width;
     long   m_height;
+    long   m_size;
     byte_t *m_color_buffer;
     float  *m_depth_buffer;
 public:
@@ -26,6 +27,7 @@ public:
 
     long getHeight() const;
     long getWidth() const;
+    long getSize() const;
     byte_t* colorBuffer() const;
     float* depthBuffer() const;
 

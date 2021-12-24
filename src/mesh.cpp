@@ -172,7 +172,8 @@ void OBJMesh::printMeshInfo() const
 UniformMesh::UniformMesh(): m_vertices(nullptr),
                             m_vertex_count(0),
                             m_has_tex_coords(false),
-                            m_has_vertex_normals(false) {}
+                            m_has_vertex_normals(false),
+                            m_bounding_box(BoundingBox()) {}
 
 UniformMesh::UniformMesh(const OBJMesh & obj_mesh)
 {
@@ -181,12 +182,23 @@ UniformMesh::UniformMesh(const OBJMesh & obj_mesh)
     m_has_tex_coords = obj_mesh.m_has_tex_coords;
     m_has_vertex_normals = obj_mesh.m_has_vertex_normals;
     m_vertices = new Vertex[m_vertex_count];
+
+    Vector3 coords_min(1e6,  1e6,  1e6);
+    Vector3 coords_max(-1e6, -1e6, -1e6);
+
     Vector3 accumulated_position = Vector3::ZERO;
     for (size_t i = 0; i < m_vertex_count; i++)
     {
         Vertex v;
         v.position = obj_mesh.m_vs[obj_mesh.m_fs[i] - 1];
         accumulated_position += v.position;
+        if (v.position.x < coords_min.x) coords_min.x = v.position.x;
+        if (v.position.y < coords_min.y) coords_min.y = v.position.y;
+        if (v.position.z < coords_min.z) coords_min.z = v.position.z;
+        if (v.position.x > coords_max.x) coords_max.x = v.position.x;
+        if (v.position.y > coords_max.y) coords_max.y = v.position.y;
+        if (v.position.z > coords_max.z) coords_max.z = v.position.z;
+
         if (m_has_tex_coords)
         {
             v.texture = obj_mesh.m_tex_coords[obj_mesh.m_fvts[i] - 1];
@@ -198,6 +210,10 @@ UniformMesh::UniformMesh(const OBJMesh & obj_mesh)
         m_vertices[i] = v;
     }
     m_mesh_center = accumulated_position / m_vertex_count;
+    m_bounding_box = BoundingBox(
+        coords_min.x, coords_min.y, coords_min.z,
+        coords_max.x, coords_max.y, coords_max.z
+    );
 }
 
 UniformMesh::UniformMesh(const UniformMesh & uni_mesh)
@@ -208,6 +224,7 @@ UniformMesh::UniformMesh(const UniformMesh & uni_mesh)
     m_vertices = new Vertex[m_vertex_count];
     memcpy(m_vertices, uni_mesh.m_vertices, m_vertex_count * sizeof(Vertex));
     m_mesh_center = uni_mesh.m_mesh_center;
+    m_bounding_box = uni_mesh.m_bounding_box;
 }
 
 UniformMesh::~UniformMesh()
@@ -235,6 +252,12 @@ Vector3 UniformMesh::getCenter() const
     return m_mesh_center;
 }
 
+BoundingBox UniformMesh::getBoundingBox() const
+{
+    return m_bounding_box;
+}
+
+
 void UniformMesh::printMeshInfo() const
 {
     if (m_vertex_count > 0)
@@ -243,6 +266,9 @@ void UniformMesh::printMeshInfo() const
         printf("  vertex count : %-6lu\n", m_vertex_count);
         printf("    face count : %-6lu\n", m_vertex_count / 3);
         printf("   mesh center : (%6.2f, %6.2f, %6.2f)\n", m_mesh_center.x, m_mesh_center.y, m_mesh_center.z);
+        printf("  bounding box : (%6.2f, %6.2f, %6.2f), (%6.2f, %6.2f, %6.2f)\n", 
+            m_bounding_box.min_x, m_bounding_box.min_y, m_bounding_box.min_z,
+            m_bounding_box.max_x, m_bounding_box.max_y, m_bounding_box.max_z );
         if (m_has_tex_coords)
             printf("texture coords : True\n");
         else

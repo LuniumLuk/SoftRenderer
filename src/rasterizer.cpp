@@ -16,7 +16,7 @@ void Lurdr::drawPoint(const FrameBuffer & frame_buffer, Vector2 position, RGBCol
 void Lurdr::drawPixel(const FrameBuffer & frame_buffer, const long & x, const long & y, const RGBColor & color)
 {
     byte_t *color_buffer = frame_buffer.colorBuffer();
-    long buffer_pos = (frame_buffer.getWidth() * y + x) * 3;
+    long buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 3;
     color_buffer[buffer_pos++] = color.R;
     color_buffer[buffer_pos++] = color.G;
     color_buffer[buffer_pos] = color.B;
@@ -66,6 +66,61 @@ void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, R
     }
 }
 
+void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RGBColor color1, RGBColor color2)
+{
+    long x1 = v1.x;
+    long y1 = v1.y;
+    long x2 = v2.x;
+    long y2 = v2.y;
+    bool x1_valid = x1 >= 0 && x1 <= frame_buffer.getWidth();
+    bool y1_valid = y1 >= 0 && y1 <= frame_buffer.getHeight();
+    bool x2_valid = x2 >= 0 && x2 <= frame_buffer.getWidth();
+    bool y2_valid = y2 >= 0 && y2 <= frame_buffer.getHeight();
+
+    if (!(x1_valid && y1_valid && x2_valid && y2_valid))
+    {
+        return;
+    }
+
+    long dx = fabs(x2 - x1);
+    long dy = -fabs(y2 - y1);
+    int sx = x1 < x2 ? 1 : -1;
+    int sy = y1 < y2 ? 1 : -1;
+    long err = dx + dy; 
+    long e2;
+
+    float dR = (float)(color2.R - color1.R) / dx;
+    float dG = (float)(color2.G - color1.G) / dx;
+    float dB = (float)(color2.B - color1.B) / dx;
+    float R = color1.R;
+    float G = color1.G;
+    float B = color1.B;
+
+
+    while (true)
+    {
+        drawPixel(frame_buffer, x1, y1, RGBColor(R, G, B));
+
+        if (x1 == x2 && y1 == y2) break;
+
+        e2 = 2 * err;
+        if (e2 >= dy)
+        {
+            err += dy;
+            x1 += sx;
+        }
+        if (e2 <= dx)
+        {
+            err += dx;
+            y1 += sy;
+
+            R += dR;
+            G += dG;
+            B += dB;
+        }
+    }
+}
+
 void Lurdr::drawScanLine(
     const FrameBuffer & frame_buffer,
     const long & x1,
@@ -98,7 +153,7 @@ void Lurdr::drawScanLine(
     float dg = (color2.y - color1.y) / (x2 - x1);
     float db = (color2.z - color1.z) / (x2 - x1);
     byte_t *color_buffer = frame_buffer.colorBuffer();
-    long buffer_pos = (frame_buffer.getWidth() * y + x1) * 3;
+    long buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x1) * 3;
     for (long x = x1; x <= x2; x++)
     {
         r += dr;
@@ -538,4 +593,61 @@ void Lurdr::fillTriangleTable(long * x_left, long * x_right, long x1, long y1, l
             need_to_draw = true;
         }
     }
+}
+
+
+
+RGBCOLOR Lurdr::getColorFromScheme(float percentage, const Vector3 * colormap)
+{
+    Vector3 color;
+    if (percentage < 0.125f)
+    {
+        color = Vector3::lerp(colormap[0], colormap[1], percentage * 8.0f);
+    }
+    else if (percentage < 0.25f)
+    {
+        color = Vector3::lerp(colormap[1], colormap[2], (percentage - 0.125f) * 8.0f);
+    }
+    else if (percentage < 0.375f)
+    {
+        color = Vector3::lerp(colormap[2], colormap[3], (percentage - 0.25f) * 8.0f);
+    }
+    else if (percentage < 0.5f)
+    {
+        color = Vector3::lerp(colormap[3], colormap[4], (percentage - 0.375f) * 8.0f);
+    }
+    else if (percentage < 0.625f)
+    {
+        color = Vector3::lerp(colormap[4], colormap[5], (percentage - 0.5f) * 8.0f);
+    }
+    else if (percentage < 0.75f)
+    {
+        color = Vector3::lerp(colormap[5], colormap[6], (percentage - 0.625f) * 8.0f);
+    }
+    else if (percentage < 0.825f)
+    {
+        color = Vector3::lerp(colormap[6], colormap[7], (percentage - 0.75f) * 8.0f);
+    }
+    else
+    {
+        color = Vector3::lerp(colormap[7], colormap[8], (percentage - 0.825f) * 8.0f);
+    }
+    return RGBCOLOR((byte_t)color.x, (byte_t)color.y, (byte_t)color.z);
+}
+
+RGBCOLOR Lurdr::getColorMap(float value, float lower, float upper, COLORMAP_TYPE type)
+{
+    float range = upper - lower;
+    assert(fabs(range) > EPSILON);
+
+    switch (type)
+    {
+        case COLORMAP_PARULA:
+            return getColorFromScheme((value - lower) / range, parula_colormap);
+        case COLORMAP_NUM:
+            break;
+        default:
+            break;
+    }
+    return RGBCOLOR(0, 0, 0);
 }

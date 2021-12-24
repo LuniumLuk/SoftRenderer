@@ -12,7 +12,7 @@ SOURCES    := $(wildcard $(addprefix $(SOURCEDIR)/, *.cpp))
 OBJECTS    := $(addprefix $(BUILDDIR)/, $(notdir $(SOURCES:.cpp=.o)))
 INCLUDES   := $(addprefix -I, $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp)))
 HEADERS    := $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp))
-# for MacOS
+# MacOS Compile
 MACSOURCES := $(SOURCEDIR)/mac.mm
 MACOBJECTS := $(filter-out build/main.o, $(OBJECTS))
 
@@ -23,6 +23,10 @@ all : $(TARGET)
 
 $(TARGET) : $(OBJECTS)
 	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
+
+$(BUILDDIR)/platform.o: $(SOURCEDIR)/mac.mm $(HEADERS)
+	@echo $(CLANG) $(OBJCFLAGS) $(CFLAGS) $(INCLUDES) -o $@ -c $<
+	@$(CC) $(OBJCFLAGS) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
 $(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp $(HEADERS)
 	@$(MD) $(dir $@)
@@ -49,5 +53,9 @@ clean:
 	@$(RM) $(OBJECTS)
 	@echo --- CLEAN COMPLETE -------------
 
-mac : $(MACSOURCES) $(MACOBJECTS)
-	@$(CLANG) $(OBJCFLAGS) $(CFLAGS) -o $(TARGET) $(MACSOURCES) $(MACOBJECTS) $(INCLUDES)
+mac : mac_compile
+
+mac_compile: $(OBJECTS)
+	@$(CLANG) -o $(TARGET) $(OBJCFLAGS) $(CFLAGS) $(SOURCEDIR)/mac.mm $(OBJECTS)
+# mac_compile: CC = clang++
+# mac_compile: clean $(BUILDDIR)/platform.o $(OBJECTS) $(TARGET);

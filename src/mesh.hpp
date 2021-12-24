@@ -14,6 +14,38 @@ namespace Lurdr
 
 #define MAX_OBJ_LINE 256
 
+struct BoundingBox
+{
+    float min_x;
+    float min_y;
+    float min_z;
+    float max_x;
+    float max_y;
+    float max_z;
+
+    BoundingBox()
+    {
+        min_x = 0.0f;
+        min_y = 0.0f;
+        min_z = 0.0f;
+        max_x = 0.0f;
+        max_y = 0.0f;
+        max_z = 0.0f;
+    }
+    BoundingBox(float _min_x, float _min_y, float _min_z, float _max_x, float _max_y, float _max_z)
+    {
+        assert(_min_x <= _max_x);
+        assert(_min_y <= _max_y);
+        assert(_min_z <= _max_z);
+        min_x = _min_x;
+        min_y = _min_y;
+        min_z = _min_z;
+        max_x = _max_x;
+        max_y = _max_y;
+        max_z = _max_z;
+    }
+};
+
 class OBJMesh
 {
 private:
@@ -67,6 +99,7 @@ private:
     bool    m_has_tex_coords;
     bool    m_has_vertex_normals;
     Vector3 m_mesh_center;
+    BoundingBox m_bounding_box;
 public:
     UniformMesh();
     UniformMesh(const OBJMesh & obj_mesh);
@@ -78,6 +111,7 @@ public:
     size_t getVertexCount() const;
     void printMeshInfo() const;
     Vector3 getCenter() const;
+    BoundingBox getBoundingBox() const;
 };
 
 
