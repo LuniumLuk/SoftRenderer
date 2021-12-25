@@ -74,17 +74,12 @@ void Model::draw(const FrameBuffer & frame_buffer, const Camera & camera)
     Matrix4 object_to_projection_matrix = camera.getProjectMatrix() * camera.getViewMatrix() * m_transform;
 
     BoundingBox bounding_box = m_mesh->getBoundingBox();
-    Vector4 coords_min = Vector4(bounding_box.min_x, bounding_box.min_y, bounding_box.min_z, 1.0f);
-    Vector4 coords_max = Vector4(bounding_box.max_x, bounding_box.max_y, bounding_box.max_z, 1.0f);
+    float min_z = bounding_box.min_z;
+    float max_z = bounding_box.max_z;
 
-    coords_min = object_to_projection_matrix * coords_min;
-    coords_max = object_to_projection_matrix * coords_max;
+    COLORMAP_TYPE type = COLORMAP_RDYLGN;
 
-    float min_z = coords_min.z / coords_min.w;
-    float max_z = coords_max.z / coords_max.w;
-    if (min_z < max_z) std::swap(min_z, max_z);
-
-    // draw wireframe
+    // draw wireframe  
     for (size_t i = 0; i < m_mesh->getVertexCount(); i += 3)
     {
         Vector4 v1 = object_to_projection_matrix * Vector4(mesh_vertices[i].position, 1.0f);
@@ -99,18 +94,16 @@ void Model::draw(const FrameBuffer & frame_buffer, const Camera & camera)
         Vector2 v2_clip = screenMapping(v2_proj, frame_buffer);
         Vector2 v3_clip = screenMapping(v3_proj, frame_buffer);
 
+        RGBColor color1 = getColorMap(mesh_vertices[i].position.z, min_z, max_z, type);
+        RGBColor color2 = getColorMap(mesh_vertices[i + 1].position.z, min_z, max_z, type);
+        RGBColor color3 = getColorMap(mesh_vertices[i + 2].position.z, min_z, max_z, type);
+
         drawLine(frame_buffer, v1_clip, v2_clip,
-            getColorMap(v1_proj.z, min_z, max_z, COLORMAP_PARULA),
-            getColorMap(v2_proj.z, min_z, max_z, COLORMAP_PARULA),
-            v1_proj.z, v2_proj.z );
+            color1, color2, v1_proj.z, v2_proj.z );
         drawLine(frame_buffer, v2_clip, v3_clip,
-            getColorMap(v2_proj.z, min_z, max_z, COLORMAP_PARULA),
-            getColorMap(v3_proj.z, min_z, max_z, COLORMAP_PARULA),
-            v2_proj.z, v3_proj.z );
+            color2, color3, v2_proj.z, v3_proj.z );
         drawLine(frame_buffer, v3_clip, v1_clip,
-            getColorMap(v3_proj.z, min_z, max_z, COLORMAP_PARULA),
-            getColorMap(v1_proj.z, min_z, max_z, COLORMAP_PARULA),
-            v3_proj.z, v1_proj.z );
+            color3, color1, v3_proj.z, v1_proj.z );
     }
 }
 
