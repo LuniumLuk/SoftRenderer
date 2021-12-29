@@ -32,10 +32,13 @@
 *.app
 
 # Target
-viewer
-viewer.dSYM/
-build/
+/viewer
+/viewer.dSYM/
+/test
+/test.dSYM/
+/build/
+/bin/
 
 # Others
-.vscode
-assets/
+/.vscode
+/assets/

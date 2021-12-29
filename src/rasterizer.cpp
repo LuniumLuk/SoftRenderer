@@ -32,10 +32,10 @@ void Lurdr::drawPixel(const FrameBuffer & frame_buffer, const long & x, const lo
 // reference : https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RGBColor color)
 {
-    long x1 = v1.x;
-    long y1 = v1.y;
-    long x2 = v2.x;
-    long y2 = v2.y;
+    long x1 = FTOD(v1.x);
+    long y1 = FTOD(v1.y);
+    long x2 = FTOD(v2.x);
+    long y2 = FTOD(v2.y);
     bool x1_valid = x1 >= 0 && x1 <= frame_buffer.getWidth();
     bool y1_valid = y1 >= 0 && y1 <= frame_buffer.getHeight();
     bool x2_valid = x2 >= 0 && x2 <= frame_buffer.getWidth();
@@ -75,10 +75,10 @@ void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, R
 
 void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RGBColor color1, RGBColor color2, float z1, float z2)
 {
-    long x1 = v1.x;
-    long y1 = v1.y;
-    long x2 = v2.x;
-    long y2 = v2.y;
+    long x1 = FTOD(v1.x);
+    long y1 = FTOD(v1.y);
+    long x2 = FTOD(v2.x);
+    long y2 = FTOD(v2.y);
     bool x1_valid = x1 >= 0 && x1 <= frame_buffer.getWidth();
     bool y1_valid = y1 >= 0 && y1 <= frame_buffer.getHeight();
     bool x2_valid = x2 >= 0 && x2 <= frame_buffer.getWidth();
@@ -221,12 +221,12 @@ void Lurdr::standardTriangleRasterization(
     const Vector2 & v3,
     const RGBColor & color )
 {
-    long x1 = v1.x;
-    long y1 = v1.y;
-    long x2 = v2.x;
-    long y2 = v2.y;
-    long x3 = v3.x;
-    long y3 = v3.y;
+    long x1 = FTOD(v1.x);
+    long y1 = FTOD(v1.y);
+    long x2 = FTOD(v2.x);
+    long y2 = FTOD(v2.y);
+    long x3 = FTOD(v3.x);
+    long y3 = FTOD(v3.y);
     
     sortVerticesByY(x1, y1, x2, y2, x3, y3);
     if (y1 == y2)
@@ -260,12 +260,12 @@ void Lurdr::standardTriangleRasterization(
     const RGBColor & color2,
     const RGBColor & color3 )
 {
-    long x1 = v1.x;
-    long y1 = v1.y;
-    long x2 = v2.x;
-    long y2 = v2.y;
-    long x3 = v3.x;
-    long y3 = v3.y;
+    long x1 = FTOD(v1.x);
+    long y1 = FTOD(v1.y);
+    long x2 = FTOD(v2.x);
+    long y2 = FTOD(v2.y);
+    long x3 = FTOD(v3.x);
+    long y3 = FTOD(v3.y);
     Vector3 color_v1(color1.R, color1.G, color1.B); 
     Vector3 color_v2(color2.R, color2.G, color2.B); 
     Vector3 color_v3(color3.R, color3.G, color3.B); 
@@ -446,12 +446,12 @@ void Lurdr::sortVerticesByY(long & x1, long & y1, long & x2, long & y2, long & x
 
 void Lurdr::bresenhamTriangleRasterization(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, Vector2 v3, RGBColor color)
 {
-    long x1 = v1.x;
-    long y1 = v1.y;
-    long x2 = v2.x;
-    long y2 = v2.y;
-    long x3 = v3.x;
-    long y3 = v3.y;
+    long x1 = FTOD(v1.x);
+    long y1 = FTOD(v1.y);
+    long x2 = FTOD(v2.x);
+    long y2 = FTOD(v2.y);
+    long x3 = FTOD(v3.x);
+    long y3 = FTOD(v3.y);
 
     sortVerticesByY(x1, y1, x2, y2, x3, y3);
     if (y1 == y2)
@@ -534,12 +534,12 @@ void Lurdr::bresenhamFillFlatTriangle(const FrameBuffer & frame_buffer, long y12
 
 void Lurdr::improvedBresenhamTriangleRasterization(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, Vector2 v3, RGBColor color)
 {
-    long x1 = v1.x;
-    long y1 = v1.y;
-    long x2 = v2.x;
-    long y2 = v2.y;
-    long x3 = v3.x;
-    long y3 = v3.y;
+    long x1 = FTOD(v1.x);
+    long y1 = FTOD(v1.y);
+    long x2 = FTOD(v2.x);
+    long y2 = FTOD(v2.y);
+    long x3 = FTOD(v3.x);
+    long y3 = FTOD(v3.y);
 
     sortVerticesByY(x1, y1, x2, y2, x3, y3);
     long *x_left = new long[y3 - y1];

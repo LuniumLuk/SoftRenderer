@@ -3,11 +3,11 @@ CLANG = clang++
 CFLAGS = -g -std=c++11 -Wall -Wextra
 OBJCFLAGS  := -framework Cocoa
 
-TARGET = viewer
-
 SOURCEDIR  := src
 INCLUDEDIR := src
 BUILDDIR   := build
+DLLDIR	   := bin
+TESTDIR	   := $(SOURCEDIR)/test
 SOURCES    := $(wildcard $(addprefix $(SOURCEDIR)/, *.cpp))
 OBJECTS    := $(addprefix $(BUILDDIR)/, $(notdir $(SOURCES:.cpp=.o)))
 INCLUDES   := $(addprefix -I, $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp)))
@@ -15,47 +15,64 @@ HEADERS    := $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp))
 # MacOS Compile
 MACSOURCES := $(SOURCEDIR)/mac.mm
 MACOBJECTS := $(filter-out build/main.o, $(OBJECTS))
+# DLL Compile
+DLLOBJECTS := $(filter-out build/main.o, $(OBJECTS))
+# Test Compile
+TESTSOURCE := $(TESTDIR)/test.cpp
+
+TARGET     = viewer
+TEST 	   = test
+DLLTARGET  = $(DLLDIR)/lurdr.dll
 
 RM         := rm -f
 MD         := mkdir -p
 
-all : $(TARGET)
+# all is set to default compile for MacOS
+all: mac
 
-$(TARGET) : $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
-
-$(BUILDDIR)/platform.o: $(SOURCEDIR)/mac.mm $(HEADERS)
-	@echo $(CLANG) $(OBJCFLAGS) $(CFLAGS) $(INCLUDES) -o $@ -c $<
-	@$(CC) $(OBJCFLAGS) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
 $(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp $(HEADERS)
 	@$(MD) $(dir $@)
 	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
-debug: clean debug_compile
-debug_compile: CFLAGS += -DDEBUG
-debug_compile: $(TARGET);
+# Debug option
+debug: CFLAGS += -DDEBUG
 
-info :
-	@echo --- MAKEFILE -------------------
-	@echo TARGET   : [ $(TARGET) ]
-	@echo SOURCES  : [ $(SOURCES) ]
-	@echo INCLUDES : [ $(INCLUDES) ]
-	@echo OBJECTS  : [ $(OBJECTS) ]
-	@echo --- MAC ------------------------
-	@echo SOURCES  : [ $(MACSOURCES) ]
-	@echo OBJECTS  : [ $(MACOBJECTS) ]
-	@echo --------------------------------
+# help option
+help:
+	@echo --- MAKEFILE OPTIONS -----------
+	@echo "  mac : compile for MacOS"
+	@echo "  dll : compile for DLL"
+	@echo " test : compile for test script 'test/test.cpp'"
+	@echo " help : show makefile options"
+	@echo "debug : add '#define DEBUG'"
+	@echo "clean : clean target, bin/ and build/"
 
 .PHONY: clean
 clean:
 	@$(RM) $(TARGET)
-	@$(RM) $(OBJECTS)
+	@$(RM) $(TEST)
+	@$(RM) build/*
+	@$(RM) bin/*
 	@echo --- CLEAN COMPLETE -------------
 
-mac : mac_compile
+# MacOS compile options
+mac: mac_compile
 
 mac_compile: $(OBJECTS)
 	@$(CLANG) -o $(TARGET) $(OBJCFLAGS) $(CFLAGS) $(SOURCEDIR)/mac.mm $(OBJECTS)
-# mac_compile: CC = clang++
-# mac_compile: clean $(BUILDDIR)/platform.o $(OBJECTS) $(TARGET);
+
+# DLL compile options
+dll: clean dll_compile
+
+dll_compile: CFLAGS += -DBDLL
+dll_compile: $(DLLTARGET)
+
+$(DLLTARGET): $(DLLOBJECTS)
+	@$(MD) $(dir $@)
+	@$(CC) $(CFLAGS) $(INCLUDES) -shared -o $@ $^
+
+test: dll_compile
+	@$(CC) $(CFLAGS) -o $(TEST) $(TESTSOURCE) $(DLLTARGET)

@@ -43,6 +43,8 @@ I intend to implement a shader-based rendered from scratch using c++ and its bas
 make
 ## for viewer application
 make mac
+## compile core dll
+make dll
 ## run program
 ./viewer
 ```

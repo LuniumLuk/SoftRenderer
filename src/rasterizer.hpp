@@ -12,6 +12,9 @@
 namespace Lurdr
 {
 
+#define FTOD(a) (floor(a))
+#define DTOF(a) ((a)+0.5f)
+
 /**
  * basic buffer access api
  * 
