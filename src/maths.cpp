@@ -93,6 +93,14 @@ float Vector2::cross(const Vector2 & other) const
 {
     return x * other.y - y * other.x;
 }
+Vector2 Vector2::multiply(const Vector2 & other) const
+{
+    Vector2 vec(
+        x * other.x,
+        y * other.y
+    );
+    return vec;
+}
 Vector2 Vector2::lerp(const Vector2 & from, const Vector2 & to, float alpha)
 {
     alpha = clamp(alpha, 0.0, 1.0);
@@ -139,6 +147,8 @@ Vector3 Vector3::UNIT_X = Vector3( 1.0f, 0.0f, 0.0f );
 Vector3 Vector3::UNIT_Y = Vector3( 0.0f, 1.0f, 0.0f );
 Vector3 Vector3::UNIT_Z = Vector3( 0.0f, 0.0f, 1.0f );
 Vector3 Vector3::ZERO   = Vector3( 0.0f, 0.0f, 0.0f );
+
+Vector3::Vector3(const Vector4 & vec): x(vec.x), y(vec.y), z(vec.z) {}
 
 void Vector3::operator= (const Vector3 & other)
 {
@@ -231,6 +241,15 @@ Vector3 Vector3::cross(const Vector3 & other) const
         x * other.y - y * other.x );
     return vec;
 }
+Vector3 Vector3::multiply(const Vector3 & other) const
+{
+    Vector3 vec(
+        x * other.x,
+        y * other.y,
+        z * other.z
+    );
+    return vec;
+}
 float Vector3::length() const
 {
     return sqrtf(x * x + y * y + z * z);
@@ -290,6 +309,11 @@ Vector3 Vector3::lerp(const Vector3 & from, const Vector3 & to, float alpha)
         from.z * (1 - alpha) + to.z * alpha
     );
     return vec;
+}
+// reference : https://luniumluk.github.io/docs-blog/quaternion_rotation/
+Vector3 Vector3::reflect(const Vector3 & vec, const Vector3 & normal)
+{
+    return vec - 2.0f * (vec.dot(normal)) * normal;
 }
 // this method is validated by : https://www.vcalc.com/wiki/vCalc/V3+-+Vector+Rotation
 Vector3 Vector3::rotatedFromAxisAngle(const Vector3 & axis, const float angle)
@@ -412,6 +436,17 @@ float Vector4::dot(const Vector4 & other) const
 {
     return x * other.x + y * other.y + z * other.z + w * other.w;
 }
+Vector4 Vector4::multiply(const Vector4 & other) const
+{
+    Vector4 vec(
+        x * other.x,
+        y * other.y,
+        z * other.z,
+        w * other.w
+    );
+    return vec;
+}
+
 float Vector4::length() const
 {
     return sqrtf(x * x + y * y + z * z + w * w);

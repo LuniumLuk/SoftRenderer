@@ -367,6 +367,26 @@ byte_t& UniformImage::operator() (const size_t & row, const size_t & column, con
     return m_buffer[row * row_size + column * 3 + channel];
 }
 
+// texture sampling by closest
+// TODO: texture sampling by duel linear interpolation
+Vector3 UniformImage::sampler(const UniformImage & image, const Vector2 & texcoord)
+{
+    assert(texcoord.x > 0.0f && texcoord.x < 1.0f);
+    assert(texcoord.y > 0.0f && texcoord.y < 1.0f);
+
+    long u = FTOD(image.m_width * texcoord.x);
+    long v = FTOD(image.m_width * texcoord.x);
+
+    size_t row_size = image.m_width * 3;
+    size_t buffer_pos = v * row_size + u * 3;
+    Vector3 vec(
+        image.m_buffer[buffer_pos],
+        image.m_buffer[buffer_pos + 1],
+        image.m_buffer[buffer_pos + 2]
+    );
+    return vec;
+}
+
 void UniformImage::createFromBMPImage(const BMPImage & bmp)
 {
     if (!bmp.isLoaded())

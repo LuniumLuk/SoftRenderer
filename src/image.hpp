@@ -155,6 +155,9 @@ public:
     byte_t* & getImageBuffer();
     byte_t* getImageBufferConst() const;
     void printImageInfo() const;
+
+    static Vector3 sampler(const UniformImage & image, const Vector2 & texcoord);
+
 };
 
 }

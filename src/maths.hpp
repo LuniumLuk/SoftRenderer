@@ -11,6 +11,9 @@
 namespace Lurdr
 {
 
+#define FTOD(a) (floor(a))
+#define DTOF(a) ((a)+0.5f)
+
 typedef class Vector2 vec2;
 typedef class Vector3 vec3;
 typedef class Vector4 vec4;
@@ -48,6 +51,7 @@ public:
     /* Member Functions */
     float dot(const Vector2 & other) const;
     float cross(const Vector2 & other) const;
+    Vector2 multiply(const Vector2 & other) const;
     float length() const;
     Vector2 normalized() const;
     void normalize();
@@ -69,6 +73,7 @@ public:
     Vector3(): x(0), y(0), z(0) {}
     Vector3(float x, float y, float z): x(x), y(y), z(z) {}
     Vector3(const Vector3 & vec): x(vec.x), y(vec.y), z(vec.z) {}
+    Vector3(const Vector4 & vec);
 
     /* Static Members */
     static Vector3 UNIT_X;
@@ -90,6 +95,7 @@ public:
     /* Member Functions */
     float dot(const Vector3 & other) const;
     Vector3 cross(const Vector3 & other) const;
+    Vector3 multiply(const Vector3 & other) const;
     float length() const;
     Vector3 normalized() const;
     void normalize();
@@ -100,6 +106,7 @@ public:
 
     /* Static Functions */
     static Vector3 lerp(const Vector3 & from, const Vector3 & to, float alpha);
+    static Vector3 reflect(const Vector3 & vec, const Vector3 & normal);
 };
 
 Vector3 operator* (float multiplier, const Vector3 & multiplicand);
@@ -137,6 +144,7 @@ public:
 
     /* Member Functions */
     float dot(const Vector4 & other) const;
+    Vector4 multiply(const Vector4 & other) const;
     float length() const;
     Vector4 normalized() const;
     void normalize();
