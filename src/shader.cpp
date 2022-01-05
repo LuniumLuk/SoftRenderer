@@ -2,6 +2,8 @@
 
 using namespace Lurdr;
 
+
+
 void Lurdr::vertexShaderPhong(
     const Vector3 & in_position,
     const Vector3 & in_normal,

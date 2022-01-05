@@ -93,10 +93,11 @@ public:
                 m_use_color_table(false),
                 m_filename(nullptr) {}
     BMPImage(const char* filename);
+    BMPImage(const size_t & width, const size_t & height);
     BMPImage(const BMPImage & image);
     ~BMPImage() { clean(); }
 
-    ulong_t getBufferSize()  const { return m_info_header.size; }
+    ulong_t getBufferSize()  const { return m_info_header.image_size; }
     long_t  getImageWidth()  const { return m_info_header.width; }
     long_t  getImageHeight() const { return m_info_header.height; }
     bool    isLoaded()       const { return m_is_loaded; }

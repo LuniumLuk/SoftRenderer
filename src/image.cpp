@@ -150,6 +150,35 @@ BMPImage::BMPImage(const char* filename): m_color_tables(nullptr),
 
     loadImage();
 }
+BMPImage::BMPImage(const size_t & width, const size_t & height)
+{
+    const char default_filename[] = "none";
+    size_t f_len = strlen(default_filename);
+    m_filename = new char[f_len + 1];
+    strcpy(m_filename, default_filename);
+
+    m_file_header.signature = BI_BM;
+    m_file_header.file_size = width * height * 3;
+    m_file_header.data_offset = 54;
+
+    m_info_header.size = 40;
+    m_info_header.width = width;
+    m_info_header.height = height;
+    m_info_header.planes = 1;
+    m_info_header.bits_per_pixel = 24;
+    m_info_header.compression = 0;
+    m_info_header.image_size = width * height * 3;
+    m_info_header.X_pixels_per_M = 3780;
+    m_info_header.Y_pixels_per_M = 3780;
+    m_info_header.colors_used = 0;
+    m_info_header.important_colors = 0;
+
+    size_t data_line = getDataLine();
+    m_buffer = new byte_t[data_line * height];
+    memset(m_buffer, 0, data_line * height);
+
+    m_is_loaded = true;
+}
 BMPImage::BMPImage(const BMPImage & image): m_color_tables(nullptr),
                                             m_buffer(nullptr),
                                             m_is_loaded(false),
@@ -274,7 +303,11 @@ void BMPImage::printImageInfo() const
 UniformImage::UniformImage(size_t width, size_t height): m_width(width),
                                                          m_height(height),
                                                          m_buffer(nullptr),
-                                                         m_color_space(COLOR_RGB) {}
+                                                         m_color_space(COLOR_RGB)
+{
+    m_buffer = new byte_t[m_width * m_height * 3];
+    memset(m_buffer, 0, m_width * m_height * 3);
+}
 UniformImage::UniformImage(const BMPImage & bmp): m_width(0),
                                                   m_height(0),
                                                   m_buffer(nullptr),

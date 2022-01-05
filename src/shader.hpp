@@ -22,6 +22,34 @@ struct PointLight
     Vector3 specular;
 };
 
+struct PointLightSimple
+{
+    Vector3 position;
+    float   constant;
+    float   linear;
+    float   quadratic;
+    Vector3 color;
+};
+
+void vertexShaderSimple(
+    const Vector3 & in_position,
+    const Matrix4 & uniform_model,
+    const Matrix4 & uniform_view,
+    const Matrix4 & uniform_projection,
+    Vector4 & out_position,
+    Vector3 & out_fragment_position
+);
+
+// support one point light and one uniform diffuse color
+void fragmentShaderSimple(
+    const Vector3 & in_fragment_position,
+    const Vector2 & in_triangle_normal,
+    const Vector3 & uniform_view_position,
+    const Vector3 & uniform_color,
+    const PointLight & uniform_point_light,
+    Vector4 & out_fragment_color
+);
+
 void vertexShaderPhong(
     const Vector3 & in_position,
     const Vector3 & in_normal,
