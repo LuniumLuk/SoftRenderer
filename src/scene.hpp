@@ -11,6 +11,7 @@
 #include "camera.hpp"
 #include "mesh.hpp"
 #include "rasterizer.hpp"
+#include "shader.hpp"
 
 namespace Lurdr
 {
@@ -34,7 +35,8 @@ public:
     Vector3 getMeshCenter() const;
     Matrix4 getTransform() const;
     void setDistance(float dist);
-    void draw(const FrameBuffer & frame_buffer, const Camera & camera); // add shader program later
+    void draw(const FrameBuffer & frame_buffer, const Program & program);
+    void drawByFixedPipeline(const FrameBuffer & frame_buffer, const Camera & camera); // add shader program later
 
     static bool compare_distance(const void* a, const void* b);
 };
@@ -60,7 +62,8 @@ public:
 
     void addModel(Model * model);
     void sortModels(const Matrix4 & view_matrix);
-    void drawScene(const FrameBuffer & frame_buffer, const Camera & camera);
+    void drawSceneByFixedPipeline(const FrameBuffer & frame_buffer, const Camera & camera);
+    void draw(const FrameBuffer & frame_buffer, const Program & program);
 
     void setBackground(const RGBCOLOR & color);
 };

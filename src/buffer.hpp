@@ -6,6 +6,7 @@
 #include <assert.h>
 #include "maths.hpp"
 #include "global.hpp"
+#include "darray.hpp"
 
 namespace Lurdr
 {
@@ -33,6 +34,44 @@ public:
 
     void clearColorBuffer(const RGBCOLOR & color) const;
     void clearDepthBuffer(const float & depth) const;
+};
+
+class ArrayBuffer
+{
+private:
+    float* m_buffer;
+    size_t m_buffer_size;
+    DynamicArray<size_t> m_batch_sizes;
+    DynamicArray<size_t> m_batch_steps;
+    DynamicArray<size_t> m_data_offsets;
+
+public:
+    ArrayBuffer();
+    ~ArrayBuffer()
+    {
+        delete[] m_buffer;
+    }
+
+    void setBufferData(const size_t & size, float* data)
+    {
+        m_buffer_size = size;
+        m_buffer = data;
+    }
+    void setDataPointers(
+        const size_t & index, 
+        const size_t & batch_size,
+        const size_t & batch_step, 
+        const size_t & offset )
+    {
+        m_batch_sizes[index] = batch_size;
+        m_batch_steps[index] = batch_step;
+        m_data_offsets[index] = offset;
+    }
+};
+
+class IndiciesBuffer
+{
+
 };
 
 }

@@ -68,7 +68,7 @@ Vector2 screenMapping(const Vector3 & src, const FrameBuffer & frame_buffer)
     return vec;
 }
 
-void Model::draw(const FrameBuffer & frame_buffer, const Camera & camera)
+void Model::drawByFixedPipeline(const FrameBuffer & frame_buffer, const Camera & camera)
 {
     Vertex *mesh_vertices = m_mesh->getVertices();
     Matrix4 object_to_projection_matrix = camera.getProjectMatrix() * camera.getViewMatrix() * m_transform;
@@ -107,6 +107,21 @@ void Model::draw(const FrameBuffer & frame_buffer, const Camera & camera)
     }
 }
 
+void Model::draw(const FrameBuffer & frame_buffer, const Program & program)
+{
+    // vertex shader
+    Vertex *mesh_vertices = m_mesh->getVertices();
+
+    Vector4 *position_buffer = new Vector4[m_mesh->getVertexCount()];
+
+    for (size_t i = 0; i < m_mesh->getVertexCount(); i += 3)
+    {
+        // 
+        // program.run(VERTEX_SHADER, 2)
+        // mesh_vertices[i].position
+    }
+}
+
 Scene::Scene(): m_background(COLOR_BLACK) {}
 
 void Scene::addModel(Model * model)
@@ -137,7 +152,7 @@ void Scene::setBackground(const RGBCOLOR & color)
     m_background = color;
 }
 
-void Scene::drawScene(const FrameBuffer & frame_buffer, const Camera & camera)
+void Scene::drawSceneByFixedPipeline(const FrameBuffer & frame_buffer, const Camera & camera)
 {
     sortModels(camera.getViewMatrix());
 
@@ -146,6 +161,14 @@ void Scene::drawScene(const FrameBuffer & frame_buffer, const Camera & camera)
 
     for (size_t i = 0; i < m_models.size(); i++)
     {
-        m_models[i]->draw(frame_buffer, camera);
+        m_models[i]->drawByFixedPipeline(frame_buffer, camera);
+    }
+}
+
+void Scene::draw(const FrameBuffer & frame_buffer, const Program & program)
+{
+    for (size_t i = 0; i < m_models.size(); i++)
+    {
+        m_models[i]->draw(frame_buffer, program);
     }
 }

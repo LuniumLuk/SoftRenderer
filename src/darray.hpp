@@ -119,7 +119,16 @@ T DynamicArray<T>::at(const size_t & pos) const
 template<typename T>
 T& DynamicArray<T>::operator[] (const size_t & pos)
 {
-    assert(pos >= 0 && pos < m_size);
+    assert(pos >= 0);
+    if (pos >= m_capacity)
+    {
+        m_capacity = pos + 1;
+        T *new_array = new T[m_capacity];
+        memcpy(new_array, m_array, m_size * sizeof(T));
+        delete[] m_array;
+        m_array = new_array;
+        m_size = m_capacity;
+    }
     return m_array[pos];
 }
 template<typename T>
