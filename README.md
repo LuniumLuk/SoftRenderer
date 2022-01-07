@@ -4,7 +4,12 @@ A Tiny Renderer designed to rely on minimum dependencies
 
 Meanwhile, this project also serve as practice while learning the book 'Real-Time Rendering'
 
-I intend to implement a shader-based rendered from scratch using c++ and its basic libraries only
+I intend to implement a shader-based renderer that runs on CPU from scratch using c++ with minimum dependencies. It's API is similar to OpenGL, with the following features:
+
+- Programable Shaders
+- Array Buffer, Frame Buffer and Element Buffer
+- Fixed Pipeline in clipping and Screen mapping
+- Multi Platform
 
 > dependencies:  `stdlib.h`   `stdio.h`   `math.h`   `string.h`   `assert.h`   `utility`
 
