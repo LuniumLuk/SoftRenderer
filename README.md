@@ -54,10 +54,10 @@ make dll
 ./viewer
 ```
 
-#### Windows
+#### Windows 
+
+(only for test, not support viewer app)
 
 ```shell
-mingw32-make
+mingw32-make test
 ```
-
-then click **viewer.exe** and run
