@@ -1,6 +1,6 @@
-# Lu Renderer
+# Lu Renderer (Under Developement)
 
-A Tiny Renderer designed to rely on minimum dependencies
+A Tiny Renderer designed to rely on minimum dependencies (Under Developement)
 
 Meanwhile, this project also serve as practice while learning the book 'Real-Time Rendering'
 
