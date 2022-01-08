@@ -9,5 +9,6 @@
 #include "darray.hpp"
 #include "rasterizer.hpp"
 #include "scene.hpp"
+#include "shader.hpp"
 
 #endif

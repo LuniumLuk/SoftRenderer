@@ -124,6 +124,7 @@ T& DynamicArray<T>::operator[] (const size_t & pos)
     {
         m_capacity = pos + 1;
         T *new_array = new T[m_capacity];
+        memset(new_array, 0, m_capacity * sizeof(T));
         memcpy(new_array, m_array, m_size * sizeof(T));
         delete[] m_array;
         m_array = new_array;

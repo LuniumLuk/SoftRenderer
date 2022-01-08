@@ -6,12 +6,12 @@
 #include <assert.h>
 #include <string.h>
 #include "buffer.hpp"
+#include "shader.hpp"
 #include "global.hpp"
 #include "maths.hpp"
 #include "camera.hpp"
 #include "mesh.hpp"
 #include "rasterizer.hpp"
-#include "shader.hpp"
 
 namespace Lurdr
 {

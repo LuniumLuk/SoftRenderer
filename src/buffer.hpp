@@ -39,39 +39,131 @@ public:
 class ArrayBuffer
 {
 private:
-    float* m_buffer;
+    float  *m_buffer;
     size_t m_buffer_size;
+    DynamicArray< DynamicArray<float*> > m_data_pointers;
     DynamicArray<size_t> m_batch_sizes;
-    DynamicArray<size_t> m_batch_steps;
-    DynamicArray<size_t> m_data_offsets;
 
 public:
-    ArrayBuffer();
-    ~ArrayBuffer()
-    {
-        delete[] m_buffer;
-    }
+    ArrayBuffer():
+        m_buffer(nullptr),
+        m_buffer_size(0) {}
+    ~ArrayBuffer() {}
 
     void setBufferData(const size_t & size, float* data)
     {
         m_buffer_size = size;
         m_buffer = data;
     }
+
     void setDataPointers(
         const size_t & index, 
         const size_t & batch_size,
         const size_t & batch_step, 
         const size_t & offset )
     {
+        m_data_pointers[index] = DynamicArray<float*>();
         m_batch_sizes[index] = batch_size;
-        m_batch_steps[index] = batch_step;
-        m_data_offsets[index] = offset;
+        size_t pos = offset;
+        while (pos < m_buffer_size)
+        {
+            m_data_pointers[index].push_back(&m_buffer[pos]);
+            pos += batch_step;
+        }
+    }
+
+    size_t getDataSize(const size_t & index)
+    {
+        return m_data_pointers[index].size();
+    }
+
+    float* getData(const size_t & index, const size_t & pos)
+    {
+        // assert(pos < m_data_pointers[index].size());
+        if (pos < m_data_pointers[index].size())
+        {
+            return (float*)0;
+        }
+        else
+        {
+            return m_data_pointers[index][pos];
+        }
     }
 };
 
-class IndiciesBuffer
+class ElementBuffer
 {
+private:
+    size_t *m_buffer;
+    size_t m_buffer_size;
+    DynamicArray<size_t*> m_data_pointer;
 
+public:
+    ElementBuffer():
+        m_buffer(nullptr),
+        m_buffer_size(0) {}
+    ~ElementBuffer() {}
+
+    void setBufferData(const size_t & size, size_t* data)
+    {
+        assert(size % 3 == 0);
+        m_buffer_size = size;
+        m_buffer = data;
+        size_t pos = 0;
+        while (pos < m_buffer_size)
+        {
+            m_data_pointer.push_back(&m_buffer[pos]);
+            pos += 3;
+        }
+    }
+
+    size_t getDataSize()
+    {
+        return m_data_pointer.size();
+    }
+
+    size_t* getData(const size_t & pos)
+    {
+        assert(pos < m_data_pointer.size());
+        return m_data_pointer[pos];
+    }
+};
+
+class VertexArray
+{
+private:
+    ArrayBuffer     *m_data_array;
+    ElementBuffer   *m_indicies_array;
+
+public:
+    VertexArray():
+        m_data_array(nullptr),
+        m_indicies_array(nullptr) {}
+    ~VertexArray() {}
+
+    void bindDataArray(ArrayBuffer * data_array)
+    {
+        m_data_array = data_array;
+    }
+
+    void bindIndiciesArray(ElementBuffer * indicies_array)
+    {
+        m_indicies_array = indicies_array;
+    }
+
+    size_t getTriangleCount()
+    {
+        return m_indicies_array->getDataSize();
+    }
+
+    float* getData(
+        const size_t & triangle_index,
+        const size_t & vertex_index,
+        const size_t & data_pos )
+    {
+        assert(vertex_index < 3);
+        return m_data_array->getData(*(m_indicies_array->getData(triangle_index) + vertex_index), data_pos);
+    }
 };
 
 }

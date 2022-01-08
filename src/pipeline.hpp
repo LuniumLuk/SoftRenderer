@@ -5,17 +5,16 @@
 #include <stdio.h>
 #include <assert.h>
 #include "maths.hpp"
+#include "shader.hpp"
+#include "buffer.hpp"
 
 namespace Lurdr
 {
 
-void triangleClipping(
-    const Vector3 & v1,
-    const Vector3 & v2,
-    const Vector3 & v3 )
-{
-
-}
+void drawTriangles(
+    const FrameBuffer & frame_buffer,
+    const Program & program
+);
 
 }
 
