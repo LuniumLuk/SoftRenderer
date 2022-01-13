@@ -11,7 +11,7 @@ I intend to implement a shader-based renderer that runs on CPU from scratch usin
 - Fixed Pipeline in clipping and Screen mapping
 - Multi Platform
 
-> current lib dependencies:  `stdlib.h`   `stdio.h`   `math.h`   `string.h`   `assert.h`   `utility`   `initializer_list`
+> current lib dependencies:  `stdlib.h`   `stdio.h`   `math.h`   `string.h`   `assert.h`   `utility`
 
 <img src="images/triangle_rasterization.webp" width="400px" />
 
