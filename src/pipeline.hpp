@@ -13,6 +13,7 @@ namespace Lurdr
 
 void drawTriangles(
     const FrameBuffer & frame_buffer,
+    const VertexArray & vertex_array,
     const Program & program
 );
 

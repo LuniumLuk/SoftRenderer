@@ -10,5 +10,6 @@
 #include "rasterizer.hpp"
 #include "scene.hpp"
 #include "shader.hpp"
+#include "digits.hpp"
 
 #endif

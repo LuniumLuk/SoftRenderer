@@ -41,13 +41,15 @@ class ArrayBuffer
 private:
     float  *m_buffer;
     size_t m_buffer_size;
+    size_t m_data_count;
     DynamicArray< DynamicArray<float*> > m_data_pointers;
     DynamicArray<size_t> m_batch_sizes;
 
 public:
     ArrayBuffer():
         m_buffer(nullptr),
-        m_buffer_size(0) {}
+        m_buffer_size(0),
+        m_data_count(0) {}
     ~ArrayBuffer() {}
 
     void setBufferData(const size_t & size, float* data)
@@ -64,6 +66,10 @@ public:
     {
         m_data_pointers[index] = DynamicArray<float*>();
         m_batch_sizes[index] = batch_size;
+        if (index >= m_data_count)
+        {
+            m_data_count = index + 1;
+        }
         size_t pos = offset;
         while (pos < m_buffer_size)
         {
@@ -75,6 +81,11 @@ public:
     size_t getDataSize(const size_t & index)
     {
         return m_data_pointers[index].size();
+    }
+
+    size_t getDataCount() const
+    {
+        return m_data_count;
     }
 
     float* getData(const size_t & index, const size_t & pos)
@@ -151,15 +162,20 @@ public:
         m_indicies_array = indicies_array;
     }
 
-    size_t getTriangleCount()
+    size_t getTriangleCount() const
     {
         return m_indicies_array->getDataSize();
+    }
+
+    size_t getDataCount() const
+    {
+        return m_data_array->getDataCount();
     }
 
     float* getData(
         const size_t & triangle_index,
         const size_t & vertex_index,
-        const size_t & data_pos )
+        const size_t & data_pos ) const
     {
         assert(vertex_index < 3);
         return m_data_array->getData(*(m_indicies_array->getData(triangle_index) + vertex_index), data_pos);

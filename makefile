@@ -1,6 +1,6 @@
 CC = g++
 CLANG = clang++
-CFLAGS = -g -std=c++11 -Wall -Wextra
+CFLAGS = -g -std=c++11 -std=c++0x -Wall -Wextra
 OBJCFLAGS  := -framework Cocoa
 
 SOURCEDIR  := src

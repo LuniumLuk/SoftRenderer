@@ -13,10 +13,11 @@ using namespace Lurdr;
 // & https://github.com/zauonlok/renderer/blob/master/renderer/platforms/macos.m
 struct Lurdr::APPWINDOW
 {
-    NSWindow   *handle;
+    NSWindow    *handle;
     byte_t      *surface;
     bool        keys[KEY_NUM];
     bool        buttons[BUTTON_NUM];
+    bool        should_close;
     void        (*keyboardCallback)(AppWindow *window, KEY_CODE key, bool pressed);
     void        (*mouseButtonCallback)(AppWindow *window, MOUSE_BUTTON button, bool pressed);
     void        (*mouseScrollCallback)(AppWindow *window, float offset);
@@ -93,12 +94,13 @@ void handleKeyEvent(AppWindow *window, int virtual_key, bool pressed)
 {
     KEY_CODE key;
     switch (virtual_key) {
-        case 0x00: key = KEY_A;     break;
-        case 0x02: key = KEY_D;     break;
-        case 0x01: key = KEY_S;     break;
-        case 0x0D: key = KEY_W;     break;
-        case 0x31: key = KEY_SPACE; break;
-        default:   key = KEY_NUM;   break;
+        case 0x00: key = KEY_A;      break;
+        case 0x02: key = KEY_D;      break;
+        case 0x01: key = KEY_S;      break;
+        case 0x0D: key = KEY_W;      break;
+        case 0x31: key = KEY_SPACE;  break;
+        case 0x35: key = KEY_ESCAPE; break;
+        default:   key = KEY_NUM;    break;
     }
     if (key < KEY_NUM)
     {
@@ -117,6 +119,29 @@ void handleMouseDrag(AppWindow *window, float x, float y)
         window->mouseDragCallback(window, x, y);
     }
 }
+
+@interface WindowDelegate : NSObject <NSWindowDelegate>
+@end
+
+@implementation WindowDelegate {
+    AppWindow *_window;
+}
+
+- (instancetype)initWithWindow:(AppWindow *)window {
+    self = [super init];
+    if (self != nil) {
+        _window = window;
+    }
+    return self;
+}
+
+- (BOOL)windowShouldClose:(NSWindow *)sender {
+    (void)sender;
+    _window->should_close = true;
+    return NO;
+}
+
+@end
 
 @interface ContentView : NSView
 @end
@@ -190,6 +215,11 @@ AppWindow* Lurdr::createWindow(const char *title, int width, int height, unsigne
     window->handle = handle;
     window->surface = surface_buffer;
 
+    WindowDelegate *delegate;
+    delegate = [[WindowDelegate alloc] initWithWindow:window];
+    assert(delegate != nil);
+    [handle setDelegate:delegate];
+
     ContentView *view;
     view = [[[ContentView alloc] initWithWindow:window] autorelease];
 
@@ -198,13 +228,44 @@ AppWindow* Lurdr::createWindow(const char *title, int width, int height, unsigne
     [handle setContentView:view];
     [handle makeFirstResponder:view];
     [handle orderFrontRegardless];
+    [handle makeKeyAndOrderFront:nil];
 
     return window;
 }
 
 void Lurdr::runApplication()
 {
+    // block
     [NSApp run];
+    // how to make NSApp not block : https://stackoverflow.com/questions/48020222/how-to-make-nsapp-run-not-block
+    // NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny
+    //                                     untilDate:[NSDate distantFuture]
+    //                                        inMode:NSDefaultRunLoopMode
+    //                                       dequeue:YES];
+    // [NSApp sendEvent:event];
+}
+
+// reference : https://github.com/zauonlok/renderer/blob/master/renderer/platforms/macos.m
+void Lurdr::pollEvent()
+{
+    while (true)
+    {
+        NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny
+                                            untilDate:[NSDate distantPast]
+                                               inMode:NSDefaultRunLoopMode
+                                              dequeue:YES];
+        if (event == nil)
+        {
+            break;
+        }
+        [NSApp sendEvent:event];
+    }
+    terminateApplication();
+}
+
+bool Lurdr::windowShouldClose(AppWindow *window)
+{
+    return window->should_close;
 }
 
 /**

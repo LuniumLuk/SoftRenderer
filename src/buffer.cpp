@@ -4,7 +4,8 @@ using namespace Lurdr;
 
 FrameBuffer::FrameBuffer(): m_width(0), m_height(0), m_size(0)
 {
-
+    m_color_buffer = nullptr;
+    m_depth_buffer = nullptr;
 }
 FrameBuffer::FrameBuffer(long width, long height): m_width(width), m_height(height)
 {

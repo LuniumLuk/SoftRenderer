@@ -10,7 +10,7 @@ void Lurdr::drawPoint(const FrameBuffer & frame_buffer, Vector2 position, RGBCol
     assert(pos_x >= 0 && pos_x < frame_buffer.getWidth());
     assert(pos_y >= 0 && pos_y < frame_buffer.getHeight());
 
-    drawPixel(frame_buffer, pos_x, pos_y, color, 1.0f);
+    drawPixel(frame_buffer, pos_x, pos_y, color, -1.0f);
 }
 
 void Lurdr::drawPixel(const FrameBuffer & frame_buffer, const long & x, const long & y, const RGBColor & color, const float & depth)
@@ -55,7 +55,7 @@ void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, R
 
     while (true)
     {
-        drawPixel(frame_buffer, x1, y1, color, 1.0f);
+        drawPixel(frame_buffer, x1, y1, color, -1.0f);
 
         if (x1 == x2 && y1 == y2) break;
 
@@ -419,7 +419,7 @@ void Lurdr::barycentricTriangleRasterization(const FrameBuffer & frame_buffer, V
 
             if (s >= 0 && t >= 0 && s + t <= 1)
             {
-                drawPixel(frame_buffer, x, y, color, 1.0f);
+                drawPixel(frame_buffer, x, y, color, -1.0f);
             }
         }
     }

@@ -61,6 +61,7 @@ DynamicArray<T>::DynamicArray(const DynamicArray & array)
     m_capacity = array.m_capacity;
     memcpy(m_array, array.m_array, m_size);
 }
+
 template<typename T>
 DynamicArray<T>::~DynamicArray()
 {

@@ -25,9 +25,6 @@ Vector3 camera_dir;
 Vector3 camera_tar;
 
 int main() {
-    double duration;
-    clock_t start, end;
-    start = clock();
 
 #ifdef DEBUG
     printf("-------- MAIN (DEBUG) ---------\n");
@@ -49,7 +46,6 @@ int main() {
     model.setTransform(Matrix4::IDENTITY);
     scene.addModel(&model);
     camera.setTransform(camera_pos, camera_tar);
-    scene.drawScene(frame_buffer, camera);
 
     const char * title = "Viewer @ Lu Renderer";
     window = createWindow(title, 512, 512, frame_buffer.colorBuffer());
@@ -59,11 +55,30 @@ int main() {
     setMouseScrollCallback(window, mouseScrollEventCallback);
     setMouseDragCallback(window, mouseDragEventCallback);
 
-    runApplication();
+    int _fps = 0;
+    clock_t last_frame_timestamp = clock();
+    clock_t last_fps_update = clock();
+    while (!windowShouldClose(window))
+    {
+        last_frame_timestamp = clock();
+        // printf("FPS: %d\n", _fps);
 
-    end = clock();
-    duration = (double)(end - start);
-    printf("Use Time: %9.3fms\n", (duration * 1000 / CLOCKS_PER_SEC));
+        scene.drawSceneByFixedPipeline(frame_buffer, camera);
+
+        if (clock() - last_fps_update > CLOCKS_PER_SEC)
+        {
+            _fps = CLOCKS_PER_SEC / (clock() - last_frame_timestamp);
+            last_fps_update = clock();
+        }
+        drawInteger(
+            frame_buffer, 10.0f, 10.0f, 
+            _fps, 10.0f, RGBColor(255.0f, 0.0f, 0.0f));
+
+        updateView(window);
+        pollEvent();
+    }
+
+    printf("windowShouldClose(window) %u\n", windowShouldClose(window));
 
     return 0;
 }
@@ -92,14 +107,16 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
                 break;
             case KEY_SPACE:
                 printf("Press SPACE\n");
-                return;
+                break;
+            case KEY_ESCAPE:
+                exit(0);
+                break;
             default:
                 return;
         }
         camera_pos = camera_tar + camera_dir.rotatedFromAxisAngle(Vector3::UNIT_Y, rotate_angle);
         camera.setTransform(camera_pos, camera_tar);
-        scene.drawScene(frame_buffer, camera);
-        updateView(window);
+        // scene.drawScene(frame_buffer, camera);
     }
 }
 void mouseButtonEventCallback(AppWindow *window, MOUSE_BUTTON button, bool pressed)

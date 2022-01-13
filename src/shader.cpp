@@ -2,6 +2,31 @@
 
 using namespace Lurdr;
 
+void * Lurdr::allocateOutBuffer(const size_t & size, size_t * allocated_sizes, const int & pos, void * buffer)
+{
+    if (allocated_sizes[pos] == size)
+    {
+        return buffer;
+    }
+    else if (allocated_sizes[pos] > 0)
+    {
+        // already allocated, but different size
+        delete[] static_cast<char*>(buffer);
+    }
+    allocated_sizes[pos] = size;
+    return buffer = (void *)new char[size];
+}
+
+Program::Program()
+{
+    m_uniform = new void*[MAX_UNIFORM_COUNT];
+}
+
+Program::~Program()
+{
+    delete[] m_uniform;
+}
+
 void Program::linkShader(SHADER_TYPE type, SHADER_FUNC(shader))
 {
     switch (type)
@@ -18,18 +43,23 @@ void Program::linkShader(SHADER_TYPE type, SHADER_FUNC(shader))
     }
 }
 
-void Program::run(SHADER_TYPE type, int in_count, void* in[], int out_count, void* out[])
+void* Program::allocateOut(int size, int pos)
+{
+    return 0;
+}
+
+void Program::run(SHADER_TYPE type, const size_t & in_count, void* in[], size_t* out_sizes, void* out[]) const
 {
     switch (type)
     {
         case VERTEX_SHADER:
-            m_vertex_shader(in_count, in, m_uniform, out_count, out);
+            m_vertex_shader(in_count, in, m_uniform, out_sizes, out);
             break;
         case FRAGMENT_SHADER:
-            m_fragment_shader(in_count, in, m_uniform, out_count, out);
+            m_fragment_shader(in_count, in, m_uniform, out_sizes, out);
             break;
         case GEOMETRY_SHADER:
-            m_geometry_shader(in_count, in, m_uniform, out_count, out);
+            m_geometry_shader(in_count, in, m_uniform, out_sizes, out);
             break;
     }
 }
@@ -42,7 +72,7 @@ void Program::setUniform(int idx, void* uniform)
 
 void Lurdr::simpleVertexShader(SHADER_PARAM)
 {
-    Vector3 a_pos = layout_in(Vector3, 0);
+    Vector3 *a_pos = layout_in(Vector3, 0);
 
     Matrix4 *model      = uniform(Matrix4, 0);
     Matrix4 *view       = uniform(Matrix4, 1);
@@ -50,7 +80,7 @@ void Lurdr::simpleVertexShader(SHADER_PARAM)
 
     Vector4 *position = layout_out(Vector4, 0);
 
-    *position = (*projection) * (*view) * (*model) * Vector4(a_pos, 1.0f);
+    *position = (*projection) * (*view) * (*model) * Vector4(*a_pos, 1.0f);
 }
 
 void Lurdr::simpleFragmentShader(SHADER_PARAM)

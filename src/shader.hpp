@@ -13,13 +13,16 @@ namespace Lurdr
 {
 
 #define MAX_UNIFORM_COUNT 64
+#define MAX_OUT_COUNT 64
 
-#define SHADER_FUNC(name) void(*name)(int,void**,void**,int,void**)
-#define SHADER_PARAM    int in_count, void* in[], void* uniform[], int out_count, void* out[]
+#define SHADER_FUNC(name) void(*name)(int,void**,void**,size_t*,void**)
+#define SHADER_PARAM    int in_count, void* in[], void* uniform[], size_t* out_sizes, void* out[]
 
-#define layout_in(T,b)  T((float*)in[b]);assert(b>=0&&b<in_count)
-#define uniform(T,b)    static_cast<T*>(uniform[b]);assert(b>=0&&b<MAX_UNIFORM_COUNT)
-#define layout_out(T,b) static_cast<T*>(out[b]);assert(b>=0&&b<out_count)
+#define layout_in(T,b)  static_cast<T*>(in[b]);assert(b<in_count)
+#define uniform(T,b)    static_cast<T*>(uniform[b]);assert(b<MAX_UNIFORM_COUNT)
+#define layout_out(T,b) static_cast<T*>(allocateOutBuffer(sizeof(T),out_sizes,b,out[b]))
+
+void * allocateOutBuffer(const size_t & size, size_t * allocated_sizes, const int & pos, void * buffer);
 
 enum SHADER_TYPE
 {
@@ -35,14 +38,15 @@ private:
     SHADER_FUNC(m_fragment_shader);
     SHADER_FUNC(m_geometry_shader);
 
-    void*   m_uniform[MAX_UNIFORM_COUNT];
+    void**  m_uniform;
+    void*   allocateOut(int size, int pos);
 
 public:
     Program();
-    ~Program() {}
+    ~Program();
 
     void linkShader(SHADER_TYPE type, SHADER_FUNC(shader));
-    void run(SHADER_TYPE type, int in_count, void* in[], int out_count, void* out[]);
+    void run(SHADER_TYPE type, const size_t & in_count, void* in[], size_t* out_sizes, void* out[]) const;
     void setUniform(int idx, void* uniform);
 };
 
