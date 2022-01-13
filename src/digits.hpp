@@ -25,7 +25,33 @@ enum DIGIT_CHARACTER
     DIGIT_7,
     DIGIT_8,
     DIGIT_9,
-    DEGIT_NUM,
+    DIGIT_A,
+    DIGIT_B,
+    DIGIT_C,
+    DIGIT_D,
+    DIGIT_E,
+    DIGIT_F,
+    DIGIT_G,
+    DIGIT_H,
+    DIGIT_I,
+    DIGIT_J,
+    DIGIT_K,
+    DIGIT_L,
+    DIGIT_M,
+    DIGIT_N,
+    DIGIT_O,
+    DIGIT_P,
+    DIGIT_Q,
+    DIGIT_R,
+    DIGIT_S,
+    DIGIT_T,
+    DIGIT_U,
+    DIGIT_V,
+    DIGIT_W,
+    DIGIT_X,
+    DIGIT_Y,
+    DIGIT_Z,
+    DIGIT_NUM,
 };
 
 /**
@@ -42,7 +68,8 @@ enum DIGIT_CHARACTER
  */
 
 // 16-segment digit data
-const int32_t DIGITS_16SEG[] = {
+const int32_t DIGITS_16SEG[] = 
+{
     0b1110011001100111, // 0
     0b0000001000000100, // 1
     0b1100001111000011, // 2
@@ -53,6 +80,32 @@ const int32_t DIGITS_16SEG[] = {
     0b1100001000000100, // 7
     0b1110001111000111, // 8
     0b1110001110000111, // 9
+    0b1110001111000100, // A
+    0b1110001111000111, // B
+    0b1110000001000011, // C
+    0b1110001001000111, // D
+    0b1110000111000011, // E
+    0b1110000111000000, // F
+    0b1110000011000111, // G
+    0b0010001111000100, // H
+    0b1100100000010011, // I
+    0b1100100000010010, // J
+    0b0010010101001000, // K
+    0b0010000001000011, // L
+    0b0011011001000100, // M
+    0b0011001001001100, // N
+    0b1110001001000111, // O
+    0b1110001111000000, // P
+    0b1110001001001111, // Q
+    0b1110001111001000, // R
+    0b1110000110000111, // S
+    0b1100100000010000, // T
+    0b0010001001000111, // U
+    0b0010001001000111, // V
+    0b0010001001101100, // W
+    0b0001010000101000, // X
+    0b0001010000010000, // Y
+    0b1100010000100011, // Z
 };
 
 /**
@@ -66,7 +119,8 @@ const int32_t DIGITS_16SEG[] = {
  *   | /  |  \ |
  *   6 -- 7 -- 8
  */
-const float DIGITS_16SEG_COORDS[][2] = {
+const float DIGITS_16SEG_COORDS[][2] = 
+{
     { 0.0f, 0.0f },
     { 0.5f, 0.0f },
     { 1.0f, 0.0f },
@@ -78,7 +132,8 @@ const float DIGITS_16SEG_COORDS[][2] = {
     { 1.0f, 1.0f },
 };
 
-const int DIGITS_16SEG_EDGES[][2] = {
+const int DIGITS_16SEG_EDGES[][2] = 
+{
     { 0, 1 }, { 1, 2 }, { 0, 3 }, { 0, 4 },
     { 1, 4 }, { 2, 4 }, { 2, 5 }, { 3, 4 },
     { 4, 5 }, { 3, 6 }, { 4, 6 }, { 4, 7 },
@@ -105,6 +160,7 @@ void drawDigit(
     const float & ratio = 1.5f, 
     const int & segment = 16 )
 {
+    assert(character < DIGIT_NUM);
     assert(segment == 16); // support 16-segment so far
 
     for (int i = 0; i < 16; i++)
@@ -167,6 +223,45 @@ void drawInteger(
             offset_x, y, digits[digits.size() - 1 - i],
             size, color, ratio, segment
         );
+        offset_x += size * (1.0f + gap);
+    }
+}
+
+/**
+ * draw integer
+ * (sign) <-size * gap(pixel)-> digit0 <-size * gap(pixel)-> digit1
+ */
+void drawString(
+    const FrameBuffer & frame_buffer, 
+    const float & x, const float & y, 
+    const char * string,
+    const float & size,
+    const RGBCOLOR & color,
+    const float & gap = 0.5f,
+    const float & ratio = 1.5f, 
+    const int & segment = 16 )
+{
+    size_t length = strlen(string);
+    float offset_x = x;
+    for (size_t i = 0; i < length; i++)
+    {
+        assert(string[i] >= 'a' && string[i] <= 'z' || string[i] >= 'A' && string[i] <= 'Z' || string[i] == ' ');
+        if (string[i] >= 'a' && string[i] <= 'z')
+        {
+            drawDigit(
+                frame_buffer,
+                offset_x, y, (DIGIT_CHARACTER)(DIGIT_A + string[i] - 'a'),
+                size, color, ratio, segment
+            );
+        }
+        else if (string[i] >= 'A' && string[i] <= 'Z')
+        {
+            drawDigit(
+                frame_buffer,
+                offset_x, y, (DIGIT_CHARACTER)(DIGIT_A + string[i] - 'A'),
+                size, color, ratio, segment
+            );
+        }
         offset_x += size * (1.0f + gap);
     }
 }

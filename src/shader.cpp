@@ -43,11 +43,6 @@ void Program::linkShader(SHADER_TYPE type, SHADER_FUNC(shader))
     }
 }
 
-void* Program::allocateOut(int size, int pos)
-{
-    return 0;
-}
-
 void Program::run(SHADER_TYPE type, const size_t & in_count, void* in[], size_t* out_sizes, void* out[]) const
 {
     switch (type)
@@ -85,6 +80,10 @@ void Lurdr::simpleVertexShader(SHADER_PARAM)
 
 void Lurdr::simpleFragmentShader(SHADER_PARAM)
 {
+    unused_in;
+    
+    unused_uniform;
+
     Vector4 *frag_color = layout_out(Vector4, 0);
 
     *frag_color = Vector4(1.0f, 0.5f, 0.2f, 1.0f);

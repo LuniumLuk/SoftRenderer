@@ -22,6 +22,10 @@ namespace Lurdr
 #define uniform(T,b)    static_cast<T*>(uniform[b]);assert(b<MAX_UNIFORM_COUNT)
 #define layout_out(T,b) static_cast<T*>(allocateOutBuffer(sizeof(T),out_sizes,b,out[b]))
 
+#define unused_in       (void)in;(void)in_count
+#define unused_uniform  (void)uniform
+#define unused_out      (void)out;(void)out_sizes
+
 void * allocateOutBuffer(const size_t & size, size_t * allocated_sizes, const int & pos, void * buffer);
 
 enum SHADER_TYPE
@@ -39,7 +43,6 @@ private:
     SHADER_FUNC(m_geometry_shader);
 
     void**  m_uniform;
-    void*   allocateOut(int size, int pos);
 
 public:
     Program();

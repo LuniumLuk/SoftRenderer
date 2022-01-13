@@ -70,15 +70,20 @@ int main() {
             _fps = CLOCKS_PER_SEC / (clock() - last_frame_timestamp);
             last_fps_update = clock();
         }
+
+        drawString(
+            frame_buffer, 10.0f, 10.0f,
+            "LU RENDERER", 10.0f, RGBColor(255.0f, 255.0f, 255.0f));
+        drawString(
+            frame_buffer, 10.0f, 50.0f,
+            "FPS", 10.0f, RGBColor(255.0f, 255.0f, 255.0f));
         drawInteger(
-            frame_buffer, 10.0f, 10.0f, 
+            frame_buffer, 60.0f, 50.0f, 
             _fps, 10.0f, RGBColor(255.0f, 0.0f, 0.0f));
 
         updateView(window);
         pollEvent();
     }
-
-    printf("windowShouldClose(window) %u\n", windowShouldClose(window));
 
     return 0;
 }

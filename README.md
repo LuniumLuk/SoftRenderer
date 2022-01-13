@@ -17,9 +17,9 @@ I intend to implement a shader-based renderer that runs on CPU from scratch usin
 - Support Cross Platform
 - Image and Geometry Process Functionalities
 
-<img src="images/triangle_rasterization.webp" width="400px" />
+<img src="images/digit_display.png" width="360px" />
 
-<img src="images/wireframe_bunny.gif" width="400px" />
+<img src="images/wireframe_bunny.gif" width="360px" />
 
 ## Current Features
 
