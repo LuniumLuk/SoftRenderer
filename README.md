@@ -1,23 +1,27 @@
 # Lu Renderer (Under Developement)
 
-A Tiny Renderer designed to rely on minimum dependencies (Under Developement)
+A Tiny Renderer designed to rely on minimum dependencies (basically with standard C library)
 
-Meanwhile, this project also serve as practice while learning the book 'Real-Time Rendering'
+:construction: **currently under construction** :construction:
+
+Meanwhile, this project also serve as practice while learning the book 'Real-Time Rendering' :book:
+
+## Planned Features
 
 I intend to implement a shader-based renderer that runs on CPU from scratch using c++ with minimum dependencies. It's API is similar to OpenGL, with the following features:
 
-- Programable Shaders
-- Array Buffer, Frame Buffer and Element Buffer
-- Fixed Pipeline in clipping and Screen mapping
-- Multi Platform
-
-> current lib dependencies:  `stdlib.h`   `stdio.h`   `math.h`   `string.h`   `assert.h`   `utility`
+- Pipeline that runs on CPU (maybe GPU later, but more limited platforms)
+- Programable and Extendable Shaders
+- Flexible and Fast to Access Buffers
+- API similar to OpenGL
+- Support Cross Platform
+- Image and Geometry Process Functionalities
 
 <img src="images/triangle_rasterization.webp" width="400px" />
 
 <img src="images/wireframe_bunny.gif" width="400px" />
 
-### Content
+## Current Features
 
 - basic linear algebra
   - vector
@@ -31,29 +35,32 @@ I intend to implement a shader-based renderer that runs on CPU from scratch usin
 - Graphics
   - basic rasterization algorithm
   - colormap
+  - digit display
+  - programable shader
 
 - Others
   - dynamic array
+  - quick sort
 
-### Platform Support
+## Current Platform
 
-- MacOS
+MacOS
 
-### Compile & Run
+## Compile & Run
 
-==> Build with c++11
+### MacOS
 
-#### MacOS
-
-```shell
+```zsh
 ## for test run
-make
+make test
 ## for viewer application
 make mac
-## compile core dll
+## compile dll
 make dll
 ## run program
 ./viewer
+## run test script
+./test
 ```
 
 #### Windows 
