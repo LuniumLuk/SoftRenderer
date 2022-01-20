@@ -31,6 +31,7 @@ public:
     Vector2(): x(0), y(0) {}
     Vector2(float x, float y): x(x), y(y) {}
     Vector2(const Vector2 & vec): x(vec.x), y(vec.y) {}
+    Vector2(const Vector4 & vec);
     Vector2(float * array):
         x(*array++),
         y(*array) {}

@@ -7,6 +7,7 @@
 #include "maths.hpp"
 #include "shader.hpp"
 #include "buffer.hpp"
+#include "rasterizer.hpp"
 
 namespace Lurdr
 {

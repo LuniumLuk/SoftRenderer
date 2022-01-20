@@ -36,6 +36,32 @@ public:
     }
 };
 
+struct vertex_in
+{
+    Vector3 position;
+    Vector3 normal;
+};
+
+struct vertex_out
+{
+    Vector4 position;
+    Vector3 normal;
+};
+
+void vertexShaderA(const vertex_in & in, vertex_out & out)
+{
+    out.position = Vector4(in.position, 1.0f);
+    out.normal = in.normal;
+};
+
+void testVertexShader(SHADER_PARAM)
+{
+    Vector3 *a_pos   = layout_in(Vector3, 0);
+
+    Vector4 *position = layout_out(Vector4, 0);
+    *position = Vector4(*a_pos, 1.0f);
+}
+
 int main()
 {
 
@@ -51,41 +77,70 @@ int main()
     // my_program.setUniform(1, &view);
     // my_program.setUniform(2, &projection);
 
-    printf("=== Test ===\n");
+    printf("=== Test 0 ===\n");
 
-    printf("%lu\n", sizeof(A));
-    printf("%lu\n", sizeof(Vector2));
-    // printf("%f\n", a.x);
-    // printf("%f\n", a.y);
+    float triangle_vertices[][3] = {
+        { 0.0f, 0.0f, 0.0f },
+        { 1.0f, 0.0f, 0.0f },
+        { 1.0f, 1.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f },
+    };
+    size_t triangle_indices[][3] = {
+        { 1, 2, 3 },
+        { 1, 3, 4 },
+    };
 
-    void * buffer = new char[sizeof(Vector2)];
-    Vector4 * vec = static_cast<Vector4*>(buffer); // ？？？
-    vec->print();
+    FrameBuffer frame_buffer(512, 512);
 
-    printf("%lu\n", sizeof(int16_t));
+    VertexArray vertex_array;
+    ArrayBuffer array_buffer;
+    ElementBuffer element_buffer;
+    array_buffer.setBufferData(12, &triangle_vertices[0][0]);
+    array_buffer.setDataPointers(0, 3, 3, 0);
+    element_buffer.setBufferData(6, &triangle_indices[0][0]);
+    vertex_array.bindDataArray(&array_buffer);
+    vertex_array.bindIndiciesArray(&element_buffer);
+
+    Program shader_program;
+    shader_program.linkShader(VERTEX_SHADER, testVertexShader);
+
+    drawTriangles(frame_buffer, vertex_array, shader_program);
+
+    printf("=== Test 1 ===\n");
+
+    // printf("%lu\n", sizeof(A));
+    // printf("%lu\n", sizeof(Vector2));
+    // // printf("%f\n", a.x);
+    // // printf("%f\n", a.y);
+
+    // void * buffer = new char[sizeof(Vector2)];
+    // Vector4 * vec = static_cast<Vector4*>(buffer); // ？？？
+    // vec->print();
+
+    // printf("%lu\n", sizeof(int16_t));
 
 
-    void * t = new char[sizeof(int16_t)];
-    int32_t * tt = static_cast<int32_t *>(t);
+    // void * t = new char[sizeof(int16_t)];
+    // int32_t * tt = static_cast<int32_t *>(t);
 
-    *tt = 0xFFFFFFFF;
-    *(tt + 1) = 0xFFFFFFFF;
+    // *tt = 0xFFFFFFFF;
+    // *(tt + 1) = 0xFFFFFFFF;
 
-    int64_t * ttt = static_cast<int64_t *>((void *)tt);
-    printf("0x%016llx\n", *ttt);
+    // int64_t * ttt = static_cast<int64_t *>((void *)tt);
+    // printf("0x%016llx\n", *ttt);
 
-    printf("=== ==== ===\n");
+    // printf("=== ==== ===\n");
 
-    int16_t aaa = 0b0110001111011110;
-    for (int i = 15; i >= 0; i--)
-    {
-        printf("%d", 1 & (aaa >> i));
-    }
-    printf("\n");
+    // int16_t aaa = 0b0110001111011110;
+    // for (int i = 15; i >= 0; i--)
+    // {
+    //     printf("%d", 1 & (aaa >> i));
+    // }
+    // printf("\n");
 
-    FrameBuffer frame_buffer;
+    // FrameBuffer frame_buffer;
 
-    drawInteger(frame_buffer, 0, 0, 14560, 10, RGBCOLOR(0.0f, 0.0f, 0.0f));
+    // drawInteger(frame_buffer, 0, 0, 14560, 10, RGBCOLOR(0.0f, 0.0f, 0.0f));
 
     // void* out[255];
     // out[0] = new char[4];

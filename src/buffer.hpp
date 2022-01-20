@@ -93,11 +93,11 @@ public:
         // assert(pos < m_data_pointers[index].size());
         if (pos < m_data_pointers[index].size())
         {
-            return (float*)0;
+            return m_data_pointers[index][pos];
         }
         else
         {
-            return m_data_pointers[index][pos];
+            return (float*)0;
         }
     }
 };
@@ -175,10 +175,11 @@ public:
     float* getData(
         const size_t & triangle_index,
         const size_t & vertex_index,
-        const size_t & data_pos ) const
+        const size_t & data_index ) const
     {
         assert(vertex_index < 3);
-        return m_data_array->getData(*(m_indicies_array->getData(triangle_index) + vertex_index), data_pos);
+        size_t data_pos = *(m_indicies_array->getData(triangle_index) + vertex_index) - 1;
+        return m_data_array->getData(data_index, data_pos);
     }
 };
 

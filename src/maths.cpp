@@ -17,6 +17,8 @@ Vector2 Vector2::UNIT_X = Vector2( 1.0f, 0.0f );
 Vector2 Vector2::UNIT_Y = Vector2( 0.0f, 1.0f );
 Vector2 Vector2::ZERO   = Vector2( 0.0f, 0.0f );
 
+Vector2::Vector2(const Vector4 & vec): x(vec.x), y(vec.y) {}
+
 void Vector2::operator= (const Vector2 & other)
 {
     x = other.x;
@@ -116,7 +118,7 @@ float Vector2::length() const
 }
 void Vector2::print() const
 {
-    printf("Vector3 : ( %9.3f, %9.3f )\n", x, y);
+    printf("Vector2 : ( %9.3f, %9.3f )\n", x, y);
 }
 
 Vector2 Vector2::normalized() const

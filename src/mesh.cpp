@@ -98,10 +98,23 @@ void OBJMesh::loadMesh()
             if (scanned_items != 9)
             {
                 scanned_items = sscanf(line_buffer, "f %lu %lu %lu", &v1, &v2, &v3);
-                assert(scanned_items == 3);
-                vertex_idxes.push_back(v1);
-                vertex_idxes.push_back(v2);
-                vertex_idxes.push_back(v3);
+                if (scanned_items != 3)
+                {
+                    scanned_items = sscanf(line_buffer, "f %lu//%lu %lu//%lu %lu//%lu", &v1, &vn1, &v2, &vn2, &v3, &vn3);
+                    assert(scanned_items == 6);
+                    vertex_idxes.push_back(v1);
+                    vertex_idxes.push_back(v2);
+                    vertex_idxes.push_back(v3);
+                    normal_idxes.push_back(vn1);
+                    normal_idxes.push_back(vn2);
+                    normal_idxes.push_back(vn3);
+                }
+                else
+                {
+                    vertex_idxes.push_back(v1);
+                    vertex_idxes.push_back(v2);
+                    vertex_idxes.push_back(v3);
+                }
             }
             else
             {
@@ -137,7 +150,14 @@ void OBJMesh::loadMesh()
     }
     if (normal_idxes.size() > 0 && normal_idxes.size() % 3 == 0)
     {
-        // ...
+        assert(vertex_normals.size() == m_vertex_count);
+        m_vns = new Vector3[vertex_normals.size()];
+        memcpy(m_vns, vertex_normals.data(), vertex_normals.size() * sizeof(Vector3));
+
+        assert(normal_idxes.size() / 3 == m_face_count);
+        m_fvns = new size_t[normal_idxes.size()];
+        memcpy(m_fvns, normal_idxes.data(), normal_idxes.size() * sizeof(size_t));
+
         m_has_vertex_normals = true;
     }
     fclose(fp);

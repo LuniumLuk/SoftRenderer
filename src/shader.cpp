@@ -2,19 +2,20 @@
 
 using namespace Lurdr;
 
-void * Lurdr::allocateOutBuffer(const size_t & size, size_t * allocated_sizes, const int & pos, void * buffer)
+void * Lurdr::allocateOutBuffer(const size_t & size, size_t * allocated_sizes, const int & pos, void ** buffer)
 {
     if (allocated_sizes[pos] == size)
     {
-        return buffer;
+        return *buffer;
     }
     else if (allocated_sizes[pos] > 0)
     {
         // already allocated, but different size
-        delete[] static_cast<char*>(buffer);
+        delete[] static_cast<char*>(*buffer);
     }
     allocated_sizes[pos] = size;
-    return buffer = (void *)new char[size];
+    *buffer = (void *)new char[size];
+    return *buffer;
 }
 
 Program::Program()

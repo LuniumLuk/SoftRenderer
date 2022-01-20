@@ -3,6 +3,8 @@ CLANG = clang++
 CFLAGS = -g -std=c++11 -std=c++0x -Wall -Wextra
 OBJCFLAGS  := -framework Cocoa
 
+MAIN	   := main
+
 SOURCEDIR  := src
 INCLUDEDIR := src
 BUILDDIR   := build
@@ -14,10 +16,11 @@ INCLUDES   := $(addprefix -I, $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp)))
 HEADERS    := $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp))
 # MacOS Compile
 MACSOURCES := $(SOURCEDIR)/mac.mm
-MACOBJECTS := $(filter-out build/main.o, $(OBJECTS))
+MACOBJECTS := $(filter-out build/$(MAIN).o, $(OBJECTS))
 # DLL Compile
-DLLOBJECTS := $(filter-out build/main.o, $(OBJECTS))
+DLLOBJECTS := $(filter-out build/$(MAIN).o, $(OBJECTS))
 # Test Compile
+# modify here if to compile other file
 TESTSOURCE := $(TESTDIR)/test.cpp
 
 TARGET     = viewer
@@ -45,7 +48,7 @@ help:
 	@echo --- MAKEFILE OPTIONS -----------
 	@echo "  mac : compile for MacOS"
 	@echo "  dll : compile for DLL"
-	@echo " test : compile for test script 'test/test.cpp'"
+	@echo " test : compile for test script $(TESTSOURCE)"
 	@echo " help : show makefile options"
 	@echo "debug : add '#define DEBUG'"
 	@echo "clean : clean target, bin/ and build/"
