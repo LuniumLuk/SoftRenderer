@@ -53,6 +53,9 @@ help:
 	@echo "debug : add '#define DEBUG'"
 	@echo "clean : clean target, bin/ and build/"
 
+show:
+	@echo $(SOURCES)
+
 .PHONY: clean
 clean:
 	@$(RM) $(TARGET)
@@ -66,6 +69,15 @@ mac: mac_compile
 
 mac_compile: $(OBJECTS)
 	@$(CLANG) -o $(TARGET) $(OBJCFLAGS) $(CFLAGS) $(SOURCEDIR)/mac.mm $(OBJECTS)
+
+# Win32 compile options
+win32: win32_compile
+
+win32_compile:
+	@$(CC) -o $(TARGET) $(CFLAGS) $(SOURCEDIR)/win32.cpp
+
+run:
+	@$(TARGET)
 
 # DLL compile options
 dll: clean dll_compile
