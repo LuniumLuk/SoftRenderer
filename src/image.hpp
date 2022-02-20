@@ -9,12 +9,12 @@
 #include "maths.hpp"
 #include "global.hpp"
 
-#define BI_BM 0x4d42    // ASCII code for 'BM'
-#define BI_FILE_HEADER_SIZE 14L
+#define LBI_BM 0x4d42    // ASCII code for 'BM'
+#define LBI_FILE_HEADER_SIZE 14L
 
-#define BI_RGB  0   // no compression
-#define BI_RLE8 1   // 8bit RLE encoding
-#define BI_RLE4 2   // 4bit RLE encoding
+#define LBI_RGB  0   // no compression
+#define LBI_RLE8 1   // 8bit RLE encoding
+#define LBI_RLE4 2   // 4bit RLE encoding
 
 #define COLOR_RGB 0U
 #define COLOR_BGR 1U

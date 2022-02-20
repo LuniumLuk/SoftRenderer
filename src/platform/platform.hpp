@@ -3,15 +3,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include "global.hpp"
-#include "maths.hpp"
-#include "image.hpp"
-#include "mesh.hpp"
-#include "buffer.hpp"
-#include "darray.hpp"
-#include "rasterizer.hpp"
-#include "camera.hpp"
-#include "scene.hpp"
+#include "../global.hpp"
 
 namespace Lurdr
 {
@@ -50,7 +42,7 @@ namespace Lurdr
     /**
      *  time
      */
-    float getPlatformTime(void);
+    float getPlatformTime(void); // unimplemented
 }
 
 

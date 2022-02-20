@@ -10,11 +10,11 @@ using namespace Lurdr;
 
 void BMPImage::loadFileHeaderx64(FILE *fp)
 {
-    byte_t *temp_buffer = new byte_t[BI_FILE_HEADER_SIZE];
+    byte_t *temp_buffer = new byte_t[LBI_FILE_HEADER_SIZE];
     byte_t *ptr = temp_buffer;
 
     fseek(fp, 0L, SEEK_SET);
-    fread(temp_buffer, BI_FILE_HEADER_SIZE, 1, fp);
+    fread(temp_buffer, LBI_FILE_HEADER_SIZE, 1, fp);
     memcpy(&(m_file_header.signature), ptr, sizeof(ushort_t));
     ptr += sizeof(ushort_t);
     memcpy(&(m_file_header.file_size), ptr, sizeof(ulong_t));
@@ -27,7 +27,7 @@ void BMPImage::loadFileHeaderx64(FILE *fp)
 }
 void BMPImage::writeFileHeaderx64(FILE *fp) const
 {
-    byte_t *temp_buffer = new byte_t[BI_FILE_HEADER_SIZE];
+    byte_t *temp_buffer = new byte_t[LBI_FILE_HEADER_SIZE];
     byte_t *ptr = temp_buffer;
 
     memcpy(ptr, &(m_file_header.signature), sizeof(ushort_t));
@@ -39,7 +39,7 @@ void BMPImage::writeFileHeaderx64(FILE *fp) const
     memcpy(ptr, &(m_file_header.data_offset), sizeof(ushort_t));
 
     fseek(fp, 0L, SEEK_SET);
-    fwrite(temp_buffer, BI_FILE_HEADER_SIZE, 1, fp);
+    fwrite(temp_buffer, LBI_FILE_HEADER_SIZE, 1, fp);
 
     delete[] temp_buffer;
 }
@@ -55,14 +55,14 @@ void BMPImage::loadImage()
         return;
     }
     loadFileHeaderx64(fp);
-    if (m_file_header.signature != BI_BM)
+    if (m_file_header.signature != LBI_BM)
     {
         printf("BMPImage : file format error\n");
         clean();
         fclose(fp);
         return;
     }
-    fseek(fp, BI_FILE_HEADER_SIZE, SEEK_SET);
+    fseek(fp, LBI_FILE_HEADER_SIZE, SEEK_SET);
     fread(&m_info_header, sizeof(BMPInfoHeader), 1, fp);
     if (m_info_header.height < 0)
     {
@@ -72,7 +72,7 @@ void BMPImage::loadImage()
     if (m_info_header.bits_per_pixel <= 8)
     {
         m_use_color_table = true;
-        size_t color_tables_offset = BI_FILE_HEADER_SIZE + sizeof(BMPInfoHeader);
+        size_t color_tables_offset = LBI_FILE_HEADER_SIZE + sizeof(BMPInfoHeader);
         fseek(fp, color_tables_offset, SEEK_SET);
 
         size_t color_num = m_info_header.colors_used;
@@ -157,7 +157,7 @@ BMPImage::BMPImage(const size_t & width, const size_t & height)
     m_filename = new char[f_len + 1];
     strcpy(m_filename, default_filename);
 
-    m_file_header.signature = BI_BM;
+    m_file_header.signature = LBI_BM;
     m_file_header.file_size = width * height * 3;
     m_file_header.data_offset = 54;
 
@@ -252,7 +252,7 @@ void BMPImage::writeImage(const char* filename) const
         return;
     }
     writeFileHeaderx64(fp);
-    fseek(fp, BI_FILE_HEADER_SIZE, SEEK_SET);
+    fseek(fp, LBI_FILE_HEADER_SIZE, SEEK_SET);
     fwrite(&m_info_header, sizeof(BMPInfoHeader), 1, fp);
     if (m_use_color_table)
     {
@@ -487,7 +487,12 @@ bool UniformImage::isBigEndian()
 {
     union 
     {
-        uint32_t      i;
+#ifdef WIN32
+        __UINT32_TYPE__ i;
+#endif
+#ifdef MACOS
+        uint32_t i;
+#endif
         byte_t c[4];
     } bint = { 0x01020304 };
     return bint.c[0] == 1; 

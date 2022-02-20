@@ -10,10 +10,11 @@ INCLUDEDIR := src
 BUILDDIR   := build
 DLLDIR	   := bin
 TESTDIR	   := $(SOURCEDIR)/test
+PLATDIR    := src/platform
 SOURCES    := $(wildcard $(addprefix $(SOURCEDIR)/, *.cpp))
 OBJECTS    := $(addprefix $(BUILDDIR)/, $(notdir $(SOURCES:.cpp=.o)))
 INCLUDES   := $(addprefix -I, $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp)))
-HEADERS    := $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp))
+HEADERS    := $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp)) $(PLATDIR)/platform.hpp
 # MacOS Compile
 MACSOURCES := $(SOURCEDIR)/mac.mm
 MACOBJECTS := $(filter-out build/$(MAIN).o, $(OBJECTS))
@@ -37,7 +38,7 @@ $(TARGET): $(OBJECTS)
 	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
 
 $(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp $(HEADERS)
-	@$(MD) $(dir $@)
+# @$(MD) $(dir $@)
 	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
 # Debug option
@@ -54,7 +55,7 @@ help:
 	@echo "clean : clean target, bin/ and build/"
 
 show:
-	@echo $(SOURCES)
+	@echo $(OBJECTS)
 
 .PHONY: clean
 clean:
@@ -68,13 +69,15 @@ clean:
 mac: mac_compile
 
 mac_compile: $(OBJECTS)
-	@$(CLANG) -o $(TARGET) $(OBJCFLAGS) $(CFLAGS) $(SOURCEDIR)/mac.mm $(OBJECTS)
+	@$(CLANG) -o $(TARGET) $(OBJCFLAGS) $(CFLAGS) $(PLATDIR)/mac.mm $(OBJECTS)
 
 # Win32 compile options
+win32: CFLAGS += -DWIN32
 win32: win32_compile
 
-win32_compile:
-	@$(CC) -o $(TARGET) $(CFLAGS) $(SOURCEDIR)/win32.cpp
+win32_compile: $(OBJECTS)
+	@echo $(CC) -o $(TARGET) $(CFLAGS) $(PLATDIR)/win32.cpp $(OBJECTS) -lgdi32
+	@$(CC) -o $(TARGET) $(CFLAGS) $(PLATDIR)/win32.cpp $(OBJECTS) -lgdi32
 
 run:
 	@$(TARGET)

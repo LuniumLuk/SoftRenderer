@@ -68,7 +68,12 @@ enum DIGIT_CHARACTER
  */
 
 // 16-segment digit data
+#ifdef WIN32
+const __INT32_TYPE__ DIGITS_16SEG[] = 
+#endif
+#ifdef MACOS
 const int32_t DIGITS_16SEG[] = 
+#endif
 {
     0b1110011001100111, // 0
     0b0000001000000100, // 1
