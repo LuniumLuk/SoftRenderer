@@ -117,6 +117,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             handleMouseScroll(GET_WHEEL_DELTA_WPARAM(wParam) > 0 ? 1.0f : -1.0f);
             break;
         case WM_PAINT:
+            // TODO: need higher swap speed
+            // TODO: RGB to BGR
             if (g_update_paint)
             {
                 HDC hdc = GetDC(hwnd);
@@ -281,18 +283,18 @@ bool Lurdr::isMouseButtonDown(AppWindow *window, MOUSE_BUTTON button)
 
 Lurdr::Time Lurdr::getSystemTime()
 {
-    SYSTEMTIME st;
-    GetSystemTime(&st);
+    SYSTEMTIME lt;
+    GetLocalTime(&lt);
 
     Lurdr::Time time;
-    time.year = st.wYear;
-    time.month = st.wMonth;
-    time.day_of_week = st.wDayOfWeek;
-    time.day = st.wDay;
-    time.hour = st.wHour;
-    time.minute = st.wMinute;
-    time.second = st.wSecond;
-    time.millisecond = st.wMilliseconds;
+    time.year = lt.wYear;
+    time.month = lt.wMonth;
+    time.day_of_week = lt.wDayOfWeek;
+    time.day = lt.wDay;
+    time.hour = lt.wHour;
+    time.minute = lt.wMinute;
+    time.second = lt.wSecond;
+    time.millisecond = lt.wMilliseconds;
 
     return time;
 }

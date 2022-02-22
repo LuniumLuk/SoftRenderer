@@ -356,7 +356,7 @@ Lurdr::Time Lurdr::getSystemTime()
     Lurdr::Time time;
     time.year = components.year;
     time.month = components.month;
-    time.day_of_week = components.weekday;
+    time.day_of_week = components.weekday - 1; // 0 - 6 where 0 is Sunday
     time.day = components.day;
     time.hour = components.hour;
     time.minute = components.minute;

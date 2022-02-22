@@ -8,13 +8,13 @@ Meanwhile, this project also serve as practice while learning the book 'Real-Tim
 
 ## Planned Features
 
-I intend to implement a shader-based renderer that runs on CPU from scratch using c++ with minimum dependencies. It's API is similar to OpenGL, with the following features:
+I intend to implement a shader-based renderer that runs on CPU from scratch using c++ with minimum dependencies. It's APIs are similar to OpenGL, with the following features:
 
 - Pipeline that runs on CPU (maybe GPU later, but more limited platforms)
 - Programable and Extendable Shaders
 - Flexible and Fast to Access Buffers
 - API similar to OpenGL
-- Support Cross Platform
+- Support Cross Platform (MacOS, Windows)
 - Image and Geometry Process Functionalities
 
 <img src="images/digit_display.png" width="360px" />
@@ -44,29 +44,36 @@ I intend to implement a shader-based renderer that runs on CPU from scratch usin
 
 ## Current Platform
 
-MacOS
+MacOS (Cocoa App)
+
+Windows (Win32 App)
 
 ## Compile & Run
 
 ### MacOS
 
+- compile
+
 ```zsh
-## for test run
-make test
-## for viewer application
-make mac
-## compile dll
-make dll
-## run program
+make macos
+```
+
+- run
+
+```zsh
 ./viewer
-## run test script
-./test
 ```
 
 #### Windows 
 
-(only for test, not support viewer app)
+- compile
 
 ```shell
-mingw32-make test
+mingw32-make win32
+```
+
+- run
+
+```shell
+viewer
 ```
