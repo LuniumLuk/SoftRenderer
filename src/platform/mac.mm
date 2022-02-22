@@ -84,7 +84,7 @@ void Lurdr::terminateApplication()
     g_auto_release_pool = [[NSAutoreleasePool alloc] init];
 }
 
-void Lurdr::updateView(AppWindow *window)
+void Lurdr::swapBuffer(AppWindow *window)
 {
     [[window->handle contentView] setNeedsDisplay:YES];  // invoke drawRect
 }

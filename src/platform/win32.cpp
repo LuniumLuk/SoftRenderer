@@ -7,11 +7,6 @@
 
 const char g_szClassName[] = "viewer_window_class";
 
-WNDCLASSEX wc;
-HWND hwnd;
-MSG Msg;
-HINSTANCE hInstance;
-
 struct Lurdr::APPWINDOW
 {
     HWND        *handle;
@@ -26,6 +21,13 @@ struct Lurdr::APPWINDOW
 };
 
 Lurdr::APPWINDOW * g_window;
+
+HINSTANCE   g_hInstance;
+POINTS      g_mouse_pts;
+BITMAPINFO  g_bitmapinfo;
+int         g_viewer_width;
+int         g_viewer_height;
+bool        g_update_paint = false;
 
 static void handleKeyPress(WPARAM wParam, bool pressed)
 {
@@ -60,11 +62,27 @@ static void handleMouseDrag(float x, float y)
     }
 }
 
+static void handleMouseButton(Lurdr::MOUSE_BUTTON button, bool pressed)
+{
+    g_window->buttons[button] = pressed;
+    if (g_window->mouseButtonCallback)
+    {
+        g_window->mouseButtonCallback(g_window, button, pressed);
+    }
+}
+
+static void handleMouseScroll(float delta)
+{
+    if (g_window->mouseScrollCallback)
+    {
+        g_window->mouseScrollCallback(g_window, delta);
+    }
+}
+
 // handling windows procedures
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     // reference : https://docs.microsoft.com/en-us/windows/win32/inputdev
-    static POINTS pts_mouse;
 
     switch(msg)
     {
@@ -77,57 +95,49 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             break;
         // handle mouse input
         case WM_LBUTTONDOWN:
-            printf("<Windows> LEFT BUTTON DOWN\n");
-            // pts_mouse = MAKEPOINTS(lParam); 
-            // printf("Button Pos: [%d, %d]\n", pts_mouse.x, pts_mouse.y);
+            handleMouseButton(Lurdr::BUTTON_L, true);
+            break;
+        case WM_LBUTTONUP:
+            handleMouseButton(Lurdr::BUTTON_L, false);
+            break;
+        case WM_RBUTTONDOWN:
+            handleMouseButton(Lurdr::BUTTON_R, true);
+            break;
+        case WM_RBUTTONUP:
+            handleMouseButton(Lurdr::BUTTON_R, false);
             break;
         case WM_MOUSEMOVE:
             if (wParam & MK_LBUTTON) // left mouse drag
             {
-                pts_mouse = MAKEPOINTS(lParam); 
-                handleMouseDrag(pts_mouse.x, pts_mouse.y);
-                // printf("Button Pos: [%d, %d]\n", pts_mouse.x, pts_mouse.y);
+                g_mouse_pts = MAKEPOINTS(lParam); 
+                handleMouseDrag(g_mouse_pts.x, g_mouse_pts.y);
             }
             break;
-        case WM_PAINT:
+        case WM_MOUSEWHEEL:
+            handleMouseScroll(GET_WHEEL_DELTA_WPARAM(wParam) > 0 ? 1.0f : -1.0f);
             break;
+        case WM_PAINT:
+            if (g_update_paint)
             {
-                unsigned char temp_bitmap[300];
-                memset(temp_bitmap, 0, sizeof(unsigned char) * 300);
-
                 HDC hdc = GetDC(hwnd);
-                HDC compatible_dc = CreateCompatibleDC(hdc);
-                ReleaseDC(hwnd, hdc);
-
-                BITMAPINFO bmi;
-                bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-                bmi.bmiHeader.biBitCount=24;
-                bmi.bmiHeader.biWidth=10;
-                bmi.bmiHeader.biHeight=10;
-                bmi.bmiHeader.biCompression=BI_RGB;
-                bmi.bmiHeader.biClrUsed=0;
-                bmi.bmiHeader.biClrImportant=0;
-                bmi.bmiHeader.biPlanes=1;
-                bmi.bmiHeader.biSizeImage=0;
-                HDC winDC=GetDC(hwnd);
-
-                RECT r={0,10,10,10};
-                FillRect(winDC,&r,(HBRUSH)GetStockObject(BLACK_BRUSH));
 
                 SetDIBitsToDevice(
-                    winDC,
-                    0,0,10,10,
-                    0,0,0,10,
-                    (void*)temp_bitmap,
-                    &bmi,
+                    hdc,
+                    0, 0,
+                    g_viewer_width,
+                    g_viewer_height,
+                    0, 0, 0, g_viewer_height,
+                    (void*)(g_window->surface),
+                    &g_bitmapinfo,
                     DIB_RGB_COLORS
                 );
 
-
-                ReleaseDC(hwnd,winDC);
+                ReleaseDC(hwnd, hdc);
+                g_update_paint = false;
             }
             break;
         case WM_CLOSE:
+            g_window->should_close = true;
             DestroyWindow(hwnd);
             break;
         case WM_DESTROY:
@@ -141,14 +151,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 void Lurdr::initializeApplication()
 {
-    hInstance = GetModuleHandle(NULL);
+    WNDCLASSEX wc;
+    g_hInstance = GetModuleHandle(NULL);
 
     wc.cbSize        = sizeof(WNDCLASSEX);
     wc.style         = 0;
     wc.lpfnWndProc   = WndProc;
     wc.cbClsExtra    = 0;
     wc.cbWndExtra    = 0;
-    wc.hInstance     = hInstance;
+    wc.hInstance     = g_hInstance;
     wc.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
     wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
@@ -163,25 +174,21 @@ void Lurdr::initializeApplication()
     }
 }
 
-void Lurdr::runApplication()
-{
-    
-}
+// need no implementation
+void Lurdr::runApplication() {};
 
-void Lurdr::terminateApplication()
-{
-    DestroyWindow(hwnd);
-}
+// need no implementation
+void Lurdr::terminateApplication() {};
 
 Lurdr::AppWindow* Lurdr::createWindow(const char *title, int width, int height, byte_t *surface_buffer)
 {
-    hwnd = CreateWindowEx(
+    HWND hwnd = CreateWindowEx(
         0,
         g_szClassName,
         title,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, width, height,
-        NULL, NULL, hInstance, NULL);
+        NULL, NULL, g_hInstance, NULL);
 
     if (hwnd == NULL)
     {
@@ -190,9 +197,22 @@ Lurdr::AppWindow* Lurdr::createWindow(const char *title, int width, int height, 
         return 0;
     }
 
+    g_bitmapinfo.bmiHeader.biSize           = sizeof(BITMAPINFOHEADER);
+    g_bitmapinfo.bmiHeader.biBitCount       = 24;
+    g_bitmapinfo.bmiHeader.biWidth          = width;
+    g_bitmapinfo.bmiHeader.biHeight         = -height;
+    g_bitmapinfo.bmiHeader.biCompression    = BI_RGB;
+    g_bitmapinfo.bmiHeader.biClrUsed        = 0;
+    g_bitmapinfo.bmiHeader.biClrImportant   = 0;
+    g_bitmapinfo.bmiHeader.biPlanes         = 1;
+    g_bitmapinfo.bmiHeader.biSizeImage      = 0;
+
     g_window = new Lurdr::AppWindow();
     g_window->handle = &hwnd;
     g_window->surface = surface_buffer;
+
+    g_viewer_width = width;
+    g_viewer_height = height;
 
     ShowWindow(hwnd, SW_SHOWNORMAL);
     UpdateWindow(hwnd);
@@ -202,12 +222,13 @@ Lurdr::AppWindow* Lurdr::createWindow(const char *title, int width, int height, 
 
 void Lurdr::destroyWindow(AppWindow *window)
 {
-    DestroyWindow(*(window->handle));
+    window->should_close = true;
 }
 
-void Lurdr::updateView(AppWindow *window)
+void Lurdr::swapBuffer(AppWindow *window)
 {
-
+    __unused_variable(window);
+    g_update_paint = true;
 }
 
 bool Lurdr::windowShouldClose(AppWindow *window)
@@ -217,12 +238,12 @@ bool Lurdr::windowShouldClose(AppWindow *window)
 
 void Lurdr::pollEvent()
 {
-    while(GetMessage(&Msg, NULL, 0, 0) > 0)
+    static MSG msg;
+    if (GetMessage(&msg, NULL, 0, 0) > 0)
     {
-        TranslateMessage(&Msg);
-        DispatchMessage(&Msg);
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
     }
-    // return Msg.wParam;
 }
 
 /**
@@ -246,4 +267,40 @@ void Lurdr::setMouseScrollCallback(AppWindow *window, void(*callback)(AppWindow*
 void Lurdr::setMouseDragCallback(AppWindow *window, void(*callback)(AppWindow*, float, float))
 {
     window->mouseDragCallback = callback;
+}
+
+bool Lurdr::isKeyDown(AppWindow *window, KEY_CODE key)
+{
+    return window->keys[key];
+}
+
+bool Lurdr::isMouseButtonDown(AppWindow *window, MOUSE_BUTTON button)
+{
+    return window->buttons[button];
+}
+
+void Lurdr::getMousePosition(AppWindow *window, float *x, float *y)
+{
+    __unused_variable(window);
+
+    *x = g_mouse_pts.x;
+    *y = g_mouse_pts.y;
+}
+
+Lurdr::Time Lurdr::getSystemTime()
+{
+    SYSTEMTIME st;
+    GetSystemTime(&st);
+
+    Lurdr::Time time;
+    time.year = st.wYear;
+    time.month = st.wMonth;
+    time.day_of_week = st.wDayOfWeek;
+    time.day = st.wDay;
+    time.hour = st.wHour;
+    time.minute = st.wMinute;
+    time.second = st.wSecond;
+    time.millisecond = st.wMilliseconds;
+
+    return time;
 }

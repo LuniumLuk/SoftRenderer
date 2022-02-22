@@ -86,7 +86,7 @@ int main() {
             frame_buffer, 60.0f, 35.0f, 
             _fps, 10.0f, RGBColor(255.0f, 0.0f, 0.0f));
 
-        updateView(window);
+        swapBuffer(window);
         pollEvent();
     }
 

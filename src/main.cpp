@@ -20,10 +20,20 @@ int main() {
 
     printf("------------ MAIN -------------\n");
 
+    // -----------------------------------------
+    BMPImage image("assets/lenna.bmp");
+    image.printImageInfo();
+
+    UniformImage uniform_image = UniformImage(image);
+    uniform_image.printImageInfo();
+
+    // -----------------------------------------
+
     initializeApplication();
 
     const char * title = "Viewer @ Lu Renderer";
-    window = createWindow(title, 512, 512, frame_buffer.colorBuffer());
+    // window = createWindow(title, 512, 512, frame_buffer.colorBuffer());
+    window = createWindow(title, 512, 512, uniform_image.getImageBuffer());
 
     setKeyboardCallback(window, keyboardEventCallback);
     setMouseButtonCallback(window, mouseButtonEventCallback);
@@ -33,6 +43,9 @@ int main() {
     int _fps = 0;
     clock_t last_frame_timestamp = clock();
     clock_t last_fps_update = clock();
+
+    swapBuffer(window);
+
     while (!windowShouldClose(window))
     {
         last_frame_timestamp = clock();
@@ -42,32 +55,35 @@ int main() {
             _fps = CLOCKS_PER_SEC / max(1.0f, (clock() - last_frame_timestamp));
             last_fps_update = clock();
         }
-        
-        updateView(window);
+
+        // swapBuffer(window);
         pollEvent();
     }
 
-    printf("------------ ---- -------------\n");
+    terminateApplication();
+
+    printf("------------ EXIT -------------\n");
     return 0;
 }
 
 void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
 {
-    assert(window);
-    printf("keyboardEventCallback : %p %d %u\n", window, key, pressed);
+    printf("keyboard event : key[%d] pressed[%u]\n", key, pressed);
+    switch(key) {
+        case KEY_ESCAPE:
+            destroyWindow(window);
+            break;
+    }
 }
 void mouseButtonEventCallback(AppWindow *window, MOUSE_BUTTON button, bool pressed)
 {
-    assert(window);
-    printf("mouseButtonEventCallback : %p %d %u\n", window, button, pressed);
+    printf("mouse button event : button[%d] pressed[%u]\n", button, pressed);
 }
 void mouseScrollEventCallback(AppWindow *window, float offset)
 {
-    assert(window);
-    printf("mouseScrollEventCallback : %p %f\n", window, offset);
+    printf("mouse scroll event : offset[%.2f]\n", offset);
 }
 void mouseDragEventCallback(AppWindow *window, float x, float y)
 {
-    assert(window);
-    printf("mouseDragEventCallback : %p %f %f\n", window, x, y);
+    printf("mouse drag event : x[%.2f] y[%.2f]\n", x, y);
 }

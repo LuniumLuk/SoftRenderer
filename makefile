@@ -66,6 +66,7 @@ clean:
 	@echo --- CLEAN COMPLETE -------------
 
 # MacOS compile options
+mac: CFLAGS += -DMACOS
 mac: mac_compile
 
 mac_compile: $(OBJECTS)
@@ -74,9 +75,8 @@ mac_compile: $(OBJECTS)
 # Win32 compile options
 win32: CFLAGS += -DWIN32
 win32: win32_compile
-
+ 
 win32_compile: $(OBJECTS)
-	@echo $(CC) -o $(TARGET) $(CFLAGS) $(PLATDIR)/win32.cpp $(OBJECTS) -lgdi32
 	@$(CC) -o $(TARGET) $(CFLAGS) $(PLATDIR)/win32.cpp $(OBJECTS) -lgdi32
 
 run:
