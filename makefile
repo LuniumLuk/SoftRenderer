@@ -16,7 +16,7 @@ OBJECTS    := $(addprefix $(BUILDDIR)/, $(notdir $(SOURCES:.cpp=.o)))
 INCLUDES   := $(addprefix -I, $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp)))
 HEADERS    := $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp)) $(PLATDIR)/platform.hpp
 # MacOS Compile
-MACSOURCES := $(SOURCEDIR)/mac.mm
+MACSOURCES := $(SOURCEDIR)/macos.mm
 MACOBJECTS := $(filter-out build/$(MAIN).o, $(OBJECTS))
 # DLL Compile
 DLLOBJECTS := $(filter-out build/$(MAIN).o, $(OBJECTS))
@@ -32,7 +32,7 @@ RM         := rm -f
 MD         := mkdir -p
 
 # all is set to default compile for MacOS
-all: mac
+all: macos
 
 $(TARGET): $(OBJECTS)
 	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
@@ -47,7 +47,8 @@ debug: CFLAGS += -DDEBUG
 # help option
 help:
 	@echo --- MAKEFILE OPTIONS -----------
-	@echo "  mac : compile for MacOS"
+	@echo "macos : compile for MacOS App"
+	@echo "win32 : compile for Win32 App"
 	@echo "  dll : compile for DLL"
 	@echo " test : compile for test script $(TESTSOURCE)"
 	@echo " help : show makefile options"
@@ -66,11 +67,11 @@ clean:
 	@echo --- CLEAN COMPLETE -------------
 
 # MacOS compile options
-mac: CFLAGS += -DMACOS
-mac: mac_compile
+macos: CFLAGS += -DMACOS
+macos: macos_compile
 
-mac_compile: $(OBJECTS)
-	@$(CLANG) -o $(TARGET) $(OBJCFLAGS) $(CFLAGS) $(PLATDIR)/mac.mm $(OBJECTS)
+macos_compile: $(OBJECTS)
+	@$(CLANG) -o $(TARGET) $(OBJCFLAGS) $(CFLAGS) $(PLATDIR)/macos.mm $(OBJECTS)
 
 # Win32 compile options
 win32: CFLAGS += -DWIN32

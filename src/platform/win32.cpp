@@ -279,14 +279,6 @@ bool Lurdr::isMouseButtonDown(AppWindow *window, MOUSE_BUTTON button)
     return window->buttons[button];
 }
 
-void Lurdr::getMousePosition(AppWindow *window, float *x, float *y)
-{
-    __unused_variable(window);
-
-    *x = g_mouse_pts.x;
-    *y = g_mouse_pts.y;
-}
-
 Lurdr::Time Lurdr::getSystemTime()
 {
     SYSTEMTIME st;

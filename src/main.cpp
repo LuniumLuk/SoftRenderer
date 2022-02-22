@@ -73,17 +73,25 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
         case KEY_ESCAPE:
             destroyWindow(window);
             break;
+        case KEY_SPACE:
+            Time time = getSystemTime();
+            printf("year[%d] month[%d] weekday[%d] day[%d] hour[%d] minute[%d] second[%d] ms[%d]\n", 
+                time.year, time.month, time.day_of_week, time.day, time.hour, time.minute, time.second, time.millisecond);
+            break;
     }
 }
 void mouseButtonEventCallback(AppWindow *window, MOUSE_BUTTON button, bool pressed)
 {
+    __unused_variable(window);
     printf("mouse button event : button[%d] pressed[%u]\n", button, pressed);
 }
 void mouseScrollEventCallback(AppWindow *window, float offset)
 {
+    __unused_variable(window);
     printf("mouse scroll event : offset[%.2f]\n", offset);
 }
 void mouseDragEventCallback(AppWindow *window, float x, float y)
 {
-    printf("mouse drag event : x[%.2f] y[%.2f]\n", x, y);
+    __unused_variable(window);
+    printf("mouse drag event x[%.2f] y[%.2f]\n", x, y);
 }

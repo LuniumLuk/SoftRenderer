@@ -45,7 +45,6 @@ namespace Lurdr
     void pollEvent();
     bool isKeyDown(AppWindow *window, KEY_CODE key);
     bool isMouseButtonDown(AppWindow *window, MOUSE_BUTTON button);
-    void getMousePosition(AppWindow *window, float *x, float *y);
     void setKeyboardCallback(AppWindow *window, void(*callback)(AppWindow*, KEY_CODE, bool));
     void setMouseButtonCallback(AppWindow *window, void(*callback)(AppWindow*, MOUSE_BUTTON, bool));
     void setMouseScrollCallback(AppWindow *window, void(*callback)(AppWindow*, float));

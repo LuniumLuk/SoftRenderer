@@ -112,11 +112,28 @@ void handleKeyEvent(AppWindow *window, int virtual_key, bool pressed)
     }
 }
 
+void handleMouseButton(AppWindow *window, Lurdr::MOUSE_BUTTON button, bool pressed)
+{
+    window->buttons[button] = pressed;
+    if (window->mouseButtonCallback)
+    {
+        window->mouseButtonCallback(window, button, pressed);
+    }
+}
+
 void handleMouseDrag(AppWindow *window, float x, float y)
 {
     if (window->mouseDragCallback)
     {
         window->mouseDragCallback(window, x, y);
+    }
+}
+
+void handleMouseScroll(AppWindow *window, float delta)
+{
+    if (window->mouseScrollCallback)
+    {
+        window->mouseScrollCallback(window, delta);
     }
 }
 
@@ -169,9 +186,31 @@ void handleMouseDrag(AppWindow *window, float x, float y)
     handleKeyEvent(_window, [event keyCode], false);
 }
 
+- (void)mouseDown:(NSEvent *)event {
+    handleMouseButton(_window, Lurdr::BUTTON_L, true);
+}
+
+- (void)mouseUp:(NSEvent *)event {
+    handleMouseButton(_window, Lurdr::BUTTON_L, false);
+}
+
+- (void)rightMouseDown:(NSEvent *)event {
+    handleMouseButton(_window, Lurdr::BUTTON_R, true);
+}
+
+- (void)rightMouseUp:(NSEvent *)event {
+    handleMouseButton(_window, Lurdr::BUTTON_R, false);
+}
+
 - (void)mouseDragged:(NSEvent *)event {
     NSPoint locationInView = [self convertPoint:[event locationInWindow] fromView:nil];
     handleMouseDrag(_window, locationInView.x, locationInView.y);
+}
+
+- (void)scrollWheel:(NSEvent *)event
+{
+    [super scrollWheel:event];
+    handleMouseScroll(_window, [event deltaY]);
 }
 
 // A Boolean value that indicates whether the responder accepts first responder status.
@@ -199,6 +238,8 @@ void handleMouseDrag(AppWindow *window, float x, float y)
 
 @end
 
+ContentView *g_view;
+
 AppWindow* Lurdr::createWindow(const char *title, int width, int height, unsigned char *surface_buffer)
 {
     NSUInteger windowStyle = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable;
@@ -220,17 +261,21 @@ AppWindow* Lurdr::createWindow(const char *title, int width, int height, unsigne
     assert(delegate != nil);
     [handle setDelegate:delegate];
 
-    ContentView *view;
-    view = [[[ContentView alloc] initWithWindow:window] autorelease];
+    g_view = [[[ContentView alloc] initWithWindow:window] autorelease];
 
     [handle setTitle:[NSString stringWithUTF8String:title]];
     [handle setColorSpace:[NSColorSpace genericRGBColorSpace]];
-    [handle setContentView:view];
-    [handle makeFirstResponder:view];
+    [handle setContentView:g_view];
+    [handle makeFirstResponder:g_view];
     [handle orderFrontRegardless];
     [handle makeKeyAndOrderFront:nil];
 
     return window;
+}
+
+void Lurdr::destroyWindow(AppWindow *window)
+{
+    window->should_close = true;
 }
 
 void Lurdr::runApplication()
@@ -289,4 +334,34 @@ void Lurdr::setMouseScrollCallback(AppWindow *window, void(*callback)(AppWindow*
 void Lurdr::setMouseDragCallback(AppWindow *window, void(*callback)(AppWindow*, float, float))
 {
     window->mouseDragCallback = callback;
+}
+
+bool Lurdr::isKeyDown(AppWindow *window, Lurdr::KEY_CODE key)
+{
+    return window->keys[key];
+}
+
+bool Lurdr::isMouseButtonDown(AppWindow *window, Lurdr::MOUSE_BUTTON button)
+{
+    return window->buttons[button];
+}
+
+Lurdr::Time Lurdr::getSystemTime()
+{
+    NSDateComponents *components = [[NSCalendar currentCalendar] 
+        components: NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitWeekday | NSCalendarUnitDay |
+                    NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond | NSCalendarUnitNanosecond
+          fromDate:[NSDate date]];
+    
+    Lurdr::Time time;
+    time.year = components.year;
+    time.month = components.month;
+    time.day_of_week = components.weekday;
+    time.day = components.day;
+    time.hour = components.hour;
+    time.minute = components.minute;
+    time.second = components.second;
+    time.millisecond = components.nanosecond / 1000000;
+
+    return time;
 }
