@@ -490,7 +490,7 @@ bool UniformImage::isBigEndian()
 #ifdef WIN32
         __UINT32_TYPE__ i;
 #endif
-#ifdef MACOS
+#ifdef OSX
         uint32_t i;
 #endif
         byte_t c[4];

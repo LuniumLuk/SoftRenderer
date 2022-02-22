@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <windows.h>
+#include <utility>
 #include "platform.hpp"
+#include "../misc.hpp"
 
 // reference : http://www.winprog.org/tutorial/simple_window.html
 
@@ -21,6 +23,7 @@ struct Lurdr::APPWINDOW
 };
 
 Lurdr::APPWINDOW * g_window;
+Lurdr::byte_t * g_paint_surface;
 
 HINSTANCE   g_hInstance;
 POINTS      g_mouse_pts;
@@ -79,6 +82,17 @@ static void handleMouseScroll(float delta)
     }
 }
 
+static void blitRGB2BGR(const Lurdr::byte_t * src, Lurdr::byte_t * tar, const size_t & width, const size_t & height)
+{
+    size_t image_size = width * height * 3;
+    for (size_t i = 0; i < image_size; i += 3)
+    {
+        tar[i] = src[i + 2];
+        tar[i + 1] = src[i + 1];
+        tar[i + 2] = src[i];
+    }
+}
+
 // handling windows procedures
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -123,13 +137,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             {
                 HDC hdc = GetDC(hwnd);
 
+                blitRGB2BGR(g_window->surface, g_paint_surface, g_viewer_width, g_viewer_height);
                 SetDIBitsToDevice(
                     hdc,
                     0, 0,
                     g_viewer_width,
                     g_viewer_height,
                     0, 0, 0, g_viewer_height,
-                    (void*)(g_window->surface),
+                    (void*)(g_paint_surface),
                     &g_bitmapinfo,
                     DIB_RGB_COLORS
                 );
@@ -179,8 +194,9 @@ void Lurdr::initializeApplication()
 // need no implementation
 void Lurdr::runApplication() {};
 
-// need no implementation
-void Lurdr::terminateApplication() {};
+void Lurdr::terminateApplication() {
+    delete[] g_paint_surface;
+};
 
 Lurdr::AppWindow* Lurdr::createWindow(const char *title, int width, int height, byte_t *surface_buffer)
 {
@@ -212,6 +228,8 @@ Lurdr::AppWindow* Lurdr::createWindow(const char *title, int width, int height, 
     g_window = new Lurdr::AppWindow();
     g_window->handle = &hwnd;
     g_window->surface = surface_buffer;
+    g_paint_surface = new Lurdr::byte_t[width * height * 3];
+    memset(g_paint_surface, 0, sizeof(Lurdr::byte_t) * width * height * 3);
 
     g_viewer_width = width;
     g_viewer_height = height;

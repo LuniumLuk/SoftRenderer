@@ -71,7 +71,7 @@ enum DIGIT_CHARACTER
 #ifdef WIN32
 const __INT32_TYPE__ DIGITS_16SEG[] = 
 #endif
-#ifdef MACOS
+#ifdef OSX
 const int32_t DIGITS_16SEG[] = 
 #endif
 {
@@ -250,7 +250,7 @@ void drawString(
     float offset_x = x;
     for (size_t i = 0; i < length; i++)
     {
-        assert(string[i] >= 'a' && string[i] <= 'z' || string[i] >= 'A' && string[i] <= 'Z' || string[i] == ' ');
+        assert((string[i] >= 'a' && string[i] <= 'z') || (string[i] >= 'A' && string[i] <= 'Z') || (string[i] == ' '));
         if (string[i] >= 'a' && string[i] <= 'z')
         {
             drawDigit(
