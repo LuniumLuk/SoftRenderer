@@ -12,5 +12,6 @@
 #include "shader.hpp"
 #include "digits.hpp"
 #include "pipeline.hpp"
+#include "misc.hpp"
 
 #endif

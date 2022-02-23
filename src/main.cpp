@@ -29,11 +29,37 @@ int main() {
 
     printf("------------ MAIN -------------\n");
 
-    // -----------------------------------------
-
-    OBJMesh obj_mesh("assets/bunny.obj");
+    OBJMesh obj_mesh("assets/simple.obj");
     UniformMesh uni_mesh(obj_mesh);
-    uni_mesh.printMeshInfo();
+
+    TriangleMesh tri_mesh("assets/armadillo.obj");
+    {
+        Timer t("compute triangle normals");
+        tri_mesh.computeTriangleNormals();
+    }
+    {
+        Timer t("compute vertex normals");
+        tri_mesh.computeVertexNormals();
+    }
+    {
+        Timer t("compute bounding box");
+        BoundingBox bbox = tri_mesh.getAxisAlignBoundingBox();
+        printf("%f %f %f %f %f %f\n", bbox.min_x, bbox.min_y, bbox.min_z, bbox.max_x, bbox.max_y, bbox.max_z);
+    }
+    tri_mesh.printMeshInfo();
+
+    vec3 translate(1.0f, 2.0f, 3.0f);
+    vec3 scale(4.4f, 5.5f, 1.2f);
+    Quaternion rotation = Quaternion::fromEulerAngles(vec3(1.4f, 2.2f, 0.62f));
+    mat4 transform = mat4(
+        scale.x, 0.0f, 0.0f, translate.x,
+        0.0f, scale.y, 0.0f, translate.y,
+        0.0f, 0.0f, scale.z, translate.z,
+        0.0f, 0.0f, 0.0f,    1.0f
+    ).rotated(rotation);
+    transform.print();
+
+    exit(0);
 
     camera_tar = uni_mesh.getCenter() + Vector3(0.0f, -0.2f, 0.0f);
     camera_dir = Vector3(0.0f, 0.0f, 2.0f);
@@ -45,8 +71,6 @@ int main() {
     model.setTransform(model_transform);
     scene.addModel(&model);
     camera.setTransform(camera_pos, camera_tar);
-
-    // -----------------------------------------
 
     initializeApplication();
 

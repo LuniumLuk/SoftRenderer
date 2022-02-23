@@ -191,20 +191,21 @@ void OBJMesh::printMeshInfo() const
  */
 UniformMesh::UniformMesh(): m_vertices(nullptr),
                             m_vertex_count(0),
+                            m_face_count(0),
                             m_has_tex_coords(false),
                             m_has_vertex_normals(false),
                             m_bounding_box(BoundingBox()) {}
 
 UniformMesh::UniformMesh(const OBJMesh & obj_mesh)
 {
-    size_t face_count = obj_mesh.m_face_count;
-    m_vertex_count = face_count * 3;
+    m_face_count = obj_mesh.m_face_count;
+    m_vertex_count = obj_mesh.m_vertex_count;
     m_has_tex_coords = obj_mesh.m_has_tex_coords;
     m_has_vertex_normals = obj_mesh.m_has_vertex_normals;
     m_vertices = new Vertex[m_vertex_count];
 
-    Vector3 coords_min(1e6,  1e6,  1e6);
-    Vector3 coords_max(-1e6, -1e6, -1e6);
+    Vector3 coords_min(FLOAT_INF,  FLOAT_INF,  FLOAT_INF);
+    Vector3 coords_max(-FLOAT_INF, -FLOAT_INF, -FLOAT_INF);
 
     Vector3 accumulated_position = Vector3::ZERO;
     for (size_t i = 0; i < m_vertex_count; i++)
@@ -239,6 +240,7 @@ UniformMesh::UniformMesh(const OBJMesh & obj_mesh)
 UniformMesh::UniformMesh(const UniformMesh & uni_mesh)
 {
     m_vertex_count = uni_mesh.m_vertex_count;
+    m_face_count = uni_mesh.m_face_count;
     m_has_tex_coords = uni_mesh.m_has_tex_coords;
     m_has_vertex_normals = uni_mesh.m_has_vertex_normals;
     m_vertices = new Vertex[m_vertex_count];
@@ -259,7 +261,7 @@ Vertex * UniformMesh::getVertices() const
 
 size_t UniformMesh::getFaceCount() const
 {
-    return m_vertex_count / 3;
+    return m_face_count;
 }
 
 size_t UniformMesh::getVertexCount() const
@@ -284,7 +286,7 @@ void UniformMesh::printMeshInfo() const
     {
         printf("-- UniformMesh info --------------------------\n");
         printf("  vertex count : %-6lu\n", m_vertex_count);
-        printf("    face count : %-6lu\n", m_vertex_count / 3);
+        printf("    face count : %-6lu\n", m_face_count);
         printf("   mesh center : (%6.2f, %6.2f, %6.2f)\n", m_mesh_center.x, m_mesh_center.y, m_mesh_center.z);
         printf("  bounding box : (%6.2f, %6.2f, %6.2f), (%6.2f, %6.2f, %6.2f)\n", 
             m_bounding_box.min_x, m_bounding_box.min_y, m_bounding_box.min_z,
@@ -303,4 +305,337 @@ void UniformMesh::printMeshInfo() const
     {
         printf("-- UniformMesh unloaded ----------------------\n");
     }
+}
+
+/**
+ * TriangleMesh
+ */
+TriangleMesh::TriangleMesh(const char * filename):
+    m_vertices(nullptr),
+    m_vertex_normals(nullptr),
+    m_triangle_normals(nullptr),
+    m_faces(nullptr),
+    m_texture_coords(nullptr),
+    m_has_vertex_normals(false),
+    m_has_triangle_normals(false),
+    m_has_texture_coords(false),
+    m_vertex_count(0),
+    m_face_count(0)
+{
+    FILE *fp;
+    assert(filename != nullptr);
+    fp = fopen(filename, "rb");
+    if (fp == nullptr)
+    {
+        printf("TriangleMesh : mesh file: %s open failed\n", filename);
+        return;
+    }
+
+    char line_buffer[MAX_OBJ_LINE];
+    DynamicArray<vec3> vertices;
+    DynamicArray<vec3> vertex_normals;
+    DynamicArray<Array<size_t, 3> > faces;
+    DynamicArray<vec2> texture_coords;
+
+    float x, y, z;
+    size_t v1, v2, v3, vt1, vt2, vt3, vn1, vn2, vn3;
+    int scanned_items;
+    while (fgets(line_buffer, MAX_OBJ_LINE, fp))
+    {
+        if (strncmp(line_buffer, "v ", 2) == 0)
+        {
+            scanned_items = sscanf(line_buffer, "v %f %f %f", &x, &y, &z);
+            assert(scanned_items == 3);
+            vertices.push_back(vec3(x, y, z));
+        }
+        else if (strncmp(line_buffer, "vt ", 3) == 0)
+        {
+            scanned_items = sscanf(line_buffer, "vt %f %f", &x, &y);
+            assert(scanned_items == 2);
+            texture_coords.push_back(vec2(x, y));
+        }
+        else if (strncmp(line_buffer, "vn ", 3) == 0)
+        {
+            scanned_items = sscanf(line_buffer, "vn %f %f %f", &x, &y, &z);
+            assert(scanned_items == 3);
+            vertex_normals.push_back(vec3(x, y, z));
+        }
+        else if (strncmp(line_buffer, "f ", 2) == 0)
+        {
+            scanned_items = sscanf(line_buffer, "f %lu/%lu/%lu %lu/%lu/%lu %lu/%lu/%lu", &v1, &vt1, &vn1, &v2, &vt2, &vn2, &v3, &vt3, &vn3);
+            if (scanned_items != 9)
+            {
+                scanned_items = sscanf(line_buffer, "f %lu %lu %lu", &v1, &v2, &v3);
+                if (scanned_items != 3)
+                {
+                    scanned_items = sscanf(line_buffer, "f %lu//%lu %lu//%lu %lu//%lu", &v1, &vn1, &v2, &vn2, &v3, &vn3);
+                    assert(scanned_items == 6);
+                    Array<size_t, 3> f;
+                    f[0] = v1 - 1;
+                    f[1] = v2 - 1;
+                    f[2] = v3 - 1;
+                    faces.push_back(f);
+                }
+                else
+                {
+                    Array<size_t, 3> f;
+                    f[0] = v1 - 1;
+                    f[1] = v2 - 1;
+                    f[2] = v3 - 1;
+                    faces.push_back(f);
+                }
+            }
+            else
+            {
+                Array<size_t, 3> f;
+                f[0] = v1 - 1;
+                f[1] = v2 - 1;
+                f[2] = v3 - 1;
+                faces.push_back(f);
+            }
+        }
+    }
+
+    if (vertices.size() > 0)
+    {
+        m_vertex_count = vertices.size();
+        m_vertices = new vec3[vertices.size()];
+        memcpy(m_vertices, vertices.data(), vertices.size() * sizeof(vec3));
+    }
+    if (faces.size() > 0)
+    {
+        m_face_count = faces.size();
+        m_faces = new Array<size_t, 3>[faces.size()];
+        memcpy(m_faces, faces.data(), faces.size() * sizeof(Array<size_t, 3>));
+    }
+    if (texture_coords.size() > 0)
+    {
+        assert(texture_coords.size() == m_vertex_count);
+        m_texture_coords = new vec2[texture_coords.size()];
+        memcpy(m_texture_coords, texture_coords.data(), texture_coords.size() * sizeof(vec2));
+        m_has_texture_coords = true;
+    }
+    if (vertex_normals.size() > 0)
+    {
+        assert(vertex_normals.size() == m_vertex_count);
+        m_vertex_normals = new vec3[vertex_normals.size()];
+        memcpy(m_vertex_normals, vertex_normals.data(), vertex_normals.size() * sizeof(vec3));
+        m_has_vertex_normals = true;
+    }
+    fclose(fp);
+}
+
+TriangleMesh::TriangleMesh(const TriangleMesh & tri_mesh)
+{
+    m_vertex_count = tri_mesh.m_vertex_count;
+    m_face_count = tri_mesh.m_face_count;
+    m_has_vertex_normals = tri_mesh.m_has_vertex_normals;
+    m_has_triangle_normals = tri_mesh.m_has_triangle_normals;
+    m_has_texture_coords = tri_mesh.m_has_texture_coords;
+
+    if (m_vertex_count > 0)
+    {
+        m_vertices = new vec3[m_vertex_count];
+        memcpy(m_vertices, tri_mesh.m_vertices, m_vertex_count * sizeof(vec3));
+    }
+    if (m_face_count > 0)
+    {
+        m_faces = new Array<size_t, 3>[m_face_count];
+        memcpy(m_faces, tri_mesh.m_faces, m_face_count * sizeof(Array<size_t, 3>));
+    }
+    if (m_has_vertex_normals)
+    {
+        m_vertex_normals = new vec3[m_vertex_count];
+        memcpy(m_vertex_normals, tri_mesh.m_vertex_normals, m_vertex_count * sizeof(vec3));
+    }
+    if (m_has_triangle_normals)
+    {
+        m_triangle_normals = new vec3[m_face_count];
+        memcpy(m_triangle_normals, tri_mesh.m_triangle_normals, m_face_count * sizeof(vec3));
+    }
+    if (m_has_texture_coords)
+    {
+        m_texture_coords = new vec2[m_vertex_count];
+        memcpy(m_texture_coords, tri_mesh.m_texture_coords, m_vertex_count * sizeof(vec2));
+    }
+}
+
+TriangleMesh & TriangleMesh::operator= (const TriangleMesh & tri_mesh)
+{
+    if (m_vertices)         delete[] m_vertices;
+    if (m_vertex_normals)   delete[] m_vertex_normals;
+    if (m_triangle_normals) delete[] m_triangle_normals;
+    if (m_faces)            delete[] m_faces;
+    if (m_texture_coords)   delete[] m_texture_coords;
+
+    m_vertex_count = tri_mesh.m_vertex_count;
+    m_face_count = tri_mesh.m_face_count;
+    m_has_vertex_normals = tri_mesh.m_has_vertex_normals;
+    m_has_triangle_normals = tri_mesh.m_has_triangle_normals;
+    m_has_texture_coords = tri_mesh.m_has_texture_coords;
+
+    if (m_vertex_count > 0)
+    {
+        m_vertices = new vec3[m_vertex_count];
+        memcpy(m_vertices, tri_mesh.m_vertices, m_vertex_count * sizeof(vec3));
+    }
+    if (m_face_count > 0)
+    {
+        m_faces = new Array<size_t, 3>[m_face_count];
+        memcpy(m_faces, tri_mesh.m_faces, m_face_count * sizeof(Array<size_t, 3>));
+    }
+    if (m_has_vertex_normals)
+    {
+        m_vertex_normals = new vec3[m_vertex_count];
+        memcpy(m_vertex_normals, tri_mesh.m_vertex_normals, m_vertex_count * sizeof(vec3));
+    }
+    if (m_has_triangle_normals)
+    {
+        m_triangle_normals = new vec3[m_face_count];
+        memcpy(m_triangle_normals, tri_mesh.m_triangle_normals, m_face_count * sizeof(vec3));
+    }
+    if (m_has_texture_coords)
+    {
+        m_texture_coords = new vec2[m_vertex_count];
+        memcpy(m_texture_coords, tri_mesh.m_texture_coords, m_vertex_count * sizeof(vec2));
+    }
+}
+
+TriangleMesh::~TriangleMesh()
+{
+    if (m_vertices)         delete[] m_vertices;
+    if (m_vertex_normals)   delete[] m_vertex_normals;
+    if (m_triangle_normals) delete[] m_triangle_normals;
+    if (m_faces)            delete[] m_faces;
+    if (m_texture_coords)   delete[] m_texture_coords;
+}
+
+void TriangleMesh::printMeshInfo() const
+{
+    if (m_vertex_count > 0)
+    {
+        printf("-- TriangleMesh info -------------------------\n");
+        printf("    vertex count : %-6lu\n", m_vertex_count);
+        printf("      face count : %-6lu\n", m_face_count);
+        if (m_has_vertex_normals)
+            printf("  vertex normals : True\n");
+        else
+            printf("  vertex normals : False\n");
+        if (m_has_triangle_normals)
+            printf("triangle normals : True\n");
+        else
+            printf("triangle normals : False\n");
+        if (m_has_texture_coords)
+            printf("  texture coords : True\n");
+        else
+            printf("  texture coords : False\n");
+        
+        printf("----------------------------------------------\n");
+    }
+    else
+    {
+        printf("-- TriangleMesh unloaded ---------------------\n");
+    }
+}
+
+void TriangleMesh::computeVertexNormals()
+{
+    if (m_has_vertex_normals) return;
+    
+    if (!m_has_triangle_normals)
+    {
+        computeTriangleNormals();
+    }
+
+    DynamicArray<DynamicArray<size_t> > neighbour_faces(m_vertex_count);
+    for (size_t fidx = 0; fidx < m_face_count; fidx++)
+    {
+        neighbour_faces[m_faces[fidx][0]].push_back(fidx);
+        neighbour_faces[m_faces[fidx][1]].push_back(fidx);
+        neighbour_faces[m_faces[fidx][2]].push_back(fidx);
+    }
+
+    DynamicArray<vec3> vertex_normals;
+    for (size_t vidx = 0; vidx < m_vertex_count; vidx++)
+    {
+        vec3 n;
+        for (size_t i = 0; i < neighbour_faces[vidx].size(); i++)
+        {
+            n += m_triangle_normals[neighbour_faces[vidx][i]];
+        }
+        vertex_normals.push_back(n.normalized());
+    }
+
+    m_vertex_normals = new vec3[vertex_normals.size()];
+    memcpy(m_vertex_normals, vertex_normals.data(), vertex_normals.size() * sizeof(vec3));
+
+    m_has_vertex_normals = true;
+}
+
+void TriangleMesh::computeTriangleNormals()
+{
+    if (m_has_triangle_normals) return;
+
+    DynamicArray<vec3> triangle_normals;
+
+    for (size_t fidx = 0; fidx < m_face_count; fidx++)
+    {
+        vec3 e1 = m_vertices[m_faces[fidx][0]] - m_vertices[m_faces[fidx][1]];
+        vec3 e2 = m_vertices[m_faces[fidx][0]] - m_vertices[m_faces[fidx][2]];
+
+        triangle_normals.push_back(e1.cross(e2).normalized());
+    }
+
+    m_triangle_normals = new vec3[triangle_normals.size()];
+    memcpy(m_triangle_normals, triangle_normals.data(), triangle_normals.size() * sizeof(vec3));
+
+    m_has_triangle_normals = true;
+}
+
+BoundingBox TriangleMesh::getAxisAlignBoundingBox() const
+{
+    BoundingBox bounding_box(
+         FLOAT_INF,  FLOAT_INF,  FLOAT_INF,
+        -FLOAT_INF, -FLOAT_INF, -FLOAT_INF
+    );
+
+    for (size_t vidx = 0; vidx < m_vertex_count; vidx++)
+    {
+        bounding_box.min_x = min(m_vertices[vidx].x, bounding_box.min_x);
+        bounding_box.min_y = min(m_vertices[vidx].y, bounding_box.min_y);
+        bounding_box.min_z = min(m_vertices[vidx].z, bounding_box.min_z);
+        bounding_box.max_x = max(m_vertices[vidx].x, bounding_box.max_x);
+        bounding_box.max_y = max(m_vertices[vidx].y, bounding_box.max_y);
+        bounding_box.max_z = max(m_vertices[vidx].z, bounding_box.max_z);
+    }
+    
+    return bounding_box;
+}
+
+vec3 TriangleMesh::getMaxBound() const
+{
+    vec3 max_bound(-FLOAT_INF, -FLOAT_INF, -FLOAT_INF);
+
+    for (size_t vidx = 0; vidx < m_vertex_count; vidx++)
+    {
+        max_bound.x = max(m_vertices[vidx].x, max_bound.x);
+        max_bound.y = max(m_vertices[vidx].y, max_bound.y);
+        max_bound.z = max(m_vertices[vidx].z, max_bound.z);
+    }
+
+    return max_bound;
+}
+
+vec3 TriangleMesh::getMinBound() const
+{
+    vec3 min_bound(FLOAT_INF, FLOAT_INF, FLOAT_INF);
+
+    for (size_t vidx = 0; vidx < m_vertex_count; vidx++)
+    {
+        min_bound.x = max(m_vertices[vidx].x, min_bound.x);
+        min_bound.y = max(m_vertices[vidx].y, min_bound.y);
+        min_bound.z = max(m_vertices[vidx].z, min_bound.z);
+    }
+
+    return min_bound;
 }

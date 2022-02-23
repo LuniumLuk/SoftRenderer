@@ -11,6 +11,22 @@
 namespace Lurdr
 {
 
+// Array implement basic functionalities as STL std::array
+template <typename T, size_t S>
+class Array
+{
+private:
+    T m_data[S]; 
+public:
+    constexpr size_t size() const { return S; }
+
+    T& operator[] (size_t index) { return m_data[index]; }
+    const T& operator[] (size_t index) const { return m_data[index]; }
+
+    T* data() { return m_data; }
+    const T* data() const { return m_data; }
+};
+
 // DynamicArray implement basic functionalities as STL std::vector
 template<typename T>
 class DynamicArray
@@ -114,13 +130,12 @@ T DynamicArray<T>::front() const
 template<typename T>
 T DynamicArray<T>::at(const size_t & pos) const
 {   
-    assert(pos >= 0 && pos < m_size);
+    assert(pos < m_size);
     return m_array[pos];
 }
 template<typename T>
 T& DynamicArray<T>::operator[] (const size_t & pos)
 {
-    assert(pos >= 0);
     if (pos >= m_capacity)
     {
         m_capacity = pos + 1;

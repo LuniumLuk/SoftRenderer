@@ -124,7 +124,7 @@ void Vector2::print() const
 Vector2 Vector2::normalized() const
 {
     float len = length();
-    assert(fabs(len) > EPSILON);
+    if (fabs(len) < EPSILON) len = 1.0f;
     float factor = 1.0f / len;
     Vector2 vec(
         x * factor,
@@ -135,7 +135,7 @@ Vector2 Vector2::normalized() const
 void Vector2::normalize()
 {
     float len = length();
-    assert(fabs(len) > EPSILON);
+    if (fabs(len) < EPSILON) len = 1.0f;
     float factor = 1.0f / len;
     x *= factor;
     y *= factor;
@@ -259,7 +259,7 @@ float Vector3::length() const
 Vector3 Vector3::normalized() const
 {
     float len = length();
-    assert(fabs(len) > EPSILON);
+    if (fabs(len) < EPSILON) len = 1.0f;
     float factor = 1.0f / len;
     Vector3 vec(
         x * factor,
@@ -271,7 +271,7 @@ Vector3 Vector3::normalized() const
 void Vector3::normalize()
 {
     float len = length();
-    assert(fabs(len) > EPSILON);
+    if (fabs(len) < EPSILON) len = 1.0f;
     float factor = 1.0f / len;
     x *= factor;
     y *= factor;
@@ -456,7 +456,7 @@ float Vector4::length() const
 Vector4 Vector4::normalized() const
 {
     float len = length();
-    assert(fabs(len) > EPSILON);
+    if (fabs(len) < EPSILON) len = 1.0f;
     float factor = 1.0f / len;
     Vector4 vec(
         x * factor,
@@ -469,7 +469,7 @@ Vector4 Vector4::normalized() const
 void Vector4::normalize()
 {
     float len = length();
-    assert(fabs(len) > EPSILON);
+    if (fabs(len) < EPSILON) len = 1.0f;
     float factor = 1.0f / len;
     x *= factor;
     y *= factor;
@@ -555,7 +555,7 @@ float Quaternion::dot(const Quaternion & other) const
 Quaternion Quaternion::normalized() const
 {
     float len = sqrtf(dot(*this));
-    assert(fabs(len) > EPSILON);
+    if (fabs(len) < EPSILON) len = 1.0f;
     float factor = 1.0f / len;
     Quaternion quat(
         x * factor,
@@ -568,7 +568,7 @@ Quaternion Quaternion::normalized() const
 void Quaternion::normalize()
 {
     float len = sqrtf(dot(*this));
-    assert(fabs(len) > EPSILON);
+    if (fabs(len) < EPSILON) len = 1.0f;
     float factor = 1.0f / len;
     x *= factor;
     y *= factor;
