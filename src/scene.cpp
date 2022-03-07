@@ -109,10 +109,14 @@ void Model::drawByFixedPipeline(const FrameBuffer & frame_buffer, const Camera &
 
 void Model::draw(const FrameBuffer & frame_buffer, const Program & program)
 {
+    __unused_variable(frame_buffer);
+    __unused_variable(program);
     // vertex shader
     Vertex *mesh_vertices = m_mesh->getVertices();
-
     Vector4 *position_buffer = new Vector4[m_mesh->getVertexCount()];
+    
+    __unused_variable(mesh_vertices);
+    __unused_variable(position_buffer);
 
     for (size_t i = 0; i < m_mesh->getVertexCount(); i += 3)
     {

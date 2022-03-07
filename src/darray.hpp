@@ -18,7 +18,7 @@ class Array
 private:
     T m_data[S]; 
 public:
-    constexpr size_t size() const { return S; }
+    size_t size() const { return S; }
 
     T& operator[] (size_t index) { return m_data[index]; }
     const T& operator[] (size_t index) const { return m_data[index]; }
@@ -26,6 +26,8 @@ public:
     T* data() { return m_data; }
     const T* data() const { return m_data; }
 };
+
+typedef Array<size_t,3> vec3i;
 
 // DynamicArray implement basic functionalities as STL std::vector
 template<typename T>
@@ -75,7 +77,10 @@ DynamicArray<T>::DynamicArray(const DynamicArray & array)
 {
     m_size = array.m_size;
     m_capacity = array.m_capacity;
-    memcpy(m_array, array.m_array, m_size);
+    for (size_t i = 0; i < m_size; i++)
+    {
+        m_array[i] = std::move(array.m_array[i]);
+    }
 }
 
 template<typename T>
@@ -97,7 +102,10 @@ void DynamicArray<T>::push_back(const T element)
     {
         m_capacity *= 2;
         T *new_array = new T[m_capacity];
-        memcpy(new_array, m_array, m_size * sizeof(T));
+        for (size_t i = 0; i < m_size; i++)
+        {
+            new_array[i] = std::move(m_array[i]);
+        }
         delete[] m_array;
         m_array = new_array;
         m_array[m_size++] = element;
@@ -140,8 +148,10 @@ T& DynamicArray<T>::operator[] (const size_t & pos)
     {
         m_capacity = pos + 1;
         T *new_array = new T[m_capacity];
-        memset(new_array, 0, m_capacity * sizeof(T));
-        memcpy(new_array, m_array, m_size * sizeof(T));
+        for (size_t i = 0; i < m_size; i++)
+        {
+            new_array[i] = m_array[i];
+        }
         delete[] m_array;
         m_array = new_array;
         m_size = m_capacity;
@@ -153,7 +163,6 @@ void DynamicArray<T>::clear()
 {
     m_size = 0;
     m_capacity = 0;
-
 }
 template<typename T>
 bool DynamicArray<T>::empty() const

@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include <utility>
-#include "../platform.hpp"
+#include "../platform/platform.hpp"
 #include "../api.hpp"
 
 using namespace Lurdr;
@@ -63,7 +63,7 @@ int main() {
 
     // -------------------------------------------
 
-    int _fps = 0;
+    long _fps = 0;
     clock_t last_frame_timestamp = clock();
     clock_t last_fps_update = clock();
     while (!windowShouldClose(window))

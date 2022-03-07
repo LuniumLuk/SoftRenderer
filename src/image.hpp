@@ -21,6 +21,10 @@
 #define COLOR_YUV 2U
 #define COLOR_HSV 3U
 
+#ifndef __SIZEOF_INT128__
+typedef unsigned long long __uint128_t;
+#endif
+
 namespace Lurdr
 {
 
@@ -33,30 +37,30 @@ namespace Lurdr
 // in x86_64, sizeof(BITMAPFILEHEADER) = 16, use loadFileHeaderx64() to load this struct
 typedef struct BITMAPFILEHEADER
 {
-	ushort_t  signature;
-	ulong_t   file_size;
-	ulong_t   reserved;
-	ulong_t   data_offset;
+	UINT16  signature;
+	UINT32  file_size;
+	UINT32  reserved;
+	UINT32  data_offset;
 } BMPFileHeader;
 
 typedef struct BITMAPINFOHEADER
 {
-	ulong_t         size;       // info header size
-	long_t          width;
- 	long_t          height;     // negative height indicate upside-down data buffer
- 	ushort_t        planes;
-	ushort_t        bits_per_pixel;
+	UINT32      size;           // info header size
+	INT32       width;
+ 	INT32       height;         // negative height indicate upside-down data buffer
+ 	UINT16      planes;
+	UINT16      bits_per_pixel;
                                 // 1 = monochrome palette.  NumColors = 1  
                                 // 4 = 4bit palletized.     NumColors = 16  
                                 // 8 = 8bit palletized.     NumColors = 256 
                                 // 16 = 16bit RGB.          NumColors = 65536
                                 // 24 = 24bit RGB.          NumColors = 16M
-	ulong_t         compression;
-	ulong_t         image_size; // compressed size of image, 0 if compression == 0
- 	long_t          X_pixels_per_M;
-	long_t          Y_pixels_per_M;
-	ulong_t         colors_used;
-	ulong_t         important_colors;
+	UINT32      compression;
+	UINT32      image_size;     // compressed size of image, 0 if compression == 0
+ 	INT32       X_pixels_per_M;
+	INT32       Y_pixels_per_M;
+	UINT32      colors_used;
+	UINT32      important_colors;
 } BMPInfoHeader;
 
 // used when bits_per_pixel <= 8
@@ -97,9 +101,9 @@ public:
     BMPImage(const BMPImage & image);
     ~BMPImage() { clean(); }
 
-    ulong_t getBufferSize()  const { return m_info_header.image_size; }
-    long_t  getImageWidth()  const { return m_info_header.width; }
-    long_t  getImageHeight() const { return m_info_header.height; }
+    UINT32 getBufferSize()  const { return m_info_header.image_size; }
+    INT32  getImageWidth()  const { return m_info_header.width; }
+    INT32  getImageHeight() const { return m_info_header.height; }
     bool    isLoaded()       const { return m_is_loaded; }
     size_t  getChannelNum()  const;
 

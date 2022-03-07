@@ -90,7 +90,7 @@ void Lurdr::swapBuffer(AppWindow *window)
 }
 
 // virtual-key codes reference : https://stackoverflow.com/questions/3202629/where-can-i-find-a-list-of-mac-virtual-key-codes
-void handleKeyEvent(AppWindow *window, int virtual_key, bool pressed)
+void handleKeyEvent(AppWindow *window, long virtual_key, bool pressed)
 {
     KEY_CODE key;
     switch (virtual_key) {
@@ -240,7 +240,7 @@ void handleMouseScroll(AppWindow *window, float delta)
 
 ContentView *g_view;
 
-AppWindow* Lurdr::createWindow(const char *title, int width, int height, unsigned char *surface_buffer)
+AppWindow* Lurdr::createWindow(const char *title, long width, long height, unsigned char *surface_buffer)
 {
     NSUInteger windowStyle = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable;
 

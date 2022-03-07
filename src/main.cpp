@@ -59,8 +59,6 @@ int main() {
     ).rotated(rotation);
     transform.print();
 
-    exit(0);
-
     camera_tar = uni_mesh.getCenter() + Vector3(0.0f, -0.2f, 0.0f);
     camera_dir = Vector3(0.0f, 0.0f, 2.0f);
     camera_pos = camera_tar + camera_dir.rotatedFromAxisAngle(Vector3::UNIT_Y, rotate_angle);
@@ -82,7 +80,7 @@ int main() {
     setMouseScrollCallback(window, mouseScrollEventCallback);
     setMouseDragCallback(window, mouseDragEventCallback);
 
-    int _fps = 0;
+    long _fps = 0;
     clock_t last_frame_timestamp = clock();
     clock_t last_fps_update = clock();
     while (!windowShouldClose(window))
@@ -139,11 +137,15 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
                     camera_dir.z -= 0.02f;
                 }
                 break;
-            case KEY_SPACE:
-                printf("Press SPACE\n");
-                break;
             case KEY_ESCAPE:
-                exit(0);
+                destroyWindow(window);
+                break;
+            case KEY_SPACE:
+                {
+                    Time time = getSystemTime();
+                    printf("year[%ld] month[%ld] weekday[%ld] day[%ld] hour[%ld] minute[%ld] second[%ld] ms[%ld]\n", 
+                        time.year, time.month, time.day_of_week, time.day, time.hour, time.minute, time.second, time.millisecond);
+                }
                 break;
             default:
                 return;
@@ -155,46 +157,16 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
 }
 void mouseButtonEventCallback(AppWindow *window, MOUSE_BUTTON button, bool pressed)
 {
-    assert(window);
-    printf("mouseButtonEventCallback : %p %d %u\n", window, button, pressed);
+    __unused_variable(window);
+    printf("mouse button event : button[%d] pressed[%u]\n", button, pressed);
 }
 void mouseScrollEventCallback(AppWindow *window, float offset)
 {
-    assert(window);
-    printf("mouseScrollEventCallback : %p %f\n", window, offset);
+    __unused_variable(window);
+    printf("mouse scroll event : offset[%.2f]\n", offset);
 }
 void mouseDragEventCallback(AppWindow *window, float x, float y)
 {
-    assert(window);
-    printf("mouseDragEventCallback : %p %f %f\n", window, x, y);
+    __unused_variable(window);
+    printf("mouse drag event x[%.2f] y[%.2f]\n", x, y);
 }
-
-// void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
-// {
-//     printf("keyboard event : key[%d] pressed[%u]\n", key, pressed);
-//     switch(key) {
-//         case KEY_ESCAPE:
-//             destroyWindow(window);
-//             break;
-//         case KEY_SPACE:
-//             Time time = getSystemTime();
-//             printf("year[%d] month[%d] weekday[%d] day[%d] hour[%d] minute[%d] second[%d] ms[%d]\n", 
-//                 time.year, time.month, time.day_of_week, time.day, time.hour, time.minute, time.second, time.millisecond);
-//             break;
-//     }
-// }
-// void mouseButtonEventCallback(AppWindow *window, MOUSE_BUTTON button, bool pressed)
-// {
-//     __unused_variable(window);
-//     printf("mouse button event : button[%d] pressed[%u]\n", button, pressed);
-// }
-// void mouseScrollEventCallback(AppWindow *window, float offset)
-// {
-//     __unused_variable(window);
-//     printf("mouse scroll event : offset[%.2f]\n", offset);
-// }
-// void mouseDragEventCallback(AppWindow *window, float x, float y)
-// {
-//     __unused_variable(window);
-//     printf("mouse drag event x[%.2f] y[%.2f]\n", x, y);
-// }

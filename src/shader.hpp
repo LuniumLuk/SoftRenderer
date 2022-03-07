@@ -15,8 +15,8 @@ namespace Lurdr
 #define MAX_UNIFORM_COUNT 64
 #define MAX_OUT_COUNT 64
 
-#define SHADER_FUNC(name) void(*name)(int,void**,void**,size_t*,void**)
-#define SHADER_PARAM    int in_count, void* in[], void* uniform[], size_t* out_sizes, void* out[]
+#define SHADER_FUNC(name) void(*name)(long,void**,void**,size_t*,void**)
+#define SHADER_PARAM    long in_count, void* in[], void* uniform[], size_t* out_sizes, void* out[]
 
 #define layout_in(T,b)  static_cast<T*>(in[b]);assert(b<in_count)
 #define uniform(T,b)    static_cast<T*>(uniform[b]);assert(b<MAX_UNIFORM_COUNT)
@@ -26,7 +26,7 @@ namespace Lurdr
 #define unused_uniform  (void)uniform
 #define unused_out      (void)out;(void)out_sizes
 
-void * allocateOutBuffer(const size_t & size, size_t * allocated_sizes, const int & pos, void ** buffer);
+void * allocateOutBuffer(const size_t & size, size_t * allocated_sizes, const long & pos, void ** buffer);
 
 enum SHADER_TYPE
 {
@@ -50,7 +50,7 @@ public:
 
     void linkShader(SHADER_TYPE type, SHADER_FUNC(shader));
     void run(SHADER_TYPE type, const size_t & in_count, void* in[], size_t* out_sizes, void* out[]) const;
-    void setUniform(int idx, void* uniform);
+    void setUniform(long idx, void* uniform);
 };
 
 struct PointLight

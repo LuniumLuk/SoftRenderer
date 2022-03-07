@@ -2,11 +2,11 @@
 
 using namespace Lurdr;
 
-RGBCOLOR Lurdr::getColorFromScheme(float percentage, const Vector3 * colormap, int map_size)
+RGBCOLOR Lurdr::getColorFromScheme(float percentage, const Vector3 * colormap, long map_size)
 {
     Vector3 color;
     float s = 1.0f / (map_size - 1);
-    int i = (int)(percentage * (map_size - 1));
+    long i = (long)(percentage * (map_size - 1));
     float lerp_factor = (percentage - (float)i * s) * (map_size - 1);
 
     color = Vector3::lerp(colormap[i], colormap[i + 1], lerp_factor);

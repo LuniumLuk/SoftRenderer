@@ -2,7 +2,7 @@
 
 using namespace Lurdr;
 
-void * Lurdr::allocateOutBuffer(const size_t & size, size_t * allocated_sizes, const int & pos, void ** buffer)
+void * Lurdr::allocateOutBuffer(const size_t & size, size_t * allocated_sizes, const long & pos, void ** buffer)
 {
     if (allocated_sizes[pos] == size)
     {
@@ -60,7 +60,7 @@ void Program::run(SHADER_TYPE type, const size_t & in_count, void* in[], size_t*
     }
 }
 
-void Program::setUniform(int idx, void* uniform)
+void Program::setUniform(long idx, void* uniform)
 {
     assert(idx >= 0 && idx < MAX_UNIFORM_COUNT);
     m_uniform[idx] = uniform;

@@ -132,7 +132,7 @@ int main()
     // printf("=== ==== ===\n");
 
     // int16_t aaa = 0b0110001111011110;
-    // for (int i = 15; i >= 0; i--)
+    // for (long i = 15; i >= 0; i--)
     // {
     //     printf("%d", 1 & (aaa >> i));
     // }

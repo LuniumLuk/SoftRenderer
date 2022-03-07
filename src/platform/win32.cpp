@@ -28,8 +28,8 @@ Lurdr::byte_t * g_paint_surface;
 HINSTANCE   g_hInstance;
 POINTS      g_mouse_pts;
 BITMAPINFO  g_bitmapinfo;
-int         g_viewer_width;
-int         g_viewer_height;
+long        g_viewer_width;
+long        g_viewer_height;
 bool        g_update_paint = false;
 
 static void handleKeyPress(WPARAM wParam, bool pressed)
@@ -198,7 +198,7 @@ void Lurdr::terminateApplication() {
     delete[] g_paint_surface;
 };
 
-Lurdr::AppWindow* Lurdr::createWindow(const char *title, int width, int height, byte_t *surface_buffer)
+Lurdr::AppWindow* Lurdr::createWindow(const char *title, long width, long height, byte_t *surface_buffer)
 {
     HWND hwnd = CreateWindowEx(
         0,

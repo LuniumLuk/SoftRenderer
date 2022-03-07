@@ -1,5 +1,5 @@
 #ifndef __MISC_HPP__
-#define __MSIC_HPP__
+#define __MISC_HPP__
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -9,7 +9,7 @@
 namespace Lurdr
 {
 
-#ifdef __CUSTOM_NEW__
+#ifdef __OVERRIDE_NEW__
 
 class MemoryCounter
 {

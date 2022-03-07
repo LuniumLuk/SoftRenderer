@@ -605,7 +605,7 @@ const Vector3 ylrd_colormap[COLORMAP_YLRD_SIZE] =
     Vector3(0x7f, 0x00, 0x00),
 };
 
-RGBCOLOR getColorFromScheme(float percentage, const Vector3 * colormap, int map_size);
+RGBCOLOR getColorFromScheme(float percentage, const Vector3 * colormap, long map_size);
 RGBCOLOR getColorMap(float value, float lower, float upper, COLORMAP_TYPE type);
 
 }

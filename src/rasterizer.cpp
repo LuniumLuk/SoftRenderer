@@ -48,8 +48,8 @@ void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, R
 
     long dx = fabs(x2 - x1);
     long dy = -fabs(y2 - y1);
-    int sx = x1 < x2 ? 1 : -1;
-    int sy = y1 < y2 ? 1 : -1;
+    long sx = x1 < x2 ? 1 : -1;
+    long sy = y1 < y2 ? 1 : -1;
     long err = dx + dy; 
     long e2;
 
@@ -91,8 +91,8 @@ void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, R
 
     long dx = fabs(x2 - x1);
     long dy = -fabs(y2 - y1);
-    int sx = x1 < x2 ? 1 : -1;
-    int sy = y1 < y2 ? 1 : -1;
+    long sx = x1 < x2 ? 1 : -1;
+    long sy = y1 < y2 ? 1 : -1;
     long err = dx + dy; 
     long e2;
 
@@ -491,9 +491,9 @@ void Lurdr::bresenhamFillFlatTriangle(const FrameBuffer & frame_buffer, long y12
     long dx1 = fabs(x3 - x1);
     long dx2 = fabs(x3 - x2);
     long dy = -fabs(y3 - y12);
-    int sx1 = x1 < x3 ? 1 : -1;
-    int sx2 = x2 < x3 ? 1 : -1;
-    int sy = y12 < y3 ? 1 : -1;
+    long sx1 = x1 < x3 ? 1 : -1;
+    long sx2 = x2 < x3 ? 1 : -1;
+    long sy = y12 < y3 ? 1 : -1;
     long err1 = dx1 + dy; 
     long err2 = dx2 + dy; 
     long e21;
@@ -555,7 +555,7 @@ void Lurdr::improvedBresenhamTriangleRasterization(const FrameBuffer & frame_buf
     drawLine(frame_buffer, v1, v3, color);
     drawLine(frame_buffer, v2, v3, color);
 
-    for (int i = y1; i < y3; i++)
+    for (long i = y1; i < y3; i++)
     {
         drawScanLine(frame_buffer, x_left[i-y1], x_right[i-y1], i, color);
     }
@@ -575,8 +575,8 @@ void Lurdr::fillTriangleTable(long * x_left, long * x_right, long x1, long y1, l
     }
     long dx = fabs(x2 - x1);
     long dy = -fabs(y2 - y1);
-    int sx = x1 < x2 ? 1 : -1;
-    int sy = y1 < y2 ? 1 : -1;
+    long sx = x1 < x2 ? 1 : -1;
+    long sy = y1 < y2 ? 1 : -1;
     long err = dx + dy; 
     long e2;
     bool need_to_draw = true;

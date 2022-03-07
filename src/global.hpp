@@ -13,11 +13,13 @@ namespace Lurdr
 #define PI 3.14159265358979323846264338327950288f
 #define EPSILON 1e-6f
 
-// x86_64
-typedef unsigned char  byte_t;   // 1 bytes
-typedef unsigned short ushort_t; // 2 bytes
-typedef unsigned int   ulong_t;  // 4 bytes
-typedef int            long_t;   // 4 bytes
+typedef unsigned char       byte_t;  // 1 bytes
+typedef unsigned short      UINT16;  // 2 bytes
+typedef short               INT16;   // 2 bytes
+typedef unsigned int        UINT32;  // 4 bytes
+typedef int                 INT32;   // 4 bytes
+typedef unsigned long long  UINT64;  // 8 bytes
+typedef long long           INT64;   // 8 bytes
 
 typedef struct RGBCOLOR
 {

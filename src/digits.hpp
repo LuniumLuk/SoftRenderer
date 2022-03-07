@@ -68,12 +68,7 @@ enum DIGIT_CHARACTER
  */
 
 // 16-segment digit data
-#ifdef WIN32
-const __INT32_TYPE__ DIGITS_16SEG[] = 
-#endif
-#ifdef OSX
-const int32_t DIGITS_16SEG[] = 
-#endif
+const INT32 DIGITS_16SEG[] = 
 {
     0b1110011001100111, // 0
     0b0000001000000100, // 1
@@ -137,7 +132,7 @@ const float DIGITS_16SEG_COORDS[][2] =
     { 1.0f, 1.0f },
 };
 
-const int DIGITS_16SEG_EDGES[][2] = 
+const long DIGITS_16SEG_EDGES[][2] = 
 {
     { 0, 1 }, { 1, 2 }, { 0, 3 }, { 0, 4 },
     { 1, 4 }, { 2, 4 }, { 2, 5 }, { 3, 4 },
@@ -163,12 +158,12 @@ void drawDigit(
     const float & size, 
     const RGBCOLOR & color,
     const float & ratio = 1.5f, 
-    const int & segment = 16 )
+    const long & segment = 16 )
 {
     assert(character < DIGIT_NUM);
     assert(segment == 16); // support 16-segment so far
 
-    for (int i = 0; i < 16; i++)
+    for (long i = 0; i < 16; i++)
     {
         if (1 & (DIGITS_16SEG[character] >> (15 - i))) {
             drawLine(frame_buffer, Vector2(
@@ -189,12 +184,12 @@ void drawDigit(
 void drawInteger(
     const FrameBuffer & frame_buffer, 
     const float & x, const float & y, 
-    int number, 
+    long number, 
     const float & size, 
     const RGBCOLOR & color,
     const float & gap = 0.5f,
     const float & ratio = 1.5f, 
-    const int & segment = 16 )
+    const long & segment = 16 )
 {
     bool is_negative = false;
     if (number < 0)
@@ -244,7 +239,7 @@ void drawString(
     const RGBCOLOR & color,
     const float & gap = 0.5f,
     const float & ratio = 1.5f, 
-    const int & segment = 16 )
+    const long & segment = 16 )
 {
     size_t length = strlen(string);
     float offset_x = x;

@@ -31,18 +31,13 @@ public:
         const Quaternion & rotation,
         const vec3 & scale )
     {
-        m_transform = rotation * mat4(
-            scale.x, 0.0f, 0.0f, translate.x,
-            0.0f, scale.y, 0.0f, translate.y,
-            0.0f, 0.0f, scale.z, translate.z,
-            0.0f, 0.0f, 0.0f, 1.0f
-        );
+        m_transform = mat4::fromTRS(translate, rotation, scale);
     }
     const mat4 getTransform() const { return m_transform; }
 
     void setTriangleMesh(TriangleMesh * mesh) { m_mesh = mesh; }
     const TriangleMesh * getTriangleMesh() const { return m_mesh; }
-}
+};
 
 }
 

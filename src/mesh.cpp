@@ -71,7 +71,7 @@ void OBJMesh::loadMesh()
 
     float x, y, z;
     size_t v1, v2, v3, vt1, vt2, vt3, vn1, vn2, vn3;
-    int scanned_items;
+    long scanned_items;
     while (fgets(line_buffer, MAX_OBJ_LINE, fp))
     {
         if (strncmp(line_buffer, "v ", 2) == 0)
@@ -314,13 +314,13 @@ TriangleMesh::TriangleMesh(const char * filename):
     m_vertices(nullptr),
     m_vertex_normals(nullptr),
     m_triangle_normals(nullptr),
-    m_faces(nullptr),
     m_texture_coords(nullptr),
+    m_faces(nullptr),
+    m_vertex_count(0),
+    m_face_count(0),
     m_has_vertex_normals(false),
     m_has_triangle_normals(false),
-    m_has_texture_coords(false),
-    m_vertex_count(0),
-    m_face_count(0)
+    m_has_texture_coords(false)
 {
     FILE *fp;
     assert(filename != nullptr);
@@ -339,7 +339,7 @@ TriangleMesh::TriangleMesh(const char * filename):
 
     float x, y, z;
     size_t v1, v2, v3, vt1, vt2, vt3, vn1, vn2, vn3;
-    int scanned_items;
+    long scanned_items;
     while (fgets(line_buffer, MAX_OBJ_LINE, fp))
     {
         if (strncmp(line_buffer, "v ", 2) == 0)
@@ -499,6 +499,8 @@ TriangleMesh & TriangleMesh::operator= (const TriangleMesh & tri_mesh)
         m_texture_coords = new vec2[m_vertex_count];
         memcpy(m_texture_coords, tri_mesh.m_texture_coords, m_vertex_count * sizeof(vec2));
     }
+
+    return *this;
 }
 
 TriangleMesh::~TriangleMesh()

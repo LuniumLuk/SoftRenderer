@@ -15,13 +15,13 @@ void BMPImage::loadFileHeaderx64(FILE *fp)
 
     fseek(fp, 0L, SEEK_SET);
     fread(temp_buffer, LBI_FILE_HEADER_SIZE, 1, fp);
-    memcpy(&(m_file_header.signature), ptr, sizeof(ushort_t));
-    ptr += sizeof(ushort_t);
-    memcpy(&(m_file_header.file_size), ptr, sizeof(ulong_t));
-    ptr += sizeof(ulong_t);
-    memcpy(&(m_file_header.reserved), ptr, sizeof(ulong_t));
-    ptr += sizeof(ulong_t);
-    memcpy(&(m_file_header.data_offset), ptr, sizeof(ulong_t));
+    memcpy(&(m_file_header.signature), ptr, sizeof(UINT16));
+    ptr += sizeof(UINT16);
+    memcpy(&(m_file_header.file_size), ptr, sizeof(UINT32));
+    ptr += sizeof(UINT32);
+    memcpy(&(m_file_header.reserved), ptr, sizeof(UINT32));
+    ptr += sizeof(UINT32);
+    memcpy(&(m_file_header.data_offset), ptr, sizeof(UINT32));
 
     delete[] temp_buffer;
 }
@@ -30,13 +30,13 @@ void BMPImage::writeFileHeaderx64(FILE *fp) const
     byte_t *temp_buffer = new byte_t[LBI_FILE_HEADER_SIZE];
     byte_t *ptr = temp_buffer;
 
-    memcpy(ptr, &(m_file_header.signature), sizeof(ushort_t));
-    ptr += sizeof(ushort_t);
-    memcpy(ptr, &(m_file_header.file_size), sizeof(ushort_t));
-    ptr += sizeof(ulong_t);
-    memcpy(ptr, &(m_file_header.reserved), sizeof(ushort_t));
-    ptr += sizeof(ulong_t);
-    memcpy(ptr, &(m_file_header.data_offset), sizeof(ushort_t));
+    memcpy(ptr, &(m_file_header.signature), sizeof(UINT16));
+    ptr += sizeof(UINT16);
+    memcpy(ptr, &(m_file_header.file_size), sizeof(UINT16));
+    ptr += sizeof(UINT32);
+    memcpy(ptr, &(m_file_header.reserved), sizeof(UINT16));
+    ptr += sizeof(UINT32);
+    memcpy(ptr, &(m_file_header.data_offset), sizeof(UINT16));
 
     fseek(fp, 0L, SEEK_SET);
     fwrite(temp_buffer, LBI_FILE_HEADER_SIZE, 1, fp);
@@ -213,7 +213,7 @@ BMPImage::BMPImage(const BMPImage & image): m_color_tables(nullptr),
 }
 size_t BMPImage::getChannelNum() const
 {
-    ushort_t bits = m_info_header.bits_per_pixel;
+    UINT16 bits = m_info_header.bits_per_pixel;
     switch (bits)
     {
         case 1:  return -8;
@@ -462,12 +462,20 @@ void UniformImage::convertColorSpace(const unsigned short mode)
     
     if (mode == COLOR_RGB && m_color_space == COLOR_BGR)
     { 
+#ifdef __SIZEOF_INT128__
         RGB2BGR_SIMD();
+#else
+        RGB2BGR();
+#endif
         m_color_space = COLOR_BGR;
     }
     if (mode == COLOR_BGR && m_color_space == COLOR_RGB)
     { 
+#ifdef __SIZEOF_INT128__
         BGR2RGB_SIMD();
+#else
+        BGR2RGB();
+#endif
         m_color_space = COLOR_RGB;
     }
     // ...
@@ -487,12 +495,7 @@ bool UniformImage::isBigEndian()
 {
     union 
     {
-#ifdef WIN32
-        __UINT32_TYPE__ i;
-#endif
-#ifdef OSX
-        uint32_t i;
-#endif
+        UINT32 i;
         byte_t c[4];
     } bint = { 0x01020304 };
     return bint.c[0] == 1; 

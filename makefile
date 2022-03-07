@@ -35,7 +35,6 @@ MD         := mkdir -p
 
 # reference : https://stackoverflow.com/questions/714100/os-detecting-makefile
 ifeq ($(OS),Windows_NT)
-    CFLAGS 	+= -D WIN32
 	MD 		:= mkdir
 	RM 		:= del /s /q
 	RMDIR 	:= rmdir /s /q
@@ -73,10 +72,11 @@ endif
 # all is set to default compile for MacOS
 all: macos
 
-prepare:
-	@echo $(RM) $(RMDIR) $(MD)
-	@echo $(CFLAGS)
+win32_prepare:
 	@if not exist $(BUILDDIR) $(MD) $(BUILDDIR)
+
+macos_prepare:
+	@$(MD) $(BUILDDIR)
 
 $(TARGET): $(OBJECTS)
 	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
@@ -108,13 +108,13 @@ clean:
 	@echo --- CLEAN COMPLETE -------------
 
 # MacOS compile options
-macos: prepare macos_compile
+macos: macos_prepare macos_compile
 
 macos_compile: $(OBJECTS)
 	@$(CLANG) -o $(TARGET) $(OBJCFLAGS) $(CFLAGS) $(PLATDIR)/macos.mm $(OBJECTS)
 
 # Win32 compile options
-win32: prepare win32_compile
+win32: win32_prepare win32_compile
 
 win32_compile: $(OBJECTS)
 	@$(CC) -o $(TARGET) $(CFLAGS) $(PLATDIR)/win32.cpp $(OBJECTS) -lgdi32
