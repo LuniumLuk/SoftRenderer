@@ -224,6 +224,7 @@ public:
         const float & m4, const float & m5, const float & m6,
         const float & m7, const float & m8, const float & m9 );
     Matrix3(const Matrix3 & other);
+    Matrix3(const Matrix4 & other);
     
     /* Static Members */
     static Matrix3 IDENTITY;
@@ -301,6 +302,49 @@ public:
     void rotate(const Vector3 & axis, const float & angle);
     void rotate(const Quaternion & rotation);
 };
+
+/**
+ * Quick Sort Function
+ * reference : https://www.geeksforgeeks.org/cpp-program-for-quicksort/
+ */
+template<typename T>
+size_t qsortPartition(T* array, long low, long high, bool (*cmp)(const T &, const T &))
+{
+    T &pivot = array[high];
+    long i = low;
+    long j = high - 1;
+    while (1)
+    {
+        while (cmp(array[i], pivot) && i < high)
+        {
+            i++;
+        }
+        while (!cmp(array[j], pivot) && j > low)
+        {
+            j--;
+        }
+
+        if (i >= j)
+        {
+            std::swap(array[i], array[high]);
+            return i;
+        }
+
+        std::swap(array[i], array[j]);
+    }
+}
+
+template<typename T>
+void qsort(T* array, long low, long high, bool (*cmp)(const T &, const T &))
+{
+    if (low < high)
+    {
+        long pivot = qsortPartition(array, low, high, cmp);
+        
+        qsort(array, low, pivot - 1, cmp);
+        qsort(array, pivot + 1, high, cmp);
+    }
+}
 
 }
 

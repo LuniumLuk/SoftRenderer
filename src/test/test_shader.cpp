@@ -1,23 +1,18 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <utility>
-#include "../platform/platform.hpp"
-#include "../api.hpp"
+#include "test.hpp"
 
 using namespace Lurdr;
 
-void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed);
-void mouseButtonEventCallback(AppWindow *window, MOUSE_BUTTON button, bool pressed);
-void mouseScrollEventCallback(AppWindow *window, float offset);
-void mouseDragEventCallback(AppWindow *window, float x, float y);
+static void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed);
+static void mouseButtonEventCallback(AppWindow *window, MOUSE_BUTTON button, bool pressed);
+static void mouseScrollEventCallback(AppWindow *window, float offset);
+static void mouseDragEventCallback(AppWindow *window, float x, float y);
 
-AppWindow *window;
-FrameBuffer frame_buffer(512, 512);
+static AppWindow *window;
+static FrameBuffer frame_buffer(512, 512);
 
 void testVertexShader(SHADER_PARAM)
 {
+    __unused_variable(uniform);
     Vector3 *a_pos   = layout_in(Vector3, 0);
 
     Vector4 *position = layout_out(Vector4, 0);
@@ -36,7 +31,7 @@ size_t triangle_indices[][3] = {
     { 1, 3, 4 },
 };
 
-int main() {
+int test_shader() {
     initializeApplication();
 
     const char * title = "Viewer @ Lu Renderer";

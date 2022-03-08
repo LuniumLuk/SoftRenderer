@@ -13,5 +13,6 @@
 #include "digits.hpp"
 #include "pipeline.hpp"
 #include "misc.hpp"
+#include "material.hpp"
 
 #endif

@@ -8,6 +8,7 @@
 #include "global.hpp"
 #include "buffer.hpp"
 #include "colormap.hpp"
+#include "digits.hpp"
 
 namespace Lurdr
 {
@@ -106,6 +107,54 @@ void improvedBresenhamTriangleRasterization(const FrameBuffer & frame_buffer, Ve
 void fillTriangleTable(long * x_left, long * x_right, long x1, long y1, long x2, long y2, long y_min);
 
 void drawTexture(const FrameBuffer & frame_buffer); // ...
+
+/**
+ * draw digits on frame buffer
+ * x,y -- width : size(pixel) --▶ u
+ * |
+ * |
+ * height : size * ratio(pixel)
+ * |
+ * |
+ * ▼
+ * v
+ */
+void drawDigit(
+    const FrameBuffer & frame_buffer, 
+    const float & x, const float & y, 
+    const DIGIT_CHARACTER & character, 
+    const float & size, 
+    const RGBCOLOR & color,
+    const float & ratio = 1.5f, 
+    const long & segment = 16 );
+
+/**
+ * draw integer
+ * (sign) <-size * gap(pixel)-> digit0 <-size * gap(pixel)-> digit1
+ */
+void drawInteger(
+    const FrameBuffer & frame_buffer, 
+    const float & x, const float & y, 
+    long number, 
+    const float & size, 
+    const RGBCOLOR & color,
+    const float & gap = 0.5f,
+    const float & ratio = 1.5f, 
+    const long & segment = 16 );
+
+/**
+ * draw integer
+ * (sign) <-size * gap(pixel)-> digit0 <-size * gap(pixel)-> digit1
+ */
+void drawString(
+    const FrameBuffer & frame_buffer, 
+    const float & x, const float & y, 
+    const char * string,
+    const float & size,
+    const RGBCOLOR & color,
+    const float & gap = 0.5f,
+    const float & ratio = 1.5f, 
+    const long & segment = 16 );
 
 }
 

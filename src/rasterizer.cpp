@@ -613,3 +613,130 @@ void Lurdr::fillTriangleTable(long * x_left, long * x_right, long x1, long y1, l
         }
     }
 }
+
+
+/**
+ * draw digits on frame buffer
+ * x,y -- width : size(pixel) --▶ u
+ * |
+ * |
+ * height : size * ratio(pixel)
+ * |
+ * |
+ * ▼
+ * v
+ */
+void Lurdr::drawDigit(
+    const FrameBuffer & frame_buffer, 
+    const float & x, const float & y, 
+    const DIGIT_CHARACTER & character, 
+    const float & size, 
+    const RGBCOLOR & color,
+    const float & ratio, 
+    const long & segment )
+{
+    assert(character < DIGIT_NUM);
+    assert(segment == 16); // support 16-segment so far
+
+    for (long i = 0; i < 16; i++)
+    {
+        if (1 & (DIGITS_16SEG[character] >> (15 - i))) {
+            drawLine(frame_buffer, Vector2(
+                x + DIGITS_16SEG_COORDS[DIGITS_16SEG_EDGES[i][0]][0] * size,
+                frame_buffer.getHeight() - y - DIGITS_16SEG_COORDS[DIGITS_16SEG_EDGES[i][0]][1] * size * ratio
+            ), Vector2(
+                x + DIGITS_16SEG_COORDS[DIGITS_16SEG_EDGES[i][1]][0] * size,
+                frame_buffer.getHeight() - y - DIGITS_16SEG_COORDS[DIGITS_16SEG_EDGES[i][1]][1] * size * ratio
+            ), color);
+        }
+    }
+}
+
+/**
+ * draw integer
+ * (sign) <-size * gap(pixel)-> digit0 <-size * gap(pixel)-> digit1
+ */
+void Lurdr::drawInteger(
+    const FrameBuffer & frame_buffer, 
+    const float & x, const float & y, 
+    long number, 
+    const float & size, 
+    const RGBCOLOR & color,
+    const float & gap,
+    const float & ratio, 
+    const long & segment )
+{
+    bool is_negative = false;
+    if (number < 0)
+    {
+        is_negative = true;
+        number = -number;
+    }
+    DynamicArray<DIGIT_CHARACTER> digits;
+
+    while (number > 0)
+    {
+        digits.push_back((DIGIT_CHARACTER)(number % 10));
+        number /= 10;
+    }
+
+    float offset_x = x;
+    if (is_negative)
+    {
+        drawLine(
+            frame_buffer,
+            Vector2(offset_x, frame_buffer.getHeight() - y - size * ratio * 0.5f),  
+            Vector2(offset_x + size, frame_buffer.getHeight() - y - size * ratio * 0.5f),
+            color
+        );
+        offset_x += size * (1.0f + gap);
+    }
+    for (size_t i = 0; i < digits.size(); i++)
+    {
+        drawDigit(
+            frame_buffer,
+            offset_x, y, digits[digits.size() - 1 - i],
+            size, color, ratio, segment
+        );
+        offset_x += size * (1.0f + gap);
+    }
+}
+
+/**
+ * draw integer
+ * (sign) <-size * gap(pixel)-> digit0 <-size * gap(pixel)-> digit1
+ */
+void Lurdr::drawString(
+    const FrameBuffer & frame_buffer, 
+    const float & x, const float & y, 
+    const char * string,
+    const float & size,
+    const RGBCOLOR & color,
+    const float & gap,
+    const float & ratio, 
+    const long & segment )
+{
+    size_t length = strlen(string);
+    float offset_x = x;
+    for (size_t i = 0; i < length; i++)
+    {
+        assert((string[i] >= 'a' && string[i] <= 'z') || (string[i] >= 'A' && string[i] <= 'Z') || (string[i] == ' '));
+        if (string[i] >= 'a' && string[i] <= 'z')
+        {
+            drawDigit(
+                frame_buffer,
+                offset_x, y, (DIGIT_CHARACTER)(DIGIT_A + string[i] - 'a'),
+                size, color, ratio, segment
+            );
+        }
+        else if (string[i] >= 'A' && string[i] <= 'Z')
+        {
+            drawDigit(
+                frame_buffer,
+                offset_x, y, (DIGIT_CHARACTER)(DIGIT_A + string[i] - 'A'),
+                size, color, ratio, segment
+            );
+        }
+        offset_x += size * (1.0f + gap);
+    }
+}

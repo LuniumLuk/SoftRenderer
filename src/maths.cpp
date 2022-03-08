@@ -780,6 +780,13 @@ Matrix3::Matrix3(const Matrix3 & other)
 {
     memcpy(m, other.m, 9 * sizeof(float));
 }
+Matrix3::Matrix3(const Matrix4 & other)
+{
+    m[0] = other.m[0]; m[1] = other.m[1]; m[2] = other.m[2];
+    m[3] = other.m[4]; m[4] = other.m[5]; m[5] = other.m[6];
+    m[6] = other.m[8]; m[7] = other.m[9]; m[8] = other.m[10];
+}
+
 
 void Matrix3::operator= (const Matrix3 & other)
 {

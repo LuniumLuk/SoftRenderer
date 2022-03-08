@@ -125,7 +125,7 @@ private:
     vec3    *m_vertex_normals;
     vec3    *m_triangle_normals;
     vec2    *m_texture_coords;
-    Array<size_t, 3>  *m_faces;
+    vec3i   *m_faces;
 
     size_t   m_vertex_count;
     size_t   m_face_count;
@@ -158,7 +158,7 @@ public:
     vec3* getVertices() const { return m_vertices; }
     vec3* getVertexNormals() const { return m_vertex_normals; }
     vec3* getTriangleNormals() const { return m_triangle_normals; }
-    Array<size_t, 3>* getFaces() const { return m_faces; }
+    vec3i* getFaces() const { return m_faces; }
     vec2* getTextureCoords() const { return m_texture_coords; }
 
     void printMeshInfo() const;

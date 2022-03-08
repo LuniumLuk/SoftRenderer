@@ -10,20 +10,18 @@ INCLUDEDIR := src
 BUILDDIR   := build
 DLLDIR	   := bin
 TESTDIR	   := $(SOURCEDIR)/test
-PLATDIR    := src/platform
+TESTSRCS   := $(wildcard $(addprefix $(TESTDIR)/, *.cpp))
+TESTOBJS   := $(addprefix $(BUILDDIR)/, $(notdir $(TESTSRCS:.cpp=.o)))
+PLATDIR    := $(SOURCEDIR)/platform
 SOURCES    := $(wildcard $(addprefix $(SOURCEDIR)/, *.cpp))
-OBJECTS    := $(addprefix $(BUILDDIR)/, $(notdir $(SOURCES:.cpp=.o)))
-# INCLUDES   := $(addprefix -I, $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp)))
+OBJECTS    := $(addprefix $(BUILDDIR)/, $(notdir $(SOURCES:.cpp=.o))) $(TESTOBJS)
 INCLUDES   := -I$(INCLUDEDIR)
-HEADERS    := $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp)) $(PLATDIR)/platform.hpp
+HEADERS    := $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp)) $(PLATDIR)/platform.hpp $(TESTDIR)/test.hpp
 # MacOS Compile
 MACSOURCES := $(SOURCEDIR)/macos.mm
 MACOBJECTS := $(filter-out build/$(MAIN).o, $(OBJECTS))
 # DLL Compile
 DLLOBJECTS := $(filter-out build/$(MAIN).o, $(OBJECTS))
-# Test Compile
-# modify here if to compile other file
-TESTSOURCE := $(TESTDIR)/test.cpp
 
 TARGET     = viewer
 TEST 	   = test
@@ -81,6 +79,9 @@ macos_prepare:
 $(TARGET): $(OBJECTS)
 	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
 
+$(BUILDDIR)/test_%.o: $(TESTDIR)/test_%.cpp $(HEADERS)
+	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
+
 $(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp $(HEADERS)
 	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
@@ -99,7 +100,8 @@ help:
 	@echo "clean : clean target, bin/ and build/"
 
 show:
-	@echo $(OBJECTS)
+	@echo $(TESTSRCS)
+	@echo $(TESTOBJS)
 
 .PHONY: clean
 clean:

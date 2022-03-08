@@ -37,25 +37,23 @@ void Model::setOpaque(bool opaque)
 }
 
 // reference : https://github.com/zauonlok/renderer/blob/master/renderer/tests/test_helper.c
-bool Model::compare_distance(const void* a, const void* b)
+bool Model::compare_distance(Model * const & a, Model * const & b)
 {
-    Model* model_a = (Model*)a;
-    Model* model_b = (Model*)b;
-    if (model_a->m_opaque && model_b->m_opaque)
+    if (a->m_opaque && b->m_opaque)
     {
-        return model_a->m_distance < model_b->m_distance;
+        return a->m_distance < b->m_distance;
     }
-    else if (model_a->m_opaque && !model_b->m_opaque)
+    else if (a->m_opaque && !b->m_opaque)
     {
         return false;
     }
-    else if (!model_a->m_opaque && model_b->m_opaque)
+    else if (!a->m_opaque && b->m_opaque)
     {
         return true;
     }
     else
     {
-        return model_a->m_distance > model_b->m_distance;
+        return a->m_distance > b->m_distance;
     }
 }
 

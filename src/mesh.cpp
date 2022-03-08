@@ -135,13 +135,19 @@ void OBJMesh::loadMesh()
     {
         m_vertex_count = vertices.size();
         m_vs = new Vector3[vertices.size()];
-        memcpy(m_vs, vertices.data(), vertices.size() * sizeof(Vector3));
+        for (size_t i = 0; i < vertices.size(); i++)
+        {
+            m_vs[i] = vertices[i];
+        }
     }
     if (vertex_idxes.size() > 0 && vertex_idxes.size() % 3 == 0)
     {
         m_face_count = vertex_idxes.size() / 3;
         m_fs = new size_t[vertex_idxes.size()];
-        memcpy(m_fs, vertex_idxes.data(), vertex_idxes.size() * sizeof(size_t));
+        for (size_t i = 0; i < vertex_idxes.size(); i++)
+        {
+            m_fs[i] = vertex_idxes[i];
+        }
     }
     if (texture_idxes.size() > 0 && texture_idxes.size() % 3 == 0)
     {
@@ -152,12 +158,17 @@ void OBJMesh::loadMesh()
     {
         assert(vertex_normals.size() == m_vertex_count);
         m_vns = new Vector3[vertex_normals.size()];
-        memcpy(m_vns, vertex_normals.data(), vertex_normals.size() * sizeof(Vector3));
+        for (size_t i = 0; i < vertex_normals.size(); i++)
+        {
+            m_vns[i] = vertex_normals[i];
+        }
 
         assert(normal_idxes.size() / 3 == m_face_count);
         m_fvns = new size_t[normal_idxes.size()];
-        memcpy(m_fvns, normal_idxes.data(), normal_idxes.size() * sizeof(size_t));
-
+        for (size_t i = 0; i < normal_idxes.size(); i++)
+        {
+            m_fvns[i] = normal_idxes[i];
+        }
         m_has_vertex_normals = true;
     }
     fclose(fp);
@@ -244,7 +255,10 @@ UniformMesh::UniformMesh(const UniformMesh & uni_mesh)
     m_has_tex_coords = uni_mesh.m_has_tex_coords;
     m_has_vertex_normals = uni_mesh.m_has_vertex_normals;
     m_vertices = new Vertex[m_vertex_count];
-    memcpy(m_vertices, uni_mesh.m_vertices, m_vertex_count * sizeof(Vertex));
+    for (size_t i = 0; i < m_vertex_count; i++)
+    {
+        m_vertices[i] = uni_mesh.m_vertices[i];
+    }
     m_mesh_center = uni_mesh.m_mesh_center;
     m_bounding_box = uni_mesh.m_bounding_box;
 }
@@ -332,10 +346,10 @@ TriangleMesh::TriangleMesh(const char * filename):
     }
 
     char line_buffer[MAX_OBJ_LINE];
-    DynamicArray<vec3> vertices;
-    DynamicArray<vec3> vertex_normals;
-    DynamicArray<Array<size_t, 3> > faces;
-    DynamicArray<vec2> texture_coords;
+    DynamicArray<vec3>  vertices;
+    DynamicArray<vec3>  vertex_normals;
+    DynamicArray<vec3i> faces;
+    DynamicArray<vec2>  texture_coords;
 
     float x, y, z;
     size_t v1, v2, v3, vt1, vt2, vt3, vn1, vn2, vn3;
@@ -370,7 +384,7 @@ TriangleMesh::TriangleMesh(const char * filename):
                 {
                     scanned_items = sscanf(line_buffer, "f %lu//%lu %lu//%lu %lu//%lu", &v1, &vn1, &v2, &vn2, &v3, &vn3);
                     assert(scanned_items == 6);
-                    Array<size_t, 3> f;
+                    vec3i f;
                     f[0] = v1 - 1;
                     f[1] = v2 - 1;
                     f[2] = v3 - 1;
@@ -378,7 +392,7 @@ TriangleMesh::TriangleMesh(const char * filename):
                 }
                 else
                 {
-                    Array<size_t, 3> f;
+                    vec3i f;
                     f[0] = v1 - 1;
                     f[1] = v2 - 1;
                     f[2] = v3 - 1;
@@ -387,7 +401,7 @@ TriangleMesh::TriangleMesh(const char * filename):
             }
             else
             {
-                Array<size_t, 3> f;
+                vec3i f;
                 f[0] = v1 - 1;
                 f[1] = v2 - 1;
                 f[2] = v3 - 1;
@@ -400,26 +414,38 @@ TriangleMesh::TriangleMesh(const char * filename):
     {
         m_vertex_count = vertices.size();
         m_vertices = new vec3[vertices.size()];
-        memcpy(m_vertices, vertices.data(), vertices.size() * sizeof(vec3));
+        for (size_t i = 0; i < vertices.size(); i++)
+        {
+            m_vertices[i] = vertices[i];
+        }
     }
     if (faces.size() > 0)
     {
         m_face_count = faces.size();
-        m_faces = new Array<size_t, 3>[faces.size()];
-        memcpy(m_faces, faces.data(), faces.size() * sizeof(Array<size_t, 3>));
+        m_faces = new vec3i[faces.size()];
+        for (size_t i = 0; i < faces.size(); i++)
+        {
+            m_faces[i] = faces[i];
+        }
     }
     if (texture_coords.size() > 0)
     {
         assert(texture_coords.size() == m_vertex_count);
         m_texture_coords = new vec2[texture_coords.size()];
-        memcpy(m_texture_coords, texture_coords.data(), texture_coords.size() * sizeof(vec2));
+        for (size_t i = 0; i < texture_coords.size(); i++)
+        {
+            m_texture_coords[i] = texture_coords[i];
+        }
         m_has_texture_coords = true;
     }
     if (vertex_normals.size() > 0)
     {
         assert(vertex_normals.size() == m_vertex_count);
         m_vertex_normals = new vec3[vertex_normals.size()];
-        memcpy(m_vertex_normals, vertex_normals.data(), vertex_normals.size() * sizeof(vec3));
+        for (size_t i = 0; i < vertex_normals.size(); i++)
+        {
+            m_vertex_normals[i] = vertex_normals[i];
+        }
         m_has_vertex_normals = true;
     }
     fclose(fp);
@@ -436,27 +462,42 @@ TriangleMesh::TriangleMesh(const TriangleMesh & tri_mesh)
     if (m_vertex_count > 0)
     {
         m_vertices = new vec3[m_vertex_count];
-        memcpy(m_vertices, tri_mesh.m_vertices, m_vertex_count * sizeof(vec3));
+        for (size_t i = 0; i < m_vertex_count; i++)
+        {
+            m_vertices[i] = tri_mesh.m_vertices[i];
+        }
     }
     if (m_face_count > 0)
     {
-        m_faces = new Array<size_t, 3>[m_face_count];
-        memcpy(m_faces, tri_mesh.m_faces, m_face_count * sizeof(Array<size_t, 3>));
+        m_faces = new vec3i[m_face_count];
+        for (size_t i = 0; i < m_face_count; i++)
+        {
+            m_faces[i] = tri_mesh.m_faces[i];
+        }
     }
     if (m_has_vertex_normals)
     {
         m_vertex_normals = new vec3[m_vertex_count];
-        memcpy(m_vertex_normals, tri_mesh.m_vertex_normals, m_vertex_count * sizeof(vec3));
+        for (size_t i = 0; i < m_vertex_count; i++)
+        {
+            m_vertex_normals[i] = tri_mesh.m_vertex_normals[i];
+        }
     }
     if (m_has_triangle_normals)
     {
         m_triangle_normals = new vec3[m_face_count];
-        memcpy(m_triangle_normals, tri_mesh.m_triangle_normals, m_face_count * sizeof(vec3));
+        for (size_t i = 0; i < m_face_count; i++)
+        {
+            m_triangle_normals[i] = tri_mesh.m_triangle_normals[i];
+        }
     }
     if (m_has_texture_coords)
     {
         m_texture_coords = new vec2[m_vertex_count];
-        memcpy(m_texture_coords, tri_mesh.m_texture_coords, m_vertex_count * sizeof(vec2));
+        for (size_t i = 0; i < m_vertex_count; i++)
+        {
+            m_texture_coords[i] = tri_mesh.m_texture_coords[i];
+        }
     }
 }
 
@@ -477,27 +518,42 @@ TriangleMesh & TriangleMesh::operator= (const TriangleMesh & tri_mesh)
     if (m_vertex_count > 0)
     {
         m_vertices = new vec3[m_vertex_count];
-        memcpy(m_vertices, tri_mesh.m_vertices, m_vertex_count * sizeof(vec3));
+        for (size_t i = 0; i < m_vertex_count; i++)
+        {
+            m_vertices[i] = tri_mesh.m_vertices[i];
+        }
     }
     if (m_face_count > 0)
     {
-        m_faces = new Array<size_t, 3>[m_face_count];
-        memcpy(m_faces, tri_mesh.m_faces, m_face_count * sizeof(Array<size_t, 3>));
+        m_faces = new vec3i[m_face_count];
+        for (size_t i = 0; i < m_face_count; i++)
+        {
+            m_faces[i] = tri_mesh.m_faces[i];
+        }
     }
     if (m_has_vertex_normals)
     {
         m_vertex_normals = new vec3[m_vertex_count];
-        memcpy(m_vertex_normals, tri_mesh.m_vertex_normals, m_vertex_count * sizeof(vec3));
+        for (size_t i = 0; i < m_vertex_count; i++)
+        {
+            m_vertex_normals[i] = tri_mesh.m_vertex_normals[i];
+        }
     }
     if (m_has_triangle_normals)
     {
         m_triangle_normals = new vec3[m_face_count];
-        memcpy(m_triangle_normals, tri_mesh.m_triangle_normals, m_face_count * sizeof(vec3));
+        for (size_t i = 0; i < m_face_count; i++)
+        {
+            m_triangle_normals[i] = tri_mesh.m_triangle_normals[i];
+        }
     }
     if (m_has_texture_coords)
     {
         m_texture_coords = new vec2[m_vertex_count];
-        memcpy(m_texture_coords, tri_mesh.m_texture_coords, m_vertex_count * sizeof(vec2));
+        for (size_t i = 0; i < m_vertex_count; i++)
+        {
+            m_texture_coords[i] = tri_mesh.m_texture_coords[i];
+        }
     }
 
     return *this;
@@ -569,7 +625,10 @@ void TriangleMesh::computeVertexNormals()
     }
 
     m_vertex_normals = new vec3[vertex_normals.size()];
-    memcpy(m_vertex_normals, vertex_normals.data(), vertex_normals.size() * sizeof(vec3));
+    for (size_t i = 0; i < vertex_normals.size(); i++)
+    {
+        m_vertex_normals[i] = vertex_normals[i];
+    }
 
     m_has_vertex_normals = true;
 }
@@ -589,7 +648,10 @@ void TriangleMesh::computeTriangleNormals()
     }
 
     m_triangle_normals = new vec3[triangle_normals.size()];
-    memcpy(m_triangle_normals, triangle_normals.data(), triangle_normals.size() * sizeof(vec3));
+    for (size_t i = 0; i < triangle_normals.size(); i++)
+    {
+        m_triangle_normals[i] = triangle_normals[i];
+    }
 
     m_has_triangle_normals = true;
 }

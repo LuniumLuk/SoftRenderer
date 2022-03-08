@@ -38,7 +38,7 @@ public:
     void draw(const FrameBuffer & frame_buffer, const Program & program);
     void drawByFixedPipeline(const FrameBuffer & frame_buffer, const Camera & camera); // add shader program later
 
-    static bool compare_distance(const void* a, const void* b);
+    static bool compare_distance(Model * const & a, Model * const & b);
 };
 
 /**

@@ -463,20 +463,20 @@ void UniformImage::convertColorSpace(const unsigned short mode)
     if (mode == COLOR_RGB && m_color_space == COLOR_BGR)
     { 
 #ifdef __SIZEOF_INT128__
-        RGB2BGR_SIMD();
-#else
-        RGB2BGR();
-#endif
-        m_color_space = COLOR_BGR;
-    }
-    if (mode == COLOR_BGR && m_color_space == COLOR_RGB)
-    { 
-#ifdef __SIZEOF_INT128__
         BGR2RGB_SIMD();
 #else
         BGR2RGB();
 #endif
         m_color_space = COLOR_RGB;
+    }
+    if (mode == COLOR_BGR && m_color_space == COLOR_RGB)
+    { 
+#ifdef __SIZEOF_INT128__
+        RGB2BGR_SIMD();
+#else
+        RGB2BGR();
+#endif
+        m_color_space = COLOR_BGR;
     }
     // ...
 }
