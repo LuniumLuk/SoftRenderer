@@ -8,21 +8,43 @@
 #include "global.hpp"
 #include "maths.hpp"
 #include "mesh.hpp"
+#include "material.hpp"
 
 namespace Lurdr
 {
 
+#define MAX_CONF_LINE 256
+
+class EntityConfig
+{
+public:
+    char *mesh_filename;
+    char *ambient_map;
+    char *diffuse_map;
+    char *specular_map;
+    char *normal_map;
+
+    EntityConfig() = delete;
+    EntityConfig(const char * filename);
+    ~EntityConfig();
+
+    void loadFromFile(const char * filename);
+};
+typedef EntityConfig entityConf;
+
 class Entity
 {
 private:
-    mat4 m_transform;
+    mat4            m_transform;
 
-    // Material *m_material;
-    TriangleMesh *m_mesh;
+    Material        *m_material;
+    TriangleMesh    *m_mesh;
+    bool            m_material_need_delete;
+    bool            m_mesh_need_delete;
 
 public:
     Entity();
-    Entity(const Entity & entity);
+    Entity(const entityConf & config);
     ~Entity();
 
     void setTransform(const mat4 & transform) { m_transform = transform; }
@@ -37,6 +59,9 @@ public:
 
     void setTriangleMesh(TriangleMesh * mesh) { m_mesh = mesh; }
     const TriangleMesh * getTriangleMesh() const { return m_mesh; }
+
+    void setMaterial(Material * material) { m_material = material; }
+    const Material * getMaterial() const { return m_material; }
 };
 
 }

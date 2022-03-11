@@ -53,28 +53,31 @@ public:
     void setUniform(long idx, void* uniform);
 };
 
-struct PointLight
-{
-    Vector3 position;
-    float   constant;
-    float   linear;
-    float   quadratic;
-    Vector3 ambient;
-    Vector3 diffuse;
-    Vector3 specular;
-};
-
-struct PointLightSimple
-{
-    Vector3 position;
-    float   constant;
-    float   linear;
-    float   quadratic;
-    Vector3 color;
-};
-
 void simpleVertexShader(SHADER_PARAM);
 void simpleFragmentShader(SHADER_PARAM);
+
+#define SHADER_UNIFORM      void** uniform_standard, void** uniform_light, void** unifrom_custom
+
+#define MODEL_MATRIX        (*(mat4*)uniform_standard[0])
+#define VIEW_MATRIX         (*(mat4*)uniform_standard[1])
+#define PERSPECTIVE_MATRIX  (*(mat4*)uniform_standard[2])
+#define MVP_MATRIX          (MODEL_MATRIX * VIEW_MATRIX * PERSPECTIVE_MATRIX)
+
+struct vdata
+{
+    vec3 position;
+    vec3 normal;
+    vec2 texcoord;
+};
+
+class v2f
+{
+public:
+    vec4 position;
+    vec3 frag_pos;
+    vec3 normal;
+    vec2 texcoord;
+};
 
 }
 

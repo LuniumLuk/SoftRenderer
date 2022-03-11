@@ -14,5 +14,6 @@
 #include "pipeline.hpp"
 #include "misc.hpp"
 #include "material.hpp"
+#include "entity.hpp"
 
 #endif

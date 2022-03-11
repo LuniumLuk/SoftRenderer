@@ -7,17 +7,7 @@ Texture::Texture(const char * filename):
     m_texture_surface(nullptr),
     m_need_delete(false)
 {
-    size_t len = strlen(filename);
-    if (strncmp(&filename[len - 4], "bmp", 3) == 0 || strncmp(&filename[len - 4], "BMP", 3) == 0)
-    {
-        printf("support only BMP format\n");
-        return;
-    }
-
-    BMPImage bmp_image(filename);
-    m_texture_surface = new UniformImage(bmp_image);
-    m_texture_surface->convertColorSpace(COLOR_RGB);
-    m_need_delete = true;
+    loadTextureSurface(filename);
 }
 
 // delegated constructor : c++11 feature
@@ -35,6 +25,33 @@ Texture::~Texture()
     }
 }
 
+void Texture::setTextureSurface(UniformImage * texture_surface)
+{
+    if (m_need_delete)
+    {
+        delete m_texture_surface;
+        m_need_delete = false;
+    }
+    m_texture_surface = texture_surface;
+    m_texture_surface->convertColorSpace(COLOR_RGB);
+}
+
+void Texture::loadTextureSurface(const char * filename)
+{
+    if (m_need_delete) delete m_texture_surface;
+
+    size_t len = strlen(filename);
+    if (strncmp(&filename[len - 4], "bmp", 3) == 0 || strncmp(&filename[len - 4], "BMP", 3) == 0)
+    {
+        printf("support only BMP format\n");
+        return;
+    }
+
+    BMPImage bmp_image(filename);
+    m_texture_surface = new UniformImage(bmp_image);
+    m_texture_surface->convertColorSpace(COLOR_RGB);
+    m_need_delete = true;
+}
 
 vec4 Texture::sampleAt(const vec2 & texcoord) const
 {
