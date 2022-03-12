@@ -52,6 +52,7 @@ public:
     T front() const;
     T at(const size_t & pos) const;
     T& operator[] (const size_t & pos);
+    const T& operator[] (const size_t & pos) const;
     void clear();
     bool empty() const;
     size_t size() const;
@@ -155,6 +156,12 @@ T& DynamicArray<T>::operator[] (const size_t & pos)
         m_array = new_array;
         m_size = m_capacity;
     }
+    return m_array[pos];
+}
+template<typename T>
+const T& DynamicArray<T>::operator[] (const size_t & pos) const
+{
+    assert(pos < m_capacity);
     return m_array[pos];
 }
 template<typename T>

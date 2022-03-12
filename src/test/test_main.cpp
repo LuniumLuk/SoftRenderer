@@ -11,7 +11,7 @@ static AppWindow *window;
 static FrameBuffer frame_buffer(512, 512);
 
 static Model model;
-static Scene scene;
+static OldScene scene;
 static Camera camera;
 
 static float rotate_angle = PI;

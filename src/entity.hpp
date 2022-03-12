@@ -19,7 +19,7 @@ class EntityConfig
 {
 public:
     char *mesh_filename;
-    char *ambient_map;
+    char *albedo_map;
     char *diffuse_map;
     char *specular_map;
     char *normal_map;
@@ -36,6 +36,7 @@ class Entity
 {
 private:
     mat4            m_transform;
+    float           m_distance;
 
     Material        *m_material;
     TriangleMesh    *m_mesh;
@@ -62,6 +63,9 @@ public:
 
     void setMaterial(Material * material) { m_material = material; }
     const Material * getMaterial() const { return m_material; }
+
+    void setDistance(float distance) { m_distance = distance; }
+    static bool compareDistance(Entity * const & a, Entity * const & b);
 };
 
 }

@@ -56,3 +56,45 @@ void Lurdr::drawTriangles(
         drawLine(frame_buffer, v3, v1, COLOR_WHITE);
     }
 }
+
+void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const Shader * shader)
+{
+    __unused_variable(frame_buffer);
+    // scene.sortEntity();
+
+    const DynamicArray<Entity*>* entities = scene.getEntities();
+    for (size_t eidx = 0; eidx < entities->size(); eidx++)
+    {
+        const Entity *entity = (*entities)[eidx];
+        const mat4 mvp_matrix = entity->getTransform() * scene.getCamera().getViewMatrix() * scene.getCamera().getProjectMatrix();
+
+        int count = 0;
+
+        const TriangleMesh *mesh = entity->getTriangleMesh();
+        for (size_t fidx = 0; fidx < mesh->faceCount(); fidx++)
+        {
+            v2f v0 = shader->vert(TRIANGLE_VDATA(fidx, 0), entity, scene);
+            v2f v1 = shader->vert(TRIANGLE_VDATA(fidx, 1), entity, scene);
+            v2f v2 = shader->vert(TRIANGLE_VDATA(fidx, 2), entity, scene);
+
+            if ((v0.position.x <= -1.0f && v1.position.x <= -1.0f && v2.position.x <= -1.0f) ||
+                (v0.position.x >=  1.0f && v1.position.x >=  1.0f && v2.position.x >=  1.0f) ||
+                (v0.position.y <= -1.0f && v1.position.y <= -1.0f && v2.position.y <= -1.0f) ||
+                (v0.position.y >=  1.0f && v1.position.y >=  1.0f && v2.position.y >=  1.0f))
+            {
+                continue;
+            }
+
+            vec3 u = v1.position - v0.position;
+            vec3 v = v2.position - v0.position;
+            vec3 face_normal = u.cross(v);
+
+            if (face_normal.z >= 0.0f)
+            {
+                continue;
+            }
+            count++;
+        }
+        printf("valid faces : %d\n", count);
+    }
+}

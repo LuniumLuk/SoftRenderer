@@ -324,17 +324,22 @@ void UniformMesh::printMeshInfo() const
 /**
  * TriangleMesh
  */
-TriangleMesh::TriangleMesh(const char * filename):
+
+TriangleMesh::TriangleMesh():
     m_vertices(nullptr),
     m_vertex_normals(nullptr),
     m_triangle_normals(nullptr),
     m_texture_coords(nullptr),
     m_faces(nullptr),
+    m_mesh_center(vec3::ZERO),
     m_vertex_count(0),
     m_face_count(0),
     m_has_vertex_normals(false),
     m_has_triangle_normals(false),
-    m_has_texture_coords(false)
+    m_has_texture_coords(false) {}
+
+TriangleMesh::TriangleMesh(const char * filename):
+    TriangleMesh()
 {
     FILE *fp;
     assert(filename != nullptr);
@@ -449,9 +454,11 @@ TriangleMesh::TriangleMesh(const char * filename):
         m_has_vertex_normals = true;
     }
     fclose(fp);
+    computeMeshCenter();
 }
 
-TriangleMesh::TriangleMesh(const TriangleMesh & tri_mesh)
+TriangleMesh::TriangleMesh(const TriangleMesh & tri_mesh):
+    TriangleMesh()
 {
     m_vertex_count = tri_mesh.m_vertex_count;
     m_face_count = tri_mesh.m_face_count;
@@ -499,6 +506,7 @@ TriangleMesh::TriangleMesh(const TriangleMesh & tri_mesh)
             m_texture_coords[i] = tri_mesh.m_texture_coords[i];
         }
     }
+    computeMeshCenter();
 }
 
 TriangleMesh & TriangleMesh::operator= (const TriangleMesh & tri_mesh)
@@ -555,6 +563,7 @@ TriangleMesh & TriangleMesh::operator= (const TriangleMesh & tri_mesh)
             m_texture_coords[i] = tri_mesh.m_texture_coords[i];
         }
     }
+    computeMeshCenter();
 
     return *this;
 }
@@ -641,10 +650,10 @@ void TriangleMesh::computeTriangleNormals()
 
     for (size_t fidx = 0; fidx < m_face_count; fidx++)
     {
-        vec3 e1 = m_vertices[m_faces[fidx][0]] - m_vertices[m_faces[fidx][1]];
-        vec3 e2 = m_vertices[m_faces[fidx][0]] - m_vertices[m_faces[fidx][2]];
+        vec3 u = m_vertices[m_faces[fidx][1]] - m_vertices[m_faces[fidx][0]];
+        vec3 v = m_vertices[m_faces[fidx][2]] - m_vertices[m_faces[fidx][0]];
 
-        triangle_normals.push_back(e1.cross(e2).normalized());
+        triangle_normals.push_back(u.cross(v).normalized());
     }
 
     m_triangle_normals = new vec3[triangle_normals.size()];
@@ -654,6 +663,18 @@ void TriangleMesh::computeTriangleNormals()
     }
 
     m_has_triangle_normals = true;
+}
+
+void TriangleMesh::computeMeshCenter()
+{
+    vec3 center = vec3::ZERO;
+
+    for (size_t vidx = 0; vidx < m_vertex_count; vidx++)
+    {
+        center += m_vertices[vidx];
+    }
+
+    m_mesh_center = center * (1.0f / m_vertex_count);
 }
 
 BoundingBox TriangleMesh::getAxisAlignBoundingBox() const

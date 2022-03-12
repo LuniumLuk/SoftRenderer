@@ -2,7 +2,7 @@
 
 using namespace Lurdr;
 
-phongComp DirectionalLight::getLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
+LightComp DirectionalLight::getLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
 {
     __unused_variable(frag_pos);
 
@@ -10,15 +10,14 @@ phongComp DirectionalLight::getLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
     vec3 reflect_dir = vec3::reflect(m_direction, normal);
     float spec = powf(max(view_dir.dot(reflect_dir), 0.0f), 32.0f);
 
-    phongComp comp = {
-        .ambient = m_ambient,
+    LightComp comp = {
         .diffuse = m_diffuse * lambertian,
         .specular = m_specular * spec
     };
     return comp;
 }
 
-phongComp PointLight::getLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
+LightComp PointLight::getLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
 {
     vec3 light_dir = m_position - frag_pos;
     float distance = light_dir.length();
@@ -29,8 +28,7 @@ phongComp PointLight::getLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
     // attenuation
     float attenuation = 1.0f / (m_constant + m_linear * distance + m_quadratic * distance * distance);
 
-    phongComp comp = {
-        .ambient = m_ambient * attenuation,
+    LightComp comp = {
         .diffuse = m_diffuse * lambertian * attenuation,
         .specular = m_specular * spec * attenuation
     };

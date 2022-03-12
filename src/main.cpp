@@ -6,8 +6,6 @@
 int main() {
     int return_value = 0;
     {
-        Lurdr::Timer t("test block");
-
         // return_value = test_main();
         return_value = test_basic();
         // return_value = test_shader();

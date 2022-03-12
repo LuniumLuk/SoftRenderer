@@ -126,6 +126,7 @@ private:
     vec3    *m_triangle_normals;
     vec2    *m_texture_coords;
     vec3i   *m_faces;
+    vec3    m_mesh_center;
 
     size_t   m_vertex_count;
     size_t   m_face_count;
@@ -134,7 +135,7 @@ private:
     bool     m_has_triangle_normals;
     bool     m_has_texture_coords;
 public:
-    TriangleMesh() = delete;
+    TriangleMesh();
     TriangleMesh(const char * filename);
     TriangleMesh(const TriangleMesh & tri_mesh);
     ~TriangleMesh();
@@ -143,6 +144,7 @@ public:
 
     void computeVertexNormals();
     void computeTriangleNormals();
+    void computeMeshCenter();
 
     BoundingBox getAxisAlignBoundingBox() const;
     vec3 getMaxBound() const;
@@ -160,6 +162,7 @@ public:
     vec3* getTriangleNormals() const { return m_triangle_normals; }
     vec3i* getFaces() const { return m_faces; }
     vec2* getTextureCoords() const { return m_texture_coords; }
+    vec3 getMeshCenter() const { return m_mesh_center; }
 
     void printMeshInfo() const;
 };

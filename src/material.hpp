@@ -50,13 +50,13 @@ public:
 class Material
 {
 public:
-    Texture ambient;
+    Texture albedo;
     Texture diffuse;
     Texture specular;
     Texture normal;
 
     Material():
-        ambient(Texture()),
+        albedo(Texture()),
         diffuse(Texture()),
         specular(Texture()),
         normal(Texture()) {}
