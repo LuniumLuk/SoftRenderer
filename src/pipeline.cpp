@@ -71,11 +71,25 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
         const TriangleMesh *mesh = entity->getTriangleMesh();
         for (size_t fidx = 0; fidx < mesh->faceCount(); fidx++)
         {
+#if 0
+            vdata vd0 = TRIANGLE_VDATA(fidx, 0);
+            vdata vd1 = TRIANGLE_VDATA(fidx, 1);
+            vdata vd2 = TRIANGLE_VDATA(fidx, 2);
+            vd0.position.print();
+            vd1.position.print();
+            vd2.position.print();
+            printf("----------------------------------------------\n");
+#endif
             // Assembly Stage
             v2f v0 = shader->vert(TRIANGLE_VDATA(fidx, 0), entity, scene);
             v2f v1 = shader->vert(TRIANGLE_VDATA(fidx, 1), entity, scene);
             v2f v2 = shader->vert(TRIANGLE_VDATA(fidx, 2), entity, scene);
-
+#if 0
+            v0.position.print();
+            v1.position.print();
+            v2.position.print();
+            printf("----------------------------------------------\n");
+#endif
             v0.t_normal = TRIANGLE_TRIANGLE_NORMAL(fidx);
             v1.t_normal = TRIANGLE_TRIANGLE_NORMAL(fidx);
             v2.t_normal = TRIANGLE_TRIANGLE_NORMAL(fidx);
