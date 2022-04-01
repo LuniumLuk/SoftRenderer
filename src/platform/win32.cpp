@@ -99,6 +99,28 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     // reference : https://docs.microsoft.com/en-us/windows/win32/inputdev
 
+    // TODO: need higher swap speed
+    // note: if draws here, input will not block paint
+    if (g_update_paint)
+    {
+        HDC hdc = GetDC(hwnd);
+
+        blitRGB2BGR(g_window->surface, g_paint_surface, g_viewer_width, g_viewer_height);
+        SetDIBitsToDevice(
+            hdc,
+            0, 0,
+            g_viewer_width,
+            g_viewer_height,
+            0, 0, 0, g_viewer_height,
+            (void*)(g_paint_surface),
+            &g_bitmapinfo,
+            DIB_RGB_COLORS
+        );
+
+        ReleaseDC(hwnd, hdc);
+        g_update_paint = false;
+    }
+
     switch(msg)
     {
         // handle keyboard input
@@ -131,9 +153,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_MOUSEWHEEL:
             handleMouseScroll(GET_WHEEL_DELTA_WPARAM(wParam) > 0 ? 1.0f : -1.0f);
             break;
+#if 0
         case WM_PAINT:
-            // TODO: need higher swap speed
-            // TODO: RGB to BGR
             if (g_update_paint)
             {
                 HDC hdc = GetDC(hwnd);
@@ -154,6 +175,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 g_update_paint = false;
             }
             break;
+#endif
         case WM_CLOSE:
             g_window->should_close = true;
             DestroyWindow(hwnd);
