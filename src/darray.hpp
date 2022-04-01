@@ -27,7 +27,7 @@ public:
     const T* data() const { return m_data; }
 };
 
-typedef Array<size_t,3> vec3i;
+typedef Array<long,3> vec3i;
 
 // DynamicArray implement basic functionalities as STL std::vector
 template<typename T>
@@ -144,18 +144,19 @@ T DynamicArray<T>::at(const size_t & pos) const
 template<typename T>
 T& DynamicArray<T>::operator[] (const size_t & pos)
 {
-    if (pos >= m_capacity)
-    {
-        m_capacity = pos + 1;
-        T *new_array = new T[m_capacity];
-        for (size_t i = 0; i < m_size; i++)
-        {
-            new_array[i] = m_array[i];
-        }
-        delete[] m_array;
-        m_array = new_array;
-        m_size = m_capacity;
-    }
+    assert(pos < m_capacity);
+    // if (pos >= m_capacity)
+    // {
+    //     m_capacity = pos + 1;
+    //     T *new_array = new T[m_capacity];
+    //     for (size_t i = 0; i < m_size; i++)
+    //     {
+    //         new_array[i] = m_array[i];
+    //     }
+    //     delete[] m_array;
+    //     m_array = new_array;
+    //     m_size = m_capacity;
+    // }
     return m_array[pos];
 }
 template<typename T>

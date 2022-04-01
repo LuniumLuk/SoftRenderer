@@ -25,8 +25,7 @@ int test_pipeline() {
 
     FrameBuffer frame_buffer(512, 512);
 
-    // entityConf config("assets/config01.txt");
-    entityConf config("assets/config02.txt");
+    entityConf config("assets/config01.txt");
     Entity ent = Entity(config);
     ent.getTriangleMesh()->computeTriangleNormals();
     ent.getTriangleMesh()->printMeshInfo();

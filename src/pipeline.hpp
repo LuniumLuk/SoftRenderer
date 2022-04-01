@@ -20,11 +20,12 @@ namespace Lurdr
 #define TRIANGLE_TEXCOORD(fidx,vidx) (mesh->hasTextureCoords()?mesh->getTextureCoords()[mesh->getFaceTexcoords()[fidx][vidx]]:vec2::ZERO)
 #define TRIANGLE_TRIANGLE_NORMAL(fidx) (mesh->hasTriangleNormals()?mesh->getTriangleNormals()[fidx]:vec3::ZERO)
 
-#define TRIANGLE_VDATA(fidx,vidx) { .model_mat = entity->getTransform(),     \
-                                    .mvp_mat = mvp_matrix,                   \
-                                    .position = TRIANGLE_VERTEX(fidx, vidx), \
-                                    .normal = TRIANGLE_NORMAL(fidx, vidx),   \
-                                    .texcoord = TRIANGLE_TEXCOORD(fidx, vidx) }
+#define TRIANGLE_VDATA(fidx,vidx) { .model_mat = entity->getTransform(),       \
+                                    .mvp_mat = mvp_matrix,                     \
+                                    .position = TRIANGLE_VERTEX(fidx, vidx),   \
+                                    .normal = TRIANGLE_NORMAL(fidx, vidx),     \
+                                    .texcoord = TRIANGLE_TEXCOORD(fidx, vidx), \
+                                    .color = vec4::ZERO }
 
 #define SCREEN_MAPPING_X(x,frame_buffer) FTOD((x * 0.5f + 0.5f) * frame_buffer.getWidth())
 #define SCREEN_MAPPING_Y(y,frame_buffer) FTOD((y * 0.5f + 0.5f) * frame_buffer.getHeight())
