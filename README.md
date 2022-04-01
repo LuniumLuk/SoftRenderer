@@ -1,6 +1,6 @@
 # Lu Renderer (Under Developement)
 
-A Tiny Renderer designed to rely on minimum dependencies (basically with standard C library)
+A Tiny Renderer designed to rely on minimum dependencies (basically with standard C library) with software rasterization
 
 :construction: **currently under construction** :construction:
 
@@ -40,11 +40,12 @@ Triangle Normal Shading    |  Vertex Normal Shading
 - [x] Simple Shaders (Unlit, VertexNormal, TriangleNormal)
 - [x] Hovering Camera by Mouse Drag
 - [ ] Normal Mapping
+- [ ] Basic Lighting + Phong, Blinn Shaders
 - [ ] Different Texture Sampling Filtering Method
-- [ ] Phong, Blinn Shaders
+- [ ] Sky Box + Environment Map
 - [ ] PBR
 - [ ] PostProcessing Pass
-- [ ] Alpha Test
+- [ ] Alpha Test + Alpha Blending
 - [ ] Multi-thread
 
 ## Bug Report
