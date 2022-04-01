@@ -19,25 +19,35 @@ static float mouse_x = -1.0f;
 static float mouse_y = -1.0f;
 
 static float camera_fov = 60.0f;
-
+static const int SHADER_COUNT = 3;
+static int current_shader = 0;
 
 int test_pipeline() {
 
     FrameBuffer frame_buffer(512, 512);
 
-    entityConf config("assets/config03.txt");
+    entityConf config("assets/config04.txt");
     Entity ent = Entity(config);
     ent.getTriangleMesh()->computeTriangleNormals();
+    ent.getTriangleMesh()->computeVertexNormals();
     ent.getTriangleMesh()->printMeshInfo();
 
     scene.addEntity(&ent);
 
     mesh_center = ent.getTriangleMesh()->getMeshCenter();
-    scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -10.0f), mesh_center);
+    scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -4.0f), mesh_center);
 
-    // UnlitShader shader;
-    TriangleNormalShader shader;
-    // VertexNormalShader shader;
+    Shader* shaders[SHADER_COUNT] = {
+        (Shader*)new UnlitShader(),
+        (Shader*)new TriangleNormalShader(),
+        (Shader*)new VertexNormalShader()
+    };
+
+    char shader_names[SHADER_COUNT][64] = {
+        "UNLIT",
+        "TRIANGLE NORMAL",
+        "VERTEX NORMAL",
+    };
 
     initializeApplication();
 
@@ -67,10 +77,9 @@ int test_pipeline() {
         mat4 t2 = mat4::IDENTITY.rotated(Quaternion::fromAxisAngle(vec3(0.0f, 1.0f, 0.0f), model_rotation_angle));
         mat4 t3 = mat4::fromTRS(mesh_center, Quaternion::IDENTITY, vec3(1.0f, 1.0f, 1.0f) * model_scale);
         ent.setTransform(t3 * t2 * t1);
-        // ent.setTransform(t2);
 
-        frame_buffer.clearColorBuffer(rgb(0.0f, 0.2f, 0.5f));
-        Pipeline::draw(frame_buffer, scene, (Shader*)&shader);
+        frame_buffer.clearColorBuffer(rgb(0.0f, 0.0f, 0.0f));
+        Pipeline::draw(frame_buffer, scene, shaders[current_shader]);
 
         drawString(
             frame_buffer, 10.0f, 10.0f,
@@ -89,14 +98,19 @@ int test_pipeline() {
             "MOUSE DRAG   --------- ROTATE CAMERA", 6.0f, COLOR_WHITE);
         drawString(
             frame_buffer, 10.0f, 75.0f,
-            "MOUSE SCROLL --------- CHANGE CAMERA FOV", 6.0f, COLOR_WHITE);
+            "MOUSE SCROLL --------- CAMERA FOV", 6.0f, COLOR_WHITE);
+        drawInteger(
+            frame_buffer, 350.0f, 75.0f, 
+            (int)camera_fov, 6.0f, COLOR_RED);
         drawString(
             frame_buffer, 10.0f, 90.0f,
-            "KEY SPACE    --------- RESET ALL", 6.0f, COLOR_WHITE);
+            "KEY SPACE    --------- SWITCH SHADER", 6.0f, COLOR_WHITE);
+        drawString(
+            frame_buffer, 350.0f, 90.0f,
+            shader_names[current_shader], 6.0f, COLOR_RED);
         drawString(
             frame_buffer, 10.0f, 105.0f,
             "KEY ESCAPE   --------- EXIT", 6.0f, COLOR_WHITE);
-        
 
         swapBuffer(window);
         pollEvent();
@@ -129,13 +143,21 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
                 destroyWindow(window);
                 break;
             case KEY_SPACE:
+                // switch shader
+                current_shader++;
+                if (current_shader >= SHADER_COUNT)
+                {
+                    current_shader = 0;
+                }
+#if 0
+                // reset camera
                 model_rotation_angle = 0.0f;
                 model_scale = 1.0f;
-                // reset camera
                 camera_fov = 60.0f;
                 scene.getCamera().setFOV(camera_fov / 180.0f * PI);
-                scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -10.0f), mesh_center);
+                scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -4.0f), mesh_center);
                 scene.getCamera().setUp(vec3::UNIT_Y);
+#endif
                 break;
             default:
                 return;

@@ -410,8 +410,8 @@ Vector3 UniformImage::sampler(const UniformImage & image, const Vector2 & texcoo
     long u = FTOD(image.m_width * texcoord.x);
     long v = FTOD(image.m_height * texcoord.y);
 
-    size_t row_size = image.m_width * 3;
-    size_t buffer_pos = v * row_size + u * 3;
+    size_t image_size = image.m_width * image.m_height;
+    size_t buffer_pos = (image_size - image.m_width * (v + 1) + u) * 3;
     Vector3 vec(
         image.m_buffer[buffer_pos],
         image.m_buffer[buffer_pos + 1],

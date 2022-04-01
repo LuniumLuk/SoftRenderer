@@ -39,7 +39,9 @@ Triangle Normal Shading    |  Vertex Normal Shading
 - [x] Win32 Application API
 - [x] Simple Shaders (Unlit, VertexNormal, TriangleNormal)
 - [x] Hovering Camera by Mouse Drag
+- [ ] Wireframe Display under current Pipeline
 - [ ] Normal Mapping
+- [ ] Read .mtl for Material
 - [ ] Basic Lighting + Phong, Blinn Shaders
 - [ ] Different Texture Sampling Filtering Method
 - [ ] Sky Box + Environment Map
