@@ -44,6 +44,10 @@ typedef struct RGBCOLOR
 
 const RGBColor COLOR_WHITE(255.0f, 255.0f, 255.0f);
 const RGBColor COLOR_BLACK(0.0f, 0.0f, 0.0f);
+const RGBColor COLOR_RED(255.0f, 0.0f, 0.0f);
+const RGBColor COLOR_GREEN(0.0f, 255.0f, 0.0f);
+const RGBColor COLOR_BLUE(0.0f, 0.0f, 255.0f);
+const RGBColor COLOR_ORANGE(255.0f, 127.0f, 51.0f);
 
 // for hdr image
 typedef struct RGBECOLOR

@@ -4,11 +4,11 @@ using namespace Lurdr;
 
 Camera::Camera()
 {
-    m_position  = Vector3(0.0f, 0.0f, 1.0f);
-    m_target    = Vector3(0.0f, 0.0f, 0.0f);
+    m_position  = vec3::UNIT_Z;
+    m_target    = vec3::ZERO;
     // note : this step is called before the static variables initialized in maths.cpp
-    m_up        = Vector3(0.0f, 1.0f, 0.0f);
-    m_FOV       = PI / 3; // 90 degree
+    m_up        = vec3::UNIT_Y;
+    m_FOV       = PI / 3; // 60 degree
     m_aspect    = 1.0f;
     m_near      = 0.1f;
     m_far       = 1000.0f;
@@ -29,6 +29,10 @@ void Camera::setAspect(float aspect)
 void Camera::setFOV(float fov)
 {
     m_FOV = fov;
+}
+void Camera::setUp(const Vector3 & up)
+{
+    m_up = up;
 }
 
 
@@ -52,4 +56,26 @@ Matrix4 Camera::getViewMatrix() const
 Matrix4 Camera::getProjectMatrix() const
 {
     return Matrix4::getProjection(m_FOV, m_aspect, m_near, m_far);
+}
+
+void Camera::rotateByDrag(float delta_x, float delta_y, float drag_speed)
+{
+    vec3 dir = m_position - m_target;
+    vec3 y_axis = -dir.cross(m_up).normalized();
+    vec3 x_axis = y_axis.cross(dir).normalized();
+    m_up = -x_axis;
+
+    if (fabs(delta_x) > EPSILON)
+    {
+        Quaternion rotate_x = Quaternion::fromAxisAngle(x_axis, delta_x * drag_speed);
+        dir.rotate(rotate_x);
+    }
+
+    if (fabs(delta_y) > EPSILON)
+    {
+        Quaternion rotate_y = Quaternion::fromAxisAngle(y_axis, delta_y * drag_speed);
+        dir.rotate(rotate_y);
+    }
+
+    m_position = m_target + dir;
 }

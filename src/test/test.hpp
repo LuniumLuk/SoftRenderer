@@ -13,5 +13,6 @@ int test_main();
 int test_basic();
 int test_shader();
 int test_pipeline();
+int test_math();
 
 #endif

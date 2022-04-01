@@ -11,15 +11,22 @@ static AppWindow *window;
 static FrameBuffer frame_buffer(512, 512);
 
 static Scene scene;
-static vec3 mesh_center;
 static float model_rotation_angle = 0.0f;
-static float camera_to_model_dist = 10.0f;
+static float model_scale = 1.0f;
+static vec3 mesh_center;
+
+static float mouse_x = -1.0f; 
+static float mouse_y = -1.0f;
+
+static float camera_fov = 60.0f;
+
 
 int test_pipeline() {
 
     FrameBuffer frame_buffer(512, 512);
 
-    entityConf config("assets/config01.txt");
+    // entityConf config("assets/config01.txt");
+    entityConf config("assets/config02.txt");
     Entity ent = Entity(config);
     ent.getTriangleMesh()->computeTriangleNormals();
     ent.getTriangleMesh()->printMeshInfo();
@@ -27,11 +34,11 @@ int test_pipeline() {
     scene.addEntity(&ent);
 
     mesh_center = ent.getTriangleMesh()->getMeshCenter();
-    scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, camera_to_model_dist), mesh_center);
+    scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -10.0f), mesh_center);
 
-    // UnlitShader shader;
+    UnlitShader shader;
     // TriangleNormalShader shader;
-    VertexNormalShader shader;
+    // VertexNormalShader shader;
 
     initializeApplication();
 
@@ -59,7 +66,7 @@ int test_pipeline() {
 
         mat4 t1 = mat4::fromTRS(-mesh_center, Quaternion::IDENTITY, vec3(1.0f, 1.0f, 1.0f));
         mat4 t2 = mat4::IDENTITY.rotated(Quaternion::fromAxisAngle(vec3(0.0f, 1.0f, 0.0f), model_rotation_angle));
-        mat4 t3 = mat4::fromTRS(mesh_center, Quaternion::IDENTITY, vec3(1.0f, 1.0f, 1.0f));
+        mat4 t3 = mat4::fromTRS(mesh_center, Quaternion::IDENTITY, vec3(1.0f, 1.0f, 1.0f) * model_scale);
         ent.setTransform(t3 * t2 * t1);
         // ent.setTransform(t2);
 
@@ -68,13 +75,29 @@ int test_pipeline() {
 
         drawString(
             frame_buffer, 10.0f, 10.0f,
-            "LU RENDERER", 10.0f, RGBColor(255.0f, 255.0f, 255.0f));
-        drawString(
-            frame_buffer, 10.0f, 35.0f,
-            "FPS", 10.0f, RGBColor(255.0f, 255.0f, 255.0f));
+            "FPS", 6.0f, COLOR_WHITE);
         drawInteger(
-            frame_buffer, 60.0f, 35.0f, 
-            _fps, 10.0f, RGBColor(255.0f, 0.0f, 0.0f));
+            frame_buffer, 40.0f, 10.0f, 
+            _fps, 6.0f, COLOR_RED);
+        drawString(
+            frame_buffer, 10.0f, 30.0f,
+            "KEY A D      --------- ROTATE MODEL", 6.0f, COLOR_WHITE);
+        drawString(
+            frame_buffer, 10.0f, 45.0f,
+            "KEY S W      --------- SCALE MODEL", 6.0f, COLOR_WHITE);
+        drawString(
+            frame_buffer, 10.0f, 60.0f,
+            "MOUSE DRAG   --------- ROTATE CAMERA", 6.0f, COLOR_WHITE);
+        drawString(
+            frame_buffer, 10.0f, 75.0f,
+            "MOUSE SCROLL --------- CHANGE CAMERA FOV", 6.0f, COLOR_WHITE);
+        drawString(
+            frame_buffer, 10.0f, 90.0f,
+            "KEY SPACE    --------- RESET ALL", 6.0f, COLOR_WHITE);
+        drawString(
+            frame_buffer, 10.0f, 105.0f,
+            "KEY ESCAPE   --------- EXIT", 6.0f, COLOR_WHITE);
+        
 
         swapBuffer(window);
         pollEvent();
@@ -95,23 +118,25 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
                 model_rotation_angle -= 0.1f;
                 break;
             case KEY_S:
-                camera_to_model_dist += 0.2f;
-                scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, camera_to_model_dist), mesh_center);
+                model_scale *= 0.9f;
                 break;
             case KEY_D:
                 model_rotation_angle += 0.1f;
                 break;
             case KEY_W:
-                camera_to_model_dist -= 0.2f;
-                scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, camera_to_model_dist), mesh_center);
+                model_scale *= 1.1f;
                 break;
             case KEY_ESCAPE:
                 destroyWindow(window);
                 break;
             case KEY_SPACE:
                 model_rotation_angle = 0.0f;
-                camera_to_model_dist = -10.0f;
-                scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, camera_to_model_dist), mesh_center);
+                model_scale = 1.0f;
+                // reset camera
+                camera_fov = 60.0f;
+                scene.getCamera().setFOV(camera_fov / 180.0f * PI);
+                scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -10.0f), mesh_center);
+                scene.getCamera().setUp(vec3::UNIT_Y);
                 break;
             default:
                 return;
@@ -121,15 +146,35 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
 void mouseButtonEventCallback(AppWindow *window, MOUSE_BUTTON button, bool pressed)
 {
     __unused_variable(window);
-    printf("mouse button event : button[%d] pressed[%u]\n", button, pressed);
+    // when left button is unclicked
+    if (button == BUTTON_L && !pressed)
+    {
+        mouse_x = -1.0f;
+        mouse_y = -1.0f;
+    }
 }
 void mouseScrollEventCallback(AppWindow *window, float offset)
 {
     __unused_variable(window);
-    printf("mouse scroll event : offset[%.2f]\n", offset);
+    camera_fov += offset;
+    if (camera_fov > 90.0f)
+    {
+        camera_fov = 90.0f;
+    }
+    else if (camera_fov < 10.0f)
+    {
+        camera_fov = 10.0f;
+    }
+    scene.getCamera().setFOV(camera_fov / 180.0f * PI);
 }
 void mouseDragEventCallback(AppWindow *window, float x, float y)
 {
     __unused_variable(window);
-    printf("mouse drag event x[%.2f] y[%.2f]\n", x, y);
+    
+    if (mouse_x > 0.0f && mouse_y > 0.0f)
+    {
+        scene.getCamera().rotateByDrag(x - mouse_x, y - mouse_y, 0.015f);
+    }
+    mouse_x = x;
+    mouse_y = y;
 }

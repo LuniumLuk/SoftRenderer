@@ -17,9 +17,40 @@ I intend to implement a shader-based renderer that runs on CPU from scratch usin
 - Support Cross Platform (MacOS, Windows)
 - Image and Geometry Process Functionalities
 
-<img src="images/digit_display.png" width="360px" />
+### Wire Frame Display
 
-<img src="images/wireframe_bunny.gif" width="360px" />
+<img src="images/wireframe_bunny.gif" width="360px" /> 
+
+### Unlit Shading & Mouse Manipulation
+
+<img src="images/unlit_shading.gif" width="360px" />
+
+Triangle Normal Shading    |  Vertex Normal Shading
+:-------------------------:|:-------------------------:
+<img src="images/triangle_normal_shading_2.png" width="360px" />  |  <img src="images/vertex_normal_shading_2.png" width="360px" />
+<img src="images/triangle_normal_shading.png" width="360px" />  |  <img src="images/vertex_normal_shading.png" width="360px" />
+
+## Todos
+
+- [x] Basic Math Liberary
+- [x] Basic Resource IO (.obj, .bmp)
+- [x] Basic Rasterization Implementation
+- [x] Basic Graphics Pipeline that runs on single thread
+- [x] Win32 Application API
+- [x] Simple Shaders (Unlit, VertexNormal, TriangleNormal)
+- [x] Hovering Camera by Mouse Drag
+- [ ] Normal Mapping
+- [ ] Different Texture Sampling Filtering Method
+- [ ] Phong, Blinn Shaders
+- [ ] PBR
+- [ ] PostProcessing Pass
+- [ ] Alpha Test
+- [ ] Multi-thread
+
+## Bug Report
+
+- Unlit Shader get segmentation fault when no albedo texture is provided
+- Some pixels shifting between edges
 
 ## Current Features
 
@@ -36,7 +67,7 @@ I intend to implement a shader-based renderer that runs on CPU from scratch usin
   - basic rasterization algorithm
   - colormap
   - digit display
-  - programable shader
+  - easy programable shader
 
 - Others
   - dynamic array

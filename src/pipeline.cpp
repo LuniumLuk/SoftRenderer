@@ -60,7 +60,7 @@ void Lurdr::drawTriangles(
 void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const Shader * shader)
 {
     // scene.sortEntity();
-    frame_buffer.clearDepthBuffer(-1.0f);
+    frame_buffer.clearDepthBuffer(1.0f);
 
     const DynamicArray<Entity*>* entities = scene.getEntities();
     for (size_t eidx = 0; eidx < entities->size(); eidx++)
@@ -149,7 +149,7 @@ void Pipeline::rasterizeFlatTriangle(
             continue;
         }
 
-        float alpha = (float)(y - y_start) / (float)y_span;
+        float alpha = (float)(y - y_start) / (float)y_span + EPSILON;
         rasterizeScanLine( frame_buffer,
                       V2F_LERP(v0, v2, alpha),
                       V2F_LERP(v1, v2, alpha),
@@ -178,7 +178,7 @@ void Pipeline::rasterizeScanLine(
             continue;
         }
 
-        float alpha = (float)(x - x_start) / (float)x_span;
+        float alpha = (float)(x - x_start) / (float)x_span + EPSILON;
         pixelShader( frame_buffer,
                      V2F_LERP(v0, v1, alpha),
                      shader, entity, scene
@@ -193,8 +193,13 @@ void Pipeline::pixelShader(
     // Depth Test
     long x = SCREEN_MAPPING_X(v.position.x, frame_buffer);
     long y = SCREEN_MAPPING_Y(v.position.y, frame_buffer);
+    if (x < 0 || y < 0)
+    {
+        return;
+    }
+
     long depth_buffer_pos = frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x;
-    if (frame_buffer.depthBuffer()[depth_buffer_pos] >= v.position.z)
+    if (frame_buffer.depthBuffer()[depth_buffer_pos] <= v.position.z)
     {
         return;
     }

@@ -17,7 +17,7 @@ void Lurdr::drawPixel(const FrameBuffer & frame_buffer, const long & x, const lo
 {
     long depth_buffer_pos = frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x;
     float d = clamp(depth, -1.0f, 1.0f);
-    if (frame_buffer.depthBuffer()[depth_buffer_pos] >= d)
+    if (frame_buffer.depthBuffer()[depth_buffer_pos] <= d)
     {
         return;
     }
@@ -55,7 +55,7 @@ void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, R
 
     while (true)
     {
-        drawPixel(frame_buffer, x1, y1, color, 1.0f);
+        drawPixel(frame_buffer, x1, y1, color, -1.0f);
 
         if (x1 == x2 && y1 == y2) break;
 
@@ -720,7 +720,7 @@ void Lurdr::drawString(
     float offset_x = x;
     for (size_t i = 0; i < length; i++)
     {
-        assert((string[i] >= 'a' && string[i] <= 'z') || (string[i] >= 'A' && string[i] <= 'Z') || (string[i] == ' '));
+        // assert((string[i] >= 'a' && string[i] <= 'z') || (string[i] >= 'A' && string[i] <= 'Z') || (string[i] == ' ') || (string[i] == '-'));
         if (string[i] >= 'a' && string[i] <= 'z')
         {
             drawDigit(
@@ -734,6 +734,14 @@ void Lurdr::drawString(
             drawDigit(
                 frame_buffer,
                 offset_x, y, (DIGIT_CHARACTER)(DIGIT_A + string[i] - 'A'),
+                size, color, ratio, segment
+            );
+        }
+        else if (string[i] == '-')
+        {
+            drawDigit(
+                frame_buffer,
+                offset_x, y, DIGIT_DASH,
                 size, color, ratio, segment
             );
         }

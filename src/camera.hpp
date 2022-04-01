@@ -9,6 +9,8 @@
 namespace Lurdr
 {
 
+#define DRAG_SPEED 0.02f
+
 class Camera
 {
 private:
@@ -24,11 +26,14 @@ public:
     void setTransform(const Vector3 & position, const Vector3 & target);
     void setAspect(float aspect);
     void setFOV(float fov);
+    void setUp(const Vector3 & up);
     Vector3 getPosition() const;
     Vector3 getForward() const;
     Vector3 getUp() const;
     Matrix4 getViewMatrix() const;
     Matrix4 getProjectMatrix() const;
+
+    void rotateByDrag(float delta_x, float delta_y, float drag_speed = DRAG_SPEED);
 };
 
 }
