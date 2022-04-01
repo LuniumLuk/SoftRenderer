@@ -9,6 +9,7 @@
 #include "darray.hpp"
 #include "rasterizer.hpp"
 #include "scene.hpp"
+#include "shaderf.hpp"
 #include "shader.hpp"
 #include "digits.hpp"
 #include "pipeline.hpp"

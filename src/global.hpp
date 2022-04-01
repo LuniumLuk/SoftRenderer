@@ -12,6 +12,7 @@ namespace Lurdr
 
 #define PI 3.14159265358979323846264338327950288f
 #define EPSILON 1e-6f
+#define ASSERT_NON_ZERO(x) assert(fabs(x)>EPSILON)
 
 typedef unsigned char       byte_t;  // 1 bytes
 typedef unsigned short      UINT16;  // 2 bytes

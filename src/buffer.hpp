@@ -33,6 +33,7 @@ public:
     float* depthBuffer() const;
 
     void clearColorBuffer(const RGBCOLOR & color) const;
+    void clearColorBuffer(const rgb & color) const;
     void clearDepthBuffer(const float & depth) const;
 };
 

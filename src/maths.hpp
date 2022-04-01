@@ -17,7 +17,9 @@ namespace Lurdr
 
 typedef class Vector2 vec2;
 typedef class Vector3 vec3;
+typedef class Vector3 rgb;
 typedef class Vector4 vec4;
+typedef class Vector4 rgba;
 typedef class Quaternion quat;
 typedef class Matrix3 mat3;
 typedef class Matrix4 mat4;
@@ -74,7 +76,12 @@ Vector2 operator* (float multiplier, const Vector2 & multiplicand);
 class Vector3
 {
 public:
+    union { float x, r; };
+    union { float y, g; };
+    union { float z, b; };
+#if 0
     float x, y, z;
+#endif
     Vector3(): x(0), y(0), z(0) {}
     Vector3(float x, float y, float z): x(x), y(y), z(z) {}
     Vector3(const Vector3 & vec): x(vec.x), y(vec.y), z(vec.z) {}
@@ -127,7 +134,13 @@ void swap(Vector3 & a, Vector3 & b);
 class Vector4
 {
 public:
+    union { float x, r; };
+    union { float y, g; };
+    union { float z, b; };
+    union { float w, a; };
+#if 0
     float x, y, z, w;
+#endif
     Vector4(): x(0), y(0), z(0), w(0) {}
     Vector4(float x, float y, float z, float w): x(x), y(y), z(z), w(w) {}
     Vector4(const Vector4 & vec): x(vec.x), y(vec.y), z(vec.z), w(vec.w) {}

@@ -126,6 +126,8 @@ private:
     vec3    *m_triangle_normals;
     vec2    *m_texture_coords;
     vec3i   *m_faces;
+    vec3i   *m_face_texcoords;
+    vec3i   *m_face_normals;
     vec3    m_mesh_center;
 
     size_t   m_vertex_count;
@@ -161,6 +163,8 @@ public:
     vec3* getVertexNormals() const { return m_vertex_normals; }
     vec3* getTriangleNormals() const { return m_triangle_normals; }
     vec3i* getFaces() const { return m_faces; }
+    vec3i* getFaceTexcoords() const { return m_face_texcoords; }
+    vec3i* getFaceNormals() const { return m_face_normals; }
     vec2* getTextureCoords() const { return m_texture_coords; }
     vec3 getMeshCenter() const { return m_mesh_center; }
 

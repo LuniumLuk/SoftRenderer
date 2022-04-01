@@ -2,90 +2,51 @@
 
 using namespace Lurdr;
 
-void * Lurdr::allocateOutBuffer(const size_t & size, size_t * allocated_sizes, const long & pos, void ** buffer)
+v2f UnlitShader::vert(const vdata in, const Entity * entity, const Scene & scene) const
 {
-    if (allocated_sizes[pos] == size)
-    {
-        return *buffer;
-    }
-    else if (allocated_sizes[pos] > 0)
-    {
-        // already allocated, but different size
-        delete[] static_cast<char*>(*buffer);
-    }
-    allocated_sizes[pos] = size;
-    *buffer = (void *)new char[size];
-    return *buffer;
+    __unused_variable(entity);
+    __unused_variable(scene);
+
+    v2f out;
+
+    out.position = MVP_MATRIX * vec4(in.position, 1.0f);
+    out.texcoord = in.texcoord;
+    out.normal   = in.normal;
+
+    return out;
 }
 
-Program::Program()
+vec4 UnlitShader::frag(const v2f in, const Entity * entity, const Scene & scene) const
 {
-    m_uniform = new void*[MAX_UNIFORM_COUNT];
-}
-
-Program::~Program()
-{
-    delete[] m_uniform;
-}
-
-void Program::linkShader(SHADER_TYPE type, SHADER_FUNC(shader))
-{
-    switch (type)
-    {
-        case VERTEX_SHADER:
-            m_vertex_shader = shader;
-            break;
-        case FRAGMENT_SHADER:
-            m_fragment_shader = shader;
-            break;
-        case GEOMETRY_SHADER:
-            m_geometry_shader = shader;
-            break;
-    }
-}
-
-void Program::run(SHADER_TYPE type, const size_t & in_count, void* in[], size_t* out_sizes, void* out[]) const
-{
-    switch (type)
-    {
-        case VERTEX_SHADER:
-            m_vertex_shader(in_count, in, m_uniform, out_sizes, out);
-            break;
-        case FRAGMENT_SHADER:
-            m_fragment_shader(in_count, in, m_uniform, out_sizes, out);
-            break;
-        case GEOMETRY_SHADER:
-            m_geometry_shader(in_count, in, m_uniform, out_sizes, out);
-            break;
-    }
-}
-
-void Program::setUniform(long idx, void* uniform)
-{
-    assert(idx >= 0 && idx < MAX_UNIFORM_COUNT);
-    m_uniform[idx] = uniform;
-}
-
-void Lurdr::simpleVertexShader(SHADER_PARAM)
-{
-    Vector3 *a_pos = layout_in(Vector3, 0);
-
-    Matrix4 *model      = uniform(Matrix4, 0);
-    Matrix4 *view       = uniform(Matrix4, 1);
-    Matrix4 *projection = uniform(Matrix4, 2);
-
-    Vector4 *position = layout_out(Vector4, 0);
-
-    *position = (*projection) * (*view) * (*model) * Vector4(*a_pos, 1.0f);
-}
-
-void Lurdr::simpleFragmentShader(SHADER_PARAM)
-{
-    unused_in;
+    __unused_variable(scene);
     
-    unused_uniform;
+    return Texture::sampler(entity->getMaterial()->albedo, in.texcoord);
+}
 
-    Vector4 *frag_color = layout_out(Vector4, 0);
+vec4 TriangleNormalShader::frag(const v2f in, const Entity * entity, const Scene & scene) const
+{
+    __unused_variable(entity);
+    __unused_variable(scene);
 
-    *frag_color = Vector4(1.0f, 0.5f, 0.2f, 1.0f);
+    rgb color = rgb(
+        in.t_normal.x * 0.5f + 0.5f,
+        in.t_normal.y * 0.5f + 0.5f,
+        in.t_normal.z * 0.5f + 0.5f
+    );
+    
+    return vec4(color, 1.0f);
+}
+
+vec4 VertexNormalShader::frag(const v2f in, const Entity * entity, const Scene & scene) const
+{
+    __unused_variable(entity);
+    __unused_variable(scene);
+
+    rgb color = rgb(
+        in.normal.x * 0.5f + 0.5f,
+        in.normal.y * 0.5f + 0.5f,
+        in.normal.z * 0.5f + 0.5f
+    );
+    
+    return vec4(color.normalized(), 1.0f);
 }

@@ -60,6 +60,7 @@ public:
 
     void setTriangleMesh(TriangleMesh * mesh) { m_mesh = mesh; }
     const TriangleMesh * getTriangleMesh() const { return m_mesh; }
+    TriangleMesh * getTriangleMesh() { return m_mesh; }
 
     void setMaterial(Material * material) { m_material = material; }
     const Material * getMaterial() const { return m_material; }

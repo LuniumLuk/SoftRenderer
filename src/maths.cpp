@@ -54,7 +54,7 @@ Vector2 Vector2::operator* (const float & multiplicand) const
 }
 Vector2 Vector2::operator/ (const float divisor) const
 {
-    assert(fabs(divisor) > EPSILON);
+    ASSERT_NON_ZERO(divisor);
     float factor = 1.0f / divisor;
     Vector2 vec(x * factor, y * factor);
     return vec;
@@ -195,7 +195,7 @@ Vector3 Vector3::operator* (const float & multiplicand) const
 }
 Vector3 Vector3::operator/ (const float divisor) const
 {
-    assert(fabs(divisor) > EPSILON);
+    ASSERT_NON_ZERO(divisor);
     float factor = 1.0f / divisor;
     Vector3 vec(x * factor, y * factor, z * factor);
     return vec;
@@ -397,7 +397,7 @@ Vector4 Vector4::operator* (const float & multiplicand) const
 }
 Vector4 Vector4::operator/ (const float divisor) const
 {
-    assert(fabs(divisor) > EPSILON);
+    ASSERT_NON_ZERO(divisor);
     float factor = 1.0f / divisor;
     Vector4 vec(x * factor, y * factor, z * factor, w * factor);
     return vec;
@@ -600,7 +600,7 @@ Vector3 Quaternion::toEulerAngles() const
 Quaternion Quaternion::inversed() const
 {
     float q = dot(*this);
-    assert(fabs(q) > EPSILON);
+    ASSERT_NON_ZERO(q);
     float factor = 1.0f / q;
     Quaternion quat(
         -x * factor,
@@ -845,7 +845,7 @@ Vector3 Matrix3::operator* (const Vector3 & other) const
 }
 Matrix3 Matrix3::operator/ (const float & divisor) const
 {
-    assert(fabs(divisor) > EPSILON);
+    ASSERT_NON_ZERO(divisor);
     float factor = 1.0f / divisor;
     Matrix3 mat(
         m[0] * factor, m[1] * factor, m[2] * factor,
@@ -897,7 +897,7 @@ Matrix3 Matrix3::hadamard(const Matrix3 & other) const
 Matrix3 Matrix3::inversed() const
 {
     float det = (*this).det();
-    assert(fabs(det) > EPSILON);
+    ASSERT_NON_ZERO(det);
 
     float factor = 1.0f / det;
     float a1 = m[4] * m[8] - m[5] * m[7];
@@ -1039,7 +1039,7 @@ Vector4 Matrix4::operator* (const Vector4 & other) const
 }
 Matrix4 Matrix4::operator/ (const float & divisor) const
 {
-    assert(fabs(divisor) > EPSILON);
+    ASSERT_NON_ZERO(divisor);
     float factor = 1.0f / divisor;
     Matrix4 mat(
         m[0]  * factor, m[1]  * factor, m[2]  * factor, m[3] * factor,
@@ -1100,7 +1100,7 @@ Matrix4 Matrix4::hadamard(const Matrix4 & other) const
 Matrix4 Matrix4::inversed() const
 {
     float det = (*this).det();
-    assert(fabs(det) > EPSILON);
+    ASSERT_NON_ZERO(det);
     float factor = 1.0f / det;
     float m11 = Matrix3(m[5],  m[6],  m[7], 
                         m[9],  m[10], m[11], 
@@ -1220,9 +1220,9 @@ Matrix4 Matrix4::fromQuaternion(const Quaternion & quat)
 // reference : http://www.songho.ca/opengl/gl_quaternion.html
 Matrix4 Matrix4::fromTRS(const Vector3 & translation, const Quaternion & rotation, const Vector3 & scale)
 {
-    assert(fabs(scale.x) > EPSILON);
-    assert(fabs(scale.y) > EPSILON);
-    assert(fabs(scale.z) > EPSILON);
+    ASSERT_NON_ZERO(scale.x);
+    ASSERT_NON_ZERO(scale.y);
+    ASSERT_NON_ZERO(scale.z);
 
     float xx = rotation.x * rotation.x;
     float xy = rotation.x * rotation.y;
@@ -1249,9 +1249,9 @@ Matrix4 Matrix4::fromTRS(const Vector3 & translation, const Quaternion & rotatio
 // reference : https://en.wikipedia.org/wiki/Rotation_matrix
 Matrix4 Matrix4::fromAxisAngle(const Vector3 & axis, const float & angle)
 {
-    assert(fabs(axis.x) > EPSILON);
-    assert(fabs(axis.y) > EPSILON);
-    assert(fabs(axis.z) > EPSILON);
+    ASSERT_NON_ZERO(axis.x);
+    ASSERT_NON_ZERO(axis.y);
+    ASSERT_NON_ZERO(axis.z);
 
     float sin = sinf(angle);
     float cos = cosf(angle);
@@ -1313,9 +1313,9 @@ Matrix4 Matrix4::translated(const Vector3 & translation) const
 }
 Matrix4 Matrix4::scaled(const Vector3 & scale) const
 {
-    assert(fabs(scale.x) > EPSILON);
-    assert(fabs(scale.y) > EPSILON);
-    assert(fabs(scale.z) > EPSILON);
+    ASSERT_NON_ZERO(scale.x);
+    ASSERT_NON_ZERO(scale.y);
+    ASSERT_NON_ZERO(scale.z);
 
     Matrix4 mat(
         m[0] * scale.x, m[1] * scale.y, m[2] * scale.z,  m[3],
@@ -1344,9 +1344,9 @@ void Matrix4::translate(const Vector3 & translation)
 }
 void Matrix4::scale(const Vector3 & scale)
 {
-    assert(fabs(scale.x) > EPSILON);
-    assert(fabs(scale.y) > EPSILON);
-    assert(fabs(scale.z) > EPSILON);
+    ASSERT_NON_ZERO(scale.x);
+    ASSERT_NON_ZERO(scale.y);
+    ASSERT_NON_ZERO(scale.z);
 
     m[0]  *= scale.x;
     m[1]  *= scale.y;

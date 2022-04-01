@@ -404,8 +404,8 @@ byte_t& UniformImage::operator() (const size_t & row, const size_t & column, con
 // TODO: texture sampling by duel linear interpolation
 Vector3 UniformImage::sampler(const UniformImage & image, const Vector2 & texcoord)
 {
-    assert(texcoord.x > 0.0f && texcoord.x < 1.0f);
-    assert(texcoord.y > 0.0f && texcoord.y < 1.0f);
+    assert(texcoord.x >= 0.0f && texcoord.x <= 1.0f);
+    assert(texcoord.y >= 0.0f && texcoord.y <= 1.0f);
 
     long u = FTOD(image.m_width * texcoord.x);
     long v = FTOD(image.m_width * texcoord.x);

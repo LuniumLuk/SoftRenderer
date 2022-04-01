@@ -17,7 +17,7 @@ RGBCOLOR Lurdr::getColorFromScheme(float percentage, const Vector3 * colormap, l
 RGBCOLOR Lurdr::getColorMap(float value, float lower, float upper, COLORMAP_TYPE type)
 {
     float range = upper - lower;
-    assert(fabs(range) > EPSILON);
+    ASSERT_NON_ZERO(range);
 
     switch (type)
     {

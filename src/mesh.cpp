@@ -156,7 +156,7 @@ void OBJMesh::loadMesh()
     }
     if (normal_idxes.size() > 0 && normal_idxes.size() % 3 == 0)
     {
-        assert(vertex_normals.size() == m_vertex_count);
+        // assert(vertex_normals.size() == m_vertex_count);
         m_vns = new Vector3[vertex_normals.size()];
         for (size_t i = 0; i < vertex_normals.size(); i++)
         {
@@ -331,6 +331,8 @@ TriangleMesh::TriangleMesh():
     m_triangle_normals(nullptr),
     m_texture_coords(nullptr),
     m_faces(nullptr),
+    m_face_texcoords(nullptr),
+    m_face_normals(nullptr),
     m_mesh_center(vec3::ZERO),
     m_vertex_count(0),
     m_face_count(0),
@@ -354,6 +356,8 @@ TriangleMesh::TriangleMesh(const char * filename):
     DynamicArray<vec3>  vertices;
     DynamicArray<vec3>  vertex_normals;
     DynamicArray<vec3i> faces;
+    DynamicArray<vec3i> face_texcoords;
+    DynamicArray<vec3i> face_normals;
     DynamicArray<vec2>  texture_coords;
 
     float x, y, z;
@@ -388,7 +392,23 @@ TriangleMesh::TriangleMesh(const char * filename):
                 if (scanned_items != 3)
                 {
                     scanned_items = sscanf(line_buffer, "f %lu//%lu %lu//%lu %lu//%lu", &v1, &vn1, &v2, &vn2, &v3, &vn3);
-                    assert(scanned_items == 6);
+                    if (scanned_items != 6)
+                    {
+                        scanned_items = sscanf(line_buffer, "f %lu/%lu %lu/%lu %lu/%lu", &v1, &vt1, &v2, &vt2, &v3, &vt3);
+                        vec3i ft;
+                        ft[0] = vt1 - 1;
+                        ft[1] = vt2 - 1;
+                        ft[2] = vt3 - 1;
+                        face_texcoords.push_back(ft);
+                    }
+                    else
+                    {
+                        vec3i fn;
+                        fn[0] = vn1 - 1;
+                        fn[1] = vn2 - 1;
+                        fn[2] = vn3 - 1;
+                        face_normals.push_back(fn);
+                    }
                     vec3i f;
                     f[0] = v1 - 1;
                     f[1] = v2 - 1;
@@ -411,6 +431,16 @@ TriangleMesh::TriangleMesh(const char * filename):
                 f[1] = v2 - 1;
                 f[2] = v3 - 1;
                 faces.push_back(f);
+                vec3i ft;
+                ft[0] = vt1 - 1;
+                ft[1] = vt2 - 1;
+                ft[2] = vt3 - 1;
+                face_texcoords.push_back(ft);
+                vec3i fn;
+                fn[0] = vn1 - 1;
+                fn[1] = vn2 - 1;
+                fn[2] = vn3 - 1;
+                face_normals.push_back(fn);
             }
         }
     }
@@ -433,9 +463,27 @@ TriangleMesh::TriangleMesh(const char * filename):
             m_faces[i] = faces[i];
         }
     }
+    if (face_texcoords.size() > 0)
+    {
+        assert(face_texcoords.size() == m_face_count);
+        m_face_texcoords = new vec3i[face_texcoords.size()];
+        for (size_t i = 0; i < face_texcoords.size(); i++)
+        {
+            m_face_texcoords[i] = face_texcoords[i];
+        }
+    }
+    if (face_normals.size() > 0)
+    {
+        assert(face_normals.size() == m_face_count);
+        m_face_normals = new vec3i[face_normals.size()];
+        for (size_t i = 0; i < face_normals.size(); i++)
+        {
+            m_face_normals[i] = face_normals[i];
+        }
+    }
     if (texture_coords.size() > 0)
     {
-        assert(texture_coords.size() == m_vertex_count);
+        // assert(texture_coords.size() == m_vertex_count);
         m_texture_coords = new vec2[texture_coords.size()];
         for (size_t i = 0; i < texture_coords.size(); i++)
         {
@@ -445,7 +493,7 @@ TriangleMesh::TriangleMesh(const char * filename):
     }
     if (vertex_normals.size() > 0)
     {
-        assert(vertex_normals.size() == m_vertex_count);
+        // assert(vertex_normals.size() == m_vertex_count);
         m_vertex_normals = new vec3[vertex_normals.size()];
         for (size_t i = 0; i < vertex_normals.size(); i++)
         {
@@ -489,6 +537,12 @@ TriangleMesh::TriangleMesh(const TriangleMesh & tri_mesh):
         {
             m_vertex_normals[i] = tri_mesh.m_vertex_normals[i];
         }
+
+        m_face_normals = new vec3i[m_face_count];
+        for (size_t i = 0; i < m_face_count; i++)
+        {
+            m_face_normals[i] = tri_mesh.m_face_normals[i];
+        }
     }
     if (m_has_triangle_normals)
     {
@@ -504,6 +558,12 @@ TriangleMesh::TriangleMesh(const TriangleMesh & tri_mesh):
         for (size_t i = 0; i < m_vertex_count; i++)
         {
             m_texture_coords[i] = tri_mesh.m_texture_coords[i];
+        }
+
+        m_face_texcoords = new vec3i[m_face_count];
+        for (size_t i = 0; i < m_face_count; i++)
+        {
+            m_face_texcoords[i] = tri_mesh.m_face_texcoords[i];
         }
     }
     computeMeshCenter();
@@ -546,6 +606,12 @@ TriangleMesh & TriangleMesh::operator= (const TriangleMesh & tri_mesh)
         {
             m_vertex_normals[i] = tri_mesh.m_vertex_normals[i];
         }
+
+        m_face_normals = new vec3i[m_face_count];
+        for (size_t i = 0; i < m_face_count; i++)
+        {
+            m_face_normals[i] = tri_mesh.m_face_normals[i];
+        }
     }
     if (m_has_triangle_normals)
     {
@@ -562,6 +628,12 @@ TriangleMesh & TriangleMesh::operator= (const TriangleMesh & tri_mesh)
         {
             m_texture_coords[i] = tri_mesh.m_texture_coords[i];
         }
+
+        m_face_texcoords = new vec3i[m_face_count];
+        for (size_t i = 0; i < m_face_count; i++)
+        {
+            m_face_texcoords[i] = tri_mesh.m_face_texcoords[i];
+        }
     }
     computeMeshCenter();
 
@@ -574,6 +646,8 @@ TriangleMesh::~TriangleMesh()
     if (m_vertex_normals)   delete[] m_vertex_normals;
     if (m_triangle_normals) delete[] m_triangle_normals;
     if (m_faces)            delete[] m_faces;
+    if (m_face_texcoords)   delete[] m_face_texcoords;
+    if (m_face_normals)     delete[] m_face_normals;
     if (m_texture_coords)   delete[] m_texture_coords;
 }
 
@@ -614,12 +688,17 @@ void TriangleMesh::computeVertexNormals()
         computeTriangleNormals();
     }
 
+    if (m_face_normals) delete[] m_face_normals;
+    m_face_normals = new vec3i[m_face_count];
+
     DynamicArray<DynamicArray<size_t> > neighbour_faces(m_vertex_count);
     for (size_t fidx = 0; fidx < m_face_count; fidx++)
     {
         neighbour_faces[m_faces[fidx][0]].push_back(fidx);
         neighbour_faces[m_faces[fidx][1]].push_back(fidx);
         neighbour_faces[m_faces[fidx][2]].push_back(fidx);
+
+        m_face_normals[fidx] = m_faces[fidx]; // use same indices as face
     }
 
     DynamicArray<vec3> vertex_normals;

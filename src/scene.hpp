@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <string.h>
 #include "buffer.hpp"
-#include "shader.hpp"
+#include "shaderf.hpp"
 #include "global.hpp"
 #include "maths.hpp"
 #include "camera.hpp"
@@ -14,6 +14,7 @@
 #include "rasterizer.hpp"
 #include "entity.hpp"
 #include "light.hpp"
+#include "shader.hpp"
 
 namespace Lurdr
 {
@@ -70,32 +71,6 @@ public:
     void setBackground(const RGBCOLOR & color);
 };
 
-struct vdata
-{
-    mat4 model_mat;
-    mat4 mvp_mat;
-    vec3 position;
-    vec3 normal;
-    vec2 texcoord;
-};
-
-struct v2f
-{
-    vec4 position;
-    vec3 frag_pos;
-    vec3 normal;
-    vec2 texcoord;
-};
-
-class Scene;
-
-class Shader
-{
-public:
-    virtual v2f vert(const vdata in, const Entity * entity, const Scene & scene) const = 0;
-    virtual vec4 frag(const v2f in, const Entity * entity, const Scene & scene) const = 0;
-};
-
 class Scene
 {
 private:
@@ -119,34 +94,6 @@ public:
     const Camera& getCamera() const { return m_camera; }
 
     LightComp getLight(vec3 normal, vec3 frag_pos, vec3 view_dir) const;
-};
-
-#define MODEL_MATRIX        (in.model_mat)
-#define VIEW_MATRIX         (scene.getCamera().getViewMatrix())
-#define PERSPECTIVE_MATRIX  (scene.getCamera().getProjectMatrix())
-#define MVP_MATRIX          (in.mvp_mat)
-
-class UnlitShader
-{
-public:
-    virtual v2f vert(const vdata in, const Entity * entity, const Scene & scene) const
-    {
-        __unused_variable(entity);
-        __unused_variable(scene);
-
-        v2f out;
-        out.position = MVP_MATRIX * vec4(in.position, 1.0f);
-        out.texcoord = in.texcoord;
-
-        return out;
-    }
-
-    virtual vec4 frag(const v2f in, const Entity * entity, const Scene & scene) const
-    {
-        __unused_variable(scene);
-        
-        return Texture::sampler(entity->getMaterial()->albedo, in.texcoord);
-    }
 };
 
 
