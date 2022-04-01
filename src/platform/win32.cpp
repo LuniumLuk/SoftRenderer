@@ -153,9 +153,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_MOUSEWHEEL:
             handleMouseScroll(GET_WHEEL_DELTA_WPARAM(wParam) > 0 ? 1.0f : -1.0f);
             break;
-#if 0
         case WM_PAINT:
-            if (g_update_paint)
+            // note: if not draw here, pollEvent will wait until receiving inputs
+            // therfore fps will drop when there's no input
             {
                 HDC hdc = GetDC(hwnd);
 
@@ -175,7 +175,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 g_update_paint = false;
             }
             break;
-#endif
         case WM_CLOSE:
             g_window->should_close = true;
             DestroyWindow(hwnd);
