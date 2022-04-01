@@ -4,10 +4,14 @@ using namespace Lurdr;
 
 Camera::Camera()
 {
-    m_position  = vec3::UNIT_Z;
-    m_target    = vec3::ZERO;
-    // note : this step is called before the static variables initialized in maths.cpp
-    m_up        = vec3::UNIT_Y;
+    m_position  = vec3(0.0f, 0.0f, 1.0f);
+    m_target    = vec3(0.0f, 0.0f, 0.0f);
+    //
+    // note : this step may be called before the static variables initialized in maths.cpp
+    // so do not use static variables like vec3::UNIT_Y
+    // which will cause a BUG in certain cases
+    //
+    m_up        = vec3(0.0f, 1.0f, 0.0f);
     m_FOV       = PI / 3; // 60 degree
     m_aspect    = 1.0f;
     m_near      = 0.1f;

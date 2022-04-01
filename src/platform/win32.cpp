@@ -61,7 +61,8 @@ static void handleMouseDrag(float x, float y)
 {
     if (g_window->mouseDragCallback)
     {
-        g_window->mouseDragCallback(g_window, x, y);
+        // inverse Y
+        g_window->mouseDragCallback(g_window, x, g_viewer_height - y);
     }
 }
 
