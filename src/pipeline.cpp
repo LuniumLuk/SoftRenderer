@@ -193,7 +193,7 @@ void Pipeline::pixelShader(
     // Depth Test
     long x = SCREEN_MAPPING_X(v.position.x, frame_buffer);
     long y = SCREEN_MAPPING_Y(v.position.y, frame_buffer);
-    if (x < 0 || y < 0)
+    if (x < 0 || x >= frame_buffer.getWidth() || y < 0 || y >= frame_buffer.getHeight())
     {
         return;
     }

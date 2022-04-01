@@ -36,8 +36,8 @@ int test_pipeline() {
     mesh_center = ent.getTriangleMesh()->getMeshCenter();
     scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -10.0f), mesh_center);
 
-    UnlitShader shader;
-    // TriangleNormalShader shader;
+    // UnlitShader shader;
+    TriangleNormalShader shader;
     // VertexNormalShader shader;
 
     initializeApplication();

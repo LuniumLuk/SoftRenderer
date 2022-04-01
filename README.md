@@ -50,7 +50,6 @@ Triangle Normal Shading    |  Vertex Normal Shading
 ## Bug Report
 
 - Unlit Shader get segmentation fault when no albedo texture is provided
-- Some pixels shifting between edges
 
 ## Current Features
 
