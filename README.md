@@ -51,6 +51,7 @@ Triangle Normal Shading    |  Vertex Normal Shading
 ## Bug Report
 
 - Unlit Shader get segmentation fault when no albedo texture is provided
+- Win32 platform is likely to freeze when handling input and when the window is moving
 
 ## Current Features
 
