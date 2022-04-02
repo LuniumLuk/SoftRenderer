@@ -401,23 +401,33 @@ byte_t& UniformImage::operator() (const size_t & row, const size_t & column, con
 }
 
 // texture sampling by closest
-// TODO: texture sampling by duel linear interpolation
 Vector3 UniformImage::sampler(const UniformImage & image, const Vector2 & texcoord)
 {
-    assert(texcoord.x >= 0.0f && texcoord.x <= 1.0f);
-    assert(texcoord.y >= 0.0f && texcoord.y <= 1.0f);
+    // assert(texcoord.u >= 0.0f && texcoord.u <= 1.0f);
+    // assert(texcoord.v >= 0.0f && texcoord.v <= 1.0f);
 
-    long u = FTOD(image.m_width * texcoord.x);
-    long v = FTOD(image.m_height * texcoord.y);
+    float uf = (float)image.m_width * clamp(texcoord.u, 0.0f, 1.0f);
+    float vf = (float)image.m_height * clamp(texcoord.v, 0.0f, 1.0f);
+    long u = FTOD(uf);
+    long v = FTOD(vf);
+    float alpha_u = (uf - u);
+    float alpha_v = (vf - v);
 
     size_t image_size = image.m_width * image.m_height;
     size_t buffer_pos = (image_size - image.m_width * (v + 1) + u) * 3;
-    Vector3 vec(
-        image.m_buffer[buffer_pos],
-        image.m_buffer[buffer_pos + 1],
-        image.m_buffer[buffer_pos + 2]
+    vec3 color0 = IMAGECOLOR_POS_INCREMENT(image, buffer_pos);
+    vec3 color1 = IMAGECOLOR_POS_INCREMENT(image, buffer_pos);
+    buffer_pos -= (image.m_width + 2) * 3;
+    vec3 color2 = IMAGECOLOR_POS_INCREMENT(image, buffer_pos);
+    vec3 color3 = IMAGECOLOR_POS_INCREMENT(image, buffer_pos);
+
+    // duel linear interpolation
+    vec3 color = vec3::lerp(
+        vec3::lerp(color0, color1, alpha_u),
+        vec3::lerp(color2, color3, alpha_u),
+        alpha_v
     );
-    return vec;
+    return color;
 }
 
 void UniformImage::createFromBMPImage(const BMPImage & bmp)

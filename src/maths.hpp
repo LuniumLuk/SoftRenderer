@@ -30,7 +30,11 @@ typedef class Matrix4 mat4;
 class Vector2
 {
 public:
+    union { float x, u; };
+    union { float y, v; };
+#if 0
     float x, y;
+#endif
     Vector2(): x(0), y(0) {}
     Vector2(float x, float y): x(x), y(y) {}
     Vector2(const Vector2 & vec): x(vec.x), y(vec.y) {}

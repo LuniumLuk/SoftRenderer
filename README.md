@@ -39,11 +39,11 @@ Triangle Normal Shading    |  Vertex Normal Shading
 - [x] Win32 Application API
 - [x] Simple Shaders (Unlit, VertexNormal, TriangleNormal)
 - [x] Hovering Camera by Mouse Drag
-- [ ] Wireframe Display under current Pipeline
+- [x] Implement Barycentric Triangle Rastrization with Perspective Correction Interpolation
+- [ ] Wireframe Display
 - [ ] Normal Mapping
 - [ ] Read .mtl for Material
 - [ ] Basic Lighting + Phong, Blinn Shaders
-- [ ] Different Texture Sampling Filtering Method
 - [ ] Sky Box + Environment Map
 - [ ] PBR
 - [ ] PostProcessing Pass
@@ -53,6 +53,7 @@ Triangle Normal Shading    |  Vertex Normal Shading
 ## Bug Report
 
 - Unlit Shader get segmentation fault when no albedo texture is provided
+- Barycentric Rasterization Seems to sample pixel outside triangle
 
 ## Current Features
 

@@ -26,7 +26,7 @@ int test_pipeline() {
 
     FrameBuffer frame_buffer(512, 512);
 
-    entityConf config("assets/config04.txt");
+    entityConf config("assets/config05.txt");
     Entity ent = Entity(config);
     ent.getTriangleMesh()->computeTriangleNormals();
     ent.getTriangleMesh()->computeVertexNormals();
@@ -48,6 +48,10 @@ int test_pipeline() {
         "TRIANGLE NORMAL",
         "VERTEX NORMAL",
     };
+
+    Pipeline::wireframe_mode = false;
+    Pipeline::backface_culling = true;
+    Pipeline::depth_test = true;
 
     initializeApplication();
 
@@ -114,6 +118,8 @@ int test_pipeline() {
 
         swapBuffer(window);
         pollEvent();
+
+        // break;
     }
 
     terminateApplication();

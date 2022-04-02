@@ -15,6 +15,12 @@
 namespace Lurdr
 {
 
+#define PERSPECTIVE_DIVIDE(v) v.w = 1.0f / v.w; \
+                              v.x *= v.w;       \
+                              v.y *= v.w;       \
+                              v.z *= v.w;
+                              
+
 #define TRIANGLE_VERTEX(fidx,vidx) (mesh->getVertices()[mesh->getFaces()[fidx][vidx]])
 #define TRIANGLE_NORMAL(fidx,vidx) (mesh->hasVertexNormals()?mesh->getVertexNormals()[mesh->getFaceNormals()[fidx][vidx]]:vec3::ZERO)
 #define TRIANGLE_TEXCOORD(fidx,vidx) (mesh->hasTextureCoords()?mesh->getTextureCoords()[mesh->getFaceTexcoords()[fidx][vidx]]:vec2::ZERO)
@@ -29,18 +35,25 @@ namespace Lurdr
 
 #define SCREEN_MAPPING_X(x,frame_buffer) FTOD((x * 0.5f + 0.5f) * frame_buffer.getWidth())
 #define SCREEN_MAPPING_Y(y,frame_buffer) FTOD((y * 0.5f + 0.5f) * frame_buffer.getHeight())
-#define V2F_LERP(v0,v1,alpha) v2f( vec4::lerp(v0.position, v1.position, alpha), \
-                                   vec3::lerp(v0.frag_pos, v1.frag_pos, alpha), \
-                                   vec3::lerp(v0.normal,   v1.normal,   alpha), \
-                                   vec3::lerp(v0.t_normal, v1.t_normal, alpha), \
-                                   vec2::lerp(v0.texcoord, v1.texcoord, alpha))
+#define V2F_LERP_LINEAR(v0,v1,alpha) v2f( vec4::lerp(v0.position, v1.position, alpha), \
+                                          vec3::lerp(v0.frag_pos, v1.frag_pos, alpha), \
+                                          vec3::lerp(v0.normal,   v1.normal,   alpha), \
+                                          vec3::lerp(v0.t_normal, v1.t_normal, alpha), \
+                                          vec2::lerp(v0.texcoord, v1.texcoord, alpha))
 
 class Pipeline
 {
 public:
     static void draw(const FrameBuffer & frame_buffer, const Scene & scene, const Shader * shader);
+    static bool wireframe_mode;
+    static bool depth_test;
+    static bool backface_culling;
 
 private:
+    static void pixelShaderBarycentric(
+        const FrameBuffer & frame_buffer, const v2f & v, const Shader * shader,
+        const Entity * entity, const Scene & scene
+    );
     static void pixelShader(
         const FrameBuffer & frame_buffer, const v2f & v, const Shader * shader,
         const Entity * entity, const Scene & scene
