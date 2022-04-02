@@ -1,10 +1,12 @@
-# Lu Renderer (Under Developement)
+# Lu Renderer
 
-A Tiny Renderer designed to rely on minimum dependencies (basically with standard C library) with software rasterization
+This is a Tiny Renderer on CPU with single-thread built from scratch, designed to rely on minimum dependencies (with standard C library, but written in C++ style).
 
 :construction: **currently under construction** :construction:
 
-Meanwhile, this project also serve as practice while learning the book 'Real-Time Rendering' :book:
+- Meanwhile, this project also serve as practice while learning the book 'Real-Time Rendering' :book: https://www.realtimerendering.com/
+
+- This project took a lot reference from project https://github.com/zauonlok/renderer for platform deploying.
 
 ## Planned Features
 
@@ -16,10 +18,6 @@ I intend to implement a shader-based renderer that runs on CPU from scratch usin
 - API similar to OpenGL
 - Support Cross Platform (MacOS, Windows)
 - Image and Geometry Process Functionalities
-
-### Wire Frame Display
-
-<img src="images/wireframe_bunny.gif" width="360px" /> 
 
 ### Unlit Shading & Mouse Manipulation
 
@@ -98,7 +96,7 @@ make macos
 ./viewer
 ```
 
-#### Windows 
+### Windows 
 
 - compile
 
