@@ -21,7 +21,8 @@ I intend to implement a shader-based renderer that runs on CPU from scratch usin
 
 ### Unlit Shading & Mouse Manipulation
 
-<img src="images/unlit_shading.gif" width="360px" />
+<img src="images/phong_shading.gif" width="480px" />
+<img src="images/unlit_shading.gif" width="480px" />
 
 Triangle Normal Shading    |  Vertex Normal Shading
 :-------------------------:|:-------------------------:

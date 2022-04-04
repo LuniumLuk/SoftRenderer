@@ -27,6 +27,7 @@ namespace Lurdr
 struct vdata
 {
     mat4 model_mat;
+    mat3 model_inv_transpose;
     mat4 mvp_mat;
     vec3 position;
     vec3 normal;
@@ -64,6 +65,7 @@ public:
 };
 
 #define MODEL_MATRIX        (in.model_mat)
+#define MODEL_INV_TRANSPOSE (in.model_inv_transpose)
 #define VIEW_MATRIX         (scene.getCamera().getViewMatrix())
 #define PERSPECTIVE_MATRIX  (scene.getCamera().getProjectMatrix())
 #define MVP_MATRIX          (in.mvp_mat)

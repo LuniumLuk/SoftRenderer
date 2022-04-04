@@ -22,7 +22,7 @@ static float camera_fov = 60.0f;
 static const int SHADER_COUNT = 4;
 static int current_shader = 0;
 
-static float view_distance = 3.0f;
+static float view_distance = 2.0f;
 
 int test_pipeline() {
 

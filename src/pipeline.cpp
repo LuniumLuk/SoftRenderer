@@ -28,6 +28,7 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
     {
         const Entity *entity = (*entities)[eidx];
         const mat4 mvp_matrix = scene.getCamera().getProjectMatrix() * scene.getCamera().getViewMatrix() * entity->getTransform();
+        const mat3 model_inv_transpose = mat3(entity->getTransform().inversed().transposed());
 
         const TriangleMesh *mesh = entity->getTriangleMesh();
         for (size_t fidx = 0; fidx < mesh->faceCount(); fidx++)
@@ -51,9 +52,9 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
             v2.position.print();
             printf("----------------------------------------------\n");
 #endif
-            v0.t_normal = TRIANGLE_TRIANGLE_NORMAL(fidx);
-            v1.t_normal = TRIANGLE_TRIANGLE_NORMAL(fidx);
-            v2.t_normal = TRIANGLE_TRIANGLE_NORMAL(fidx);
+            v0.t_normal = model_inv_transpose * TRIANGLE_TRIANGLE_NORMAL(fidx);
+            v1.t_normal = model_inv_transpose * TRIANGLE_TRIANGLE_NORMAL(fidx);
+            v2.t_normal = model_inv_transpose * TRIANGLE_TRIANGLE_NORMAL(fidx);
 
             // Perspective Division
             PERSPECTIVE_DIVIDE(v0.position);

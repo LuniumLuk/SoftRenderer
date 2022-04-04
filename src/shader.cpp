@@ -11,7 +11,7 @@ v2f UnlitShader::vert(const vdata in, const Entity * entity, const Scene & scene
 
     out.position = MVP_MATRIX * vec4(in.position, 1.0f);
     out.texcoord = in.texcoord;
-    out.normal   = mat3(MODEL_MATRIX.inversed().transposed()) * in.normal;
+    out.normal   = MODEL_INV_TRANSPOSE * in.normal;
 
     return out;
 }
@@ -26,7 +26,7 @@ v2f LitShader::vert(const vdata in, const Entity * entity, const Scene & scene) 
     out.position = MVP_MATRIX * vec4(in.position, 1.0f);
     out.frag_pos = vec3(MODEL_MATRIX * vec4(in.position, 1.0f));
     out.texcoord = in.texcoord;
-    out.normal   = mat3(MODEL_MATRIX.inversed().transposed()) * in.normal;
+    out.normal   = MODEL_INV_TRANSPOSE * in.normal;
 
     return out;
 }
@@ -72,8 +72,12 @@ vec4 PhongShader::frag(const v2f in, const Entity * entity, const Scene & scene)
     const float diffuse_strength = 1.0f;
     const float specular_strength = 0.8f;
 
+    vec3 normal = in.normal;
+    // vec3 tex_normal = vec3(SAMPLER_2D(TEXTURE_NORMAL, in.texcoord)) * 2.0f - vec3(1.0f, 1.0f, 1.0f);
+    // vec3 normal = (in.normal + tex_normal).normalized();
+
     vec3 view_dir = (scene.getCamera().getPosition() - in.frag_pos).normalized();
-    LightComp light_comp = scene.getLight(in.normal, in.frag_pos, view_dir);
+    LightComp light_comp = scene.getLight(normal, in.frag_pos, view_dir);
     vec3 color = ambient_strength * vec3(SAMPLER_2D(TEXTURE_ALBEDO, in.texcoord)) +
                  diffuse_strength * light_comp.diffuse.multiply(vec3(SAMPLER_2D(TEXTURE_DIFFUSE, in.texcoord))) +
                  specular_strength * light_comp.specular.multiply(vec3(SAMPLER_2D(TEXTURE_SPECULAR, in.texcoord)));

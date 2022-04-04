@@ -29,6 +29,7 @@ namespace Lurdr
 #define TRIANGLE_TRIANGLE_NORMAL(fidx) (mesh->hasTriangleNormals()?mesh->getTriangleNormals()[fidx]:vec3::ZERO)
 
 #define TRIANGLE_VDATA(fidx,vidx) { .model_mat = entity->getTransform(),       \
+                                    .model_inv_transpose = model_inv_transpose,\
                                     .mvp_mat = mvp_matrix,                     \
                                     .position = TRIANGLE_VERTEX(fidx, vidx),   \
                                     .normal = TRIANGLE_NORMAL(fidx, vidx),     \
