@@ -51,7 +51,7 @@ Triangle Normal Shading    |  Vertex Normal Shading
 ## Bug Report
 
 - Unlit Shader get segmentation fault when no albedo texture is provided
-- Barycentric Rasterization Seems to sample pixel outside triangle
+- Error Depth value appear in back-face
 
 ## Current Features
 

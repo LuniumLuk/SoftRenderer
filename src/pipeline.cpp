@@ -3,13 +3,20 @@
 using namespace Lurdr;
 
 // #define _FLAT_FILL_TRIANGLE_RASTERIZATION_
-#define _BARYCENTRIC_TRIANGLE_RASTERIZATION_
+// #define _BARYCENTRIC_TRIANGLE_RASTERIZATION_0_
+#define _BARYCENTRIC_TRIANGLE_RASTERIZATION_1_
 
 #define WIREFRAME_EPSILON 0.5f
 
 bool Pipeline::wireframe_mode = false;
 bool Pipeline::depth_test = true;
 bool Pipeline::backface_culling = true;
+
+// reference : https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/perspective-correct-interpolation-vertex-attributes
+static inline float edgeFunction(const vec3 & a, const vec3 & b, const vec3 & c)
+{
+    return (c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x);
+}
 
 void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const Shader * shader)
 {
@@ -75,7 +82,7 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
                 }
             }
 
-#ifdef _BARYCENTRIC_TRIANGLE_RASTERIZATION_
+#ifdef _BARYCENTRIC_TRIANGLE_RASTERIZATION_0_
             v0.position.x = SCREEN_MAPPING_X(v0.position.x, frame_buffer);
             v1.position.x = SCREEN_MAPPING_X(v1.position.x, frame_buffer);
             v2.position.x = SCREEN_MAPPING_X(v2.position.x, frame_buffer);
@@ -99,16 +106,16 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
             );
             
             // AABB Bounding Box of Triangle
-            long x_min = FTOD(min(v0.position.x, min(v1.position.x, v2.position.x)));
-            long x_max = FTOD(max(v0.position.x, max(v1.position.x, v2.position.x)));
-            long y_min = FTOD(min(v0.position.y, min(v1.position.y, v2.position.y)));
-            long y_max = FTOD(max(v0.position.y, max(v1.position.y, v2.position.y)));
+            long x_min = min(v0.position.x, min(v1.position.x, v2.position.x));
+            long x_max = max(v0.position.x, max(v1.position.x, v2.position.x));
+            long y_min = min(v0.position.y, min(v1.position.y, v2.position.y));
+            long y_max = max(v0.position.y, max(v1.position.y, v2.position.y));
 
             for (long x = x_min; x < x_max; x++)
             {
                 for (long y = y_min; y < y_max; y++)
                 {
-                    vec4 pos(DTOF(x), DTOF(y), 0.0f, 0.0f);
+                    vec4 pos(DTOF(x), DTOF(frame_buffer.getHeight() - y), 0.0f, 0.0f);
 
                     const vec3 barycentric = pos.x * barycentric_d0 + pos.y * barycentric_d1 + barycentric_0;
                     if (barycentric.x < 0.0f || barycentric.y < 0.0f || barycentric.z < 0.0f)
@@ -140,6 +147,77 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
                               v0.t_normal.z, v1.t_normal.z, v2.t_normal.z ) * perspective,
                         vec2( vec3(v0.texcoord.u, v1.texcoord.u, v2.texcoord.u).dot(perspective),
                               vec3(v0.texcoord.v, v1.texcoord.v, v2.texcoord.v).dot(perspective) )
+                    );
+
+                    pixelShaderBarycentric(frame_buffer, v, shader, entity, scene);
+                }
+            }
+#endif
+
+#ifdef _BARYCENTRIC_TRIANGLE_RASTERIZATION_1_
+            v0.position.x = SCREEN_MAPPING_X(v0.position.x, frame_buffer);
+            v1.position.x = SCREEN_MAPPING_X(v1.position.x, frame_buffer);
+            v2.position.x = SCREEN_MAPPING_X(v2.position.x, frame_buffer);
+            v0.position.y = SCREEN_MAPPING_Y(v0.position.y, frame_buffer);
+            v1.position.y = SCREEN_MAPPING_Y(v1.position.y, frame_buffer);
+            v2.position.y = SCREEN_MAPPING_Y(v2.position.y, frame_buffer);
+
+            v0.position.z = 1.0f / v0.position.z;
+            v1.position.z = 1.0f / v1.position.z;
+            v2.position.z = 1.0f / v2.position.z;
+
+            // AABB Bounding Box of Triangle
+            long x_min = min(v0.position.x, min(v1.position.x, v2.position.x));
+            long x_max = max(v0.position.x, max(v1.position.x, v2.position.x));
+            long y_min = min(v0.position.y, min(v1.position.y, v2.position.y));
+            long y_max = max(v0.position.y, max(v1.position.y, v2.position.y));
+
+            const float area = edgeFunction(v0.position, v1.position, v2.position);
+
+            for (long x = x_min; x < x_max; x++)
+            {
+                for (long y = y_min; y < y_max; y++)
+                {
+                    vec4 pos(DTOF(x), DTOF(y), 0.0f, 0.0f);
+
+                    float w0 = edgeFunction(v1.position, v2.position, pos);
+                    float w1 = edgeFunction(v2.position, v0.position, pos);
+                    float w2 = edgeFunction(v0.position, v1.position, pos);
+
+                    bool has_neg = w0 < -EPSILON || w1 < -EPSILON || w2 < -EPSILON;
+                    bool has_pos = w0 > EPSILON || w1 > EPSILON || w2 > EPSILON;
+                    if (has_neg && has_pos)
+                    {
+                        continue;
+                    }
+
+                    w0 /= area;
+                    w1 /= area;
+                    w2 /= area;
+
+                    pos.z = 1.0f / (w0 * v0.position.z + w1 * v1.position.z + w2 * v2.position.z);
+                    // pos.w = w0 * v0.position.w + w1 * v1.position.w + w2 * v2.position.w;
+                    vec3 barycentric = (1.0f / (w0 * v0.position.w + w1 * v1.position.w + w2 * v2.position.w)) * vec3(w0 * v0.position.w, w1 * v1.position.w, w2 * v2.position.w);
+
+                    // Near/Far Plane Clipping
+                    if (pos.z < 0.0f || pos.z > 1.0f)
+                    {
+                        continue;
+                    }
+
+                    v2f v = v2f(
+                        pos,
+                        mat3( v0.frag_pos.x, v1.frag_pos.x, v2.frag_pos.x,
+                              v0.frag_pos.y, v1.frag_pos.y, v2.frag_pos.y,
+                              v0.frag_pos.z, v1.frag_pos.z, v2.frag_pos.z ) * barycentric,
+                        mat3( v0.normal.x, v1.normal.x, v2.normal.x,
+                              v0.normal.y, v1.normal.y, v2.normal.y,
+                              v0.normal.z, v1.normal.z, v2.normal.z ) * barycentric,
+                        mat3( v0.t_normal.x, v1.t_normal.x, v2.t_normal.x,
+                              v0.t_normal.y, v1.t_normal.y, v2.t_normal.y,
+                              v0.t_normal.z, v1.t_normal.z, v2.t_normal.z ) * barycentric,
+                        vec2( vec3(v0.texcoord.u, v1.texcoord.u, v2.texcoord.u).dot(barycentric),
+                              vec3(v0.texcoord.v, v1.texcoord.v, v2.texcoord.v).dot(barycentric) )
                     );
 
                     pixelShaderBarycentric(frame_buffer, v, shader, entity, scene);
@@ -261,16 +339,16 @@ void Pipeline::pixelShaderBarycentric(
     }
 
     // TODO: here we ignore alpha channel
-    frame_buffer.depthBuffer()[depth_buffer_pos] = v.position.z;
+    frame_buffer.depthBuffer()[depth_buffer_pos] = clamp(v.position.z, 0.0f, 1.0f);
 
     // Fragment Shader 
     rgba color = shader->frag(v, entity, scene);
 
     byte_t *color_buffer = frame_buffer.colorBuffer();
     long color_buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 3;
-    color_buffer[color_buffer_pos++] = FTOD(color.r * 255);
-    color_buffer[color_buffer_pos++] = FTOD(color.g * 255);
-    color_buffer[color_buffer_pos] = FTOD(color.b * 255);
+    color_buffer[color_buffer_pos++] = FLOAT2BYTECOLOR(color.r);
+    color_buffer[color_buffer_pos++] = FLOAT2BYTECOLOR(color.g);
+    color_buffer[color_buffer_pos] = FLOAT2BYTECOLOR(color.b);
 }
 
 void Pipeline::pixelShader(

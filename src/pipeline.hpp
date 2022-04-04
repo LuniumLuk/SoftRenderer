@@ -19,6 +19,8 @@ namespace Lurdr
                               v.x *= v.w;       \
                               v.y *= v.w;       \
                               v.z *= v.w;
+
+#define FLOAT2BYTECOLOR(x) FTOD(clamp(x,0.0f,1.0f)*255)
                               
 
 #define TRIANGLE_VERTEX(fidx,vidx) (mesh->getVertices()[mesh->getFaces()[fidx][vidx]])

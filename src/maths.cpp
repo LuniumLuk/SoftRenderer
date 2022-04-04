@@ -1249,9 +1249,7 @@ Matrix4 Matrix4::fromTRS(const Vector3 & translation, const Quaternion & rotatio
 // reference : https://en.wikipedia.org/wiki/Rotation_matrix
 Matrix4 Matrix4::fromAxisAngle(const Vector3 & axis, const float & angle)
 {
-    ASSERT_NON_ZERO(axis.x);
-    ASSERT_NON_ZERO(axis.y);
-    ASSERT_NON_ZERO(axis.z);
+    ASSERT_NON_ZERO(axis.length());
 
     float sin = sinf(angle);
     float cos = cosf(angle);

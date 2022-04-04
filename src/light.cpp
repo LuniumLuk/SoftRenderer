@@ -6,8 +6,10 @@ LightComp DirectionalLight::getLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
 {
     __unused_variable(frag_pos);
 
+    normal.normalize();
+
     float lambertian = max((-m_direction).dot(normal), 0.0f);
-    vec3 reflect_dir = vec3::reflect(m_direction, normal);
+    vec3 reflect_dir = vec3::reflect(m_direction, normal).normalized();
     float spec = powf(max(view_dir.dot(reflect_dir), 0.0f), 32.0f);
 
     LightComp comp = {
@@ -19,6 +21,8 @@ LightComp DirectionalLight::getLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
 
 LightComp PointLight::getLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
 {
+    normal.normalize();
+
     vec3 light_dir = m_position - frag_pos;
     float distance = light_dir.length();
     light_dir.normalize();

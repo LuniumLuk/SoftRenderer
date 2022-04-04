@@ -11,39 +11,50 @@ static AppWindow *window;
 static FrameBuffer frame_buffer(512, 512);
 
 static Scene scene;
-static float model_rotation_angle = 0.0f;
-static float model_scale = 1.0f;
-static vec3 mesh_center;
+
+entityConf config("assets/config04.txt");
+Entity ent = Entity(config);
 
 static float mouse_x = -1.0f; 
 static float mouse_y = -1.0f;
 
 static float camera_fov = 60.0f;
-static const int SHADER_COUNT = 3;
+static const int SHADER_COUNT = 4;
 static int current_shader = 0;
+
+static float view_distance = 3.0f;
 
 int test_pipeline() {
 
     FrameBuffer frame_buffer(512, 512);
 
-    entityConf config("assets/config05.txt");
-    Entity ent = Entity(config);
     ent.getTriangleMesh()->computeTriangleNormals();
     ent.getTriangleMesh()->computeVertexNormals();
     ent.getTriangleMesh()->printMeshInfo();
+    ent.setTransform(mat4::fromAxisAngle(vec3::UNIT_X, -PI / 2));
+
+    DirectionalLight dir_light(
+        vec3(0.0f, 0.0f, 0.0f),
+        vec3(1.0f, -1.0f, 1.0f),
+        vec3(1.0f, 1.0f, 1.0f),
+        vec3(1.0f, 1.0f, 1.0f) 
+    );
 
     scene.addEntity(&ent);
+    scene.addLight((Light*)&dir_light);
 
-    mesh_center = ent.getTriangleMesh()->getMeshCenter();
-    scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -4.0f), mesh_center);
+    vec3 mesh_center = ent.getTriangleMesh()->getMeshCenter();
+    scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -view_distance), mesh_center);
 
     Shader* shaders[SHADER_COUNT] = {
+        (Shader*)new PhongShader(),
         (Shader*)new UnlitShader(),
         (Shader*)new TriangleNormalShader(),
         (Shader*)new VertexNormalShader()
     };
 
     char shader_names[SHADER_COUNT][64] = {
+        "PHONG",
         "UNLIT",
         "TRIANGLE NORMAL",
         "VERTEX NORMAL",
@@ -76,11 +87,6 @@ int test_pipeline() {
             _fps = _frame_count_since_last_update;
             _frame_count_since_last_update = 0;
         }
-
-        mat4 t1 = mat4::fromTRS(-mesh_center, Quaternion::IDENTITY, vec3(1.0f, 1.0f, 1.0f));
-        mat4 t2 = mat4::IDENTITY.rotated(Quaternion::fromAxisAngle(vec3(0.0f, 1.0f, 0.0f), model_rotation_angle));
-        mat4 t3 = mat4::fromTRS(mesh_center, Quaternion::IDENTITY, vec3(1.0f, 1.0f, 1.0f) * model_scale);
-        ent.setTransform(t3 * t2 * t1);
 
         frame_buffer.clearColorBuffer(rgb(0.0f, 0.0f, 0.0f));
         Pipeline::draw(frame_buffer, scene, shaders[current_shader]);
@@ -118,12 +124,19 @@ int test_pipeline() {
 
         swapBuffer(window);
         pollEvent();
-
-        // break;
     }
 
     terminateApplication();
     return 0;
+}
+
+static void transformModel(float rotate_angle, float scale)
+{
+    vec3 mesh_center = vec3(ent.getTransform() * vec4(ent.getTriangleMesh()->getMeshCenter(), 1.0f));
+    mat4 t1 = mat4::fromTRS(-mesh_center, Quaternion::IDENTITY, vec3(1.0f, 1.0f, 1.0f));
+    mat4 t2 = mat4::IDENTITY.rotated(Quaternion::fromAxisAngle(vec3(0.0f, 1.0f, 0.0f), rotate_angle));
+    mat4 t3 = mat4::fromTRS(mesh_center, Quaternion::IDENTITY, vec3(1.0f, 1.0f, 1.0f) * scale);
+    ent.setTransform(t3 * t2 * t1 * ent.getTransform());
 }
 
 void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
@@ -134,16 +147,16 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
         switch (key)
         {
             case KEY_A:
-                model_rotation_angle -= 0.1f;
+                transformModel(-0.1f, 1.0f);
                 break;
             case KEY_S:
-                model_scale *= 0.9f;
+                transformModel(0.0f, 0.9f);
                 break;
             case KEY_D:
-                model_rotation_angle += 0.1f;
+                transformModel(0.1f, 1.0f);
                 break;
             case KEY_W:
-                model_scale *= 1.1f;
+                transformModel(0.0f, 1.1f);
                 break;
             case KEY_ESCAPE:
                 destroyWindow(window);
@@ -161,7 +174,7 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
                 model_scale = 1.0f;
                 camera_fov = 60.0f;
                 scene.getCamera().setFOV(camera_fov / 180.0f * PI);
-                scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -4.0f), mesh_center);
+                scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -view_distance), mesh_center);
                 scene.getCamera().setUp(vec3::UNIT_Y);
 #endif
                 break;

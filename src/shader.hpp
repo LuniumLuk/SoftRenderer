@@ -10,11 +10,19 @@
 #include "maths.hpp"
 #include "camera.hpp"
 #include "entity.hpp"
+#include "scene.hpp"
 #include "light.hpp"
 #include "colormap.hpp"
 
 namespace Lurdr
 {
+
+#define SAMPLER_2D(tex,coord) (Texture::sampler(tex,coord))
+#define TEXTURE_ALBEDO (entity->getMaterial()->albedo)
+#define TEXTURE_DIFFUSE (entity->getMaterial()->diffuse)
+#define TEXTURE_SPECULAR (entity->getMaterial()->specular)
+#define TEXTURE_NORMAL (entity->getMaterial()->normal)
+
 
 struct vdata
 {
@@ -74,6 +82,18 @@ public:
 };
 
 class VertexNormalShader : public UnlitShader
+{
+public:
+    virtual vec4 frag(const v2f in, const Entity * entity, const Scene & scene) const;
+};
+
+class LitShader : public Shader
+{
+public:
+    virtual v2f vert(const vdata in, const Entity * entity, const Scene & scene) const;
+};
+
+class PhongShader : LitShader
 {
 public:
     virtual vec4 frag(const v2f in, const Entity * entity, const Scene & scene) const;
