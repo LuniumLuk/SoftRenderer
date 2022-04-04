@@ -42,6 +42,15 @@ public:
 
     virtual LightComp getLight(vec3 normal, vec3 frag_pos, vec3 view_dir) = 0;
 
+    void setPosition(const vec3 & position) { m_position = position; }
+    void setDirection(const vec3 & direction) { m_direction = direction; }
+    void setDiffuse(const vec3 & diffuse) { m_diffuse = diffuse; }
+    void setSpecular(const vec3 & specular) { m_specular = specular; }
+
+    const vec3 & getPosition() const { return m_position; }
+    const vec3 & getDirection() const { return m_direction; }
+    const vec3 & getDiffuse() const { return m_diffuse; }
+    const vec3 & getSpecular() const { return m_specular; }
 };
 
 class DirectionalLight : public Light

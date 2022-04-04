@@ -24,6 +24,27 @@ static int current_shader = 0;
 
 static float view_distance = 2.0f;
 
+DirectionalLight dir_light(
+    vec3(0.0f, 0.0f, 0.0f),
+    vec3(1.0f, -1.0f, 1.0f),
+    vec3(0.0f, 0.0f, 1.0f),
+    vec3(0.0f, 0.0f, 1.0f) 
+);
+
+PointLight point_light1(
+    vec3(-2.0f, -2.0f, -2.0f),
+    vec3(1.0f, 1.0f, 1.0f).normalized(),
+    vec3(1.0f, 0.0f, 0.0f),
+    vec3(1.0f, 0.0f, 0.0f)
+);
+
+PointLight point_light2(
+    vec3(-2.0f, 0.0f, 4.0f),
+    vec3(2.0f, 0.0f, -4.0f).normalized(),
+    vec3(0.0f, 1.0f, 0.0f),
+    vec3(0.0f, 1.0f, 0.0f)
+);
+
 int test_pipeline() {
 
     FrameBuffer frame_buffer(512, 512);
@@ -33,15 +54,10 @@ int test_pipeline() {
     ent.getTriangleMesh()->printMeshInfo();
     ent.setTransform(mat4::fromAxisAngle(vec3::UNIT_X, -PI / 2));
 
-    DirectionalLight dir_light(
-        vec3(0.0f, 0.0f, 0.0f),
-        vec3(1.0f, -1.0f, 1.0f),
-        vec3(1.0f, 1.0f, 1.0f),
-        vec3(1.0f, 1.0f, 1.0f) 
-    );
-
     scene.addEntity(&ent);
     scene.addLight((Light*)&dir_light);
+    scene.addLight((Light*)&point_light1);
+    scene.addLight((Light*)&point_light2);
 
     vec3 mesh_center = ent.getTriangleMesh()->getMeshCenter();
     scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -view_distance), mesh_center);
@@ -150,13 +166,25 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
                 transformModel(-0.1f, 1.0f);
                 break;
             case KEY_S:
-                transformModel(0.0f, 0.9f);
+                {
+                    vec3 pos = point_light1.getPosition();
+                    pos.y -= 0.1f;
+                    if (pos.y < -2.0f) pos.y = -2.0f;
+                    point_light1.setPosition(pos);
+                }
+                // transformModel(0.0f, 0.9f);
                 break;
             case KEY_D:
                 transformModel(0.1f, 1.0f);
                 break;
             case KEY_W:
-                transformModel(0.0f, 1.1f);
+                {
+                    vec3 pos = point_light1.getPosition();
+                    pos.y += 0.1f;
+                    if (pos.y > 2.0f) pos.y = 2.0f;
+                    point_light1.setPosition(pos);
+                }
+                // transformModel(0.0f, 1.1f);
                 break;
             case KEY_ESCAPE:
                 destroyWindow(window);
