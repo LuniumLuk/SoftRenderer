@@ -19,10 +19,9 @@ I intend to implement a shader-based renderer that runs on CPU from scratch usin
 - Support Cross Platform (MacOS, Windows)
 - Image and Geometry Process Functionalities
 
-### Unlit Shading & Mouse Manipulation
+### Switch Shading & Mouse Manipulation
 
 <img src="images/phong_shading.gif" width="480px" />
-<img src="images/unlit_shading.gif" width="480px" />
 
 Triangle Normal Shading    |  Vertex Normal Shading
 :-------------------------:|:-------------------------:
