@@ -30,6 +30,7 @@ public:
     Vector3 getPosition() const;
     Vector3 getForward() const;
     Vector3 getUp() const;
+    float getFOV() const;
     Matrix4 getViewMatrix() const;
     Matrix4 getProjectMatrix() const;
 

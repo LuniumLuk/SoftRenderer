@@ -2,33 +2,84 @@
 
 using namespace Lurdr;
 
+#define V2THETA(v) (2.0f * acosf(sqrtf(1 - (v))))
+#define U2PHI(u) (2.0f * PI * (u))
+
+static vec3 sh2car(const vec2 & sh)
+{
+    return vec3(
+        sinf(sh.theta) * cos(sh.phi),
+        sinf(sh.theta) * sin(sh.phi),
+        cosf(sh.theta)
+    );
+}
+
 int test_basic()
 {
-    entityConf config("assets/config01.txt");
-
-    Entity ent = Entity(config);
-
-    ent.getTriangleMesh()->printMeshInfo();
-    
-    Texture::sampler(ent.getMaterial()->albedo, vec2(0.123f, 0.122f)).print();
-    Texture::sampler(ent.getMaterial()->specular, vec2(0.982f, 0.129f)).print();
-
-    Scene scene;
-    FrameBuffer frame_buffer(512, 512);
-
-    scene.addEntity(&ent);
-
-    vec3 mesh_center = ent.getTriangleMesh()->getMeshCenter();
-    mesh_center.print();
-    scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -2.0f), mesh_center);
-
-    UnlitShader shader;
-    
+    BMPImage bmp_image("assets/envmaps/env02.bmp");
     {
-        frame_buffer.clearColorBuffer(rgb(0.2f, 0.5f, 1.0f));
-        Timer t("draw");
-        Pipeline::draw(frame_buffer, scene, (Shader*)&shader);
+        Timer t("read bmp");
+        vec3 mean_color = vec3::ZERO;
+        for (long x = 0; x < bmp_image.getImageWidth(); x++)
+        {
+            for (long y = 0; y < bmp_image.getImageHeight(); y++)
+            {
+                mean_color.b += bmp_image(y, x, 0);
+                mean_color.g += bmp_image(y, x, 1);
+                mean_color.r += bmp_image(y, x, 2);
+            }
+        }
+        mean_color = mean_color * (1.0f / (bmp_image.getImageWidth() * bmp_image.getImageHeight() * 255));
+        mean_color.print();
     }
+
+    Envmap* envmap;
+    {
+        Timer t("envmap");
+        envmap = new Envmap("assets/envmaps/env02.bmp");
+    }
+
+    const float *L = envmap->getCoefficients();
+    for (int i = 0; i < 9; i++)
+    {
+        printf("%f %f %f\n", L[i * 3], L[i * 3 + 1], L[i * 3 + 2]);
+    }
+
+    {
+        Timer t("write bmp");
+        for (long x = 0; x < bmp_image.getImageWidth(); x++)
+        {
+            for (long y = 0; y < bmp_image.getImageHeight(); y++)
+            {
+                float U = (float)x / (bmp_image.getImageWidth() - 1);
+                float V = (float)y / (bmp_image.getImageHeight() - 1);
+                const vec2 sh(V2THETA(1 - V), U2PHI(U));
+                // vec3 irradiance = envmap->calcIrradianceFast(sh);
+                vec3 irradiance = envmap->calcIrradiance(sh);
+                bmp_image(y, x, 2) = irradiance.r * 255;
+                bmp_image(y, x, 1) = irradiance.g * 255;
+                bmp_image(y, x, 0) = irradiance.b * 255;
+            }
+        }
+    }
+
+    {
+        Timer t("read bmp");
+        vec3 mean_color = vec3::ZERO;
+        for (long x = 0; x < bmp_image.getImageWidth(); x++)
+        {
+            for (long y = 0; y < bmp_image.getImageHeight(); y++)
+            {
+                mean_color.b += bmp_image(y, x, 0);
+                mean_color.g += bmp_image(y, x, 1);
+                mean_color.r += bmp_image(y, x, 2);
+            }
+        }
+        mean_color = mean_color * (1.0f / (bmp_image.getImageWidth() * bmp_image.getImageHeight() * 255));
+        mean_color.print();
+    }
+
+    bmp_image.writeImage("test.bmp");
 
     return 0;
 }

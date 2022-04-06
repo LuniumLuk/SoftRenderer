@@ -30,8 +30,8 @@ typedef class Matrix4 mat4;
 class Vector2
 {
 public:
-    union { float x, u; };
-    union { float y, v; };
+    union { float x, u, theta; };
+    union { float y, v, phi; };
 #if 0
     float x, y;
 #endif

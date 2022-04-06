@@ -41,7 +41,7 @@ Triangle Normal Shading    |  Vertex Normal Shading
 - [ ] Wireframe Display
 - [ ] Normal Mapping
 - [ ] Read .mtl for Material
-- [ ] Basic Lighting + Phong, Blinn Shaders
+- [x] Basic Lighting + Phong, Blinn Shaders
 - [ ] Sky Box + Environment Map
 - [ ] PBR
 - [ ] PostProcessing Pass
@@ -50,7 +50,6 @@ Triangle Normal Shading    |  Vertex Normal Shading
 
 ## Bug Report
 
-- Unlit Shader get segmentation fault when no albedo texture is provided
 - Error Depth value appear in back-face
 
 ## Current Features

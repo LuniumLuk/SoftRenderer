@@ -14,7 +14,7 @@ namespace Lurdr
 class Texture
 {
 private:
-    vec4         m_base_color;
+    mutable vec4 m_base_color;
     UniformImage *m_texture_surface;
     bool         m_need_delete;
 
@@ -35,7 +35,7 @@ public:
     Texture(const vec4 & base_color, const char * filename);
     ~Texture();
 
-    void setBaseColor(const vec4 & base_color) { m_base_color = base_color; }
+    void setBaseColor(const vec4 & base_color) const { m_base_color = base_color; }
     vec4 getBaseColor() const { return m_base_color; }
     void setTextureSurface(UniformImage * texture_surface);
     void loadTextureSurface(const char * filename);
@@ -60,6 +60,7 @@ public:
         diffuse(Texture()),
         specular(Texture()),
         normal(Texture()) {}
+    
 };
 
 }

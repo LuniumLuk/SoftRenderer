@@ -52,6 +52,10 @@ Vector3 Camera::getUp() const
 {
     return m_up;
 }
+float Camera::getFOV() const
+{
+    return m_FOV;
+}
 
 Matrix4 Camera::getViewMatrix() const
 {

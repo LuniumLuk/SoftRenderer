@@ -89,13 +89,19 @@ public:
     virtual vec4 frag(const v2f in, const Entity * entity, const Scene & scene) const;
 };
 
+class DepthShader : public UnlitShader
+{
+public:
+    virtual vec4 frag(const v2f in, const Entity * entity, const Scene & scene) const;
+};
+
 class LitShader : public Shader
 {
 public:
     virtual v2f vert(const vdata in, const Entity * entity, const Scene & scene) const;
 };
 
-class PhongShader : LitShader
+class BlinnPhongShader : LitShader
 {
 public:
     virtual vec4 frag(const v2f in, const Entity * entity, const Scene & scene) const;

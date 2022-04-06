@@ -109,27 +109,24 @@ Entity::Entity(const entityConf & config):
         m_mesh_need_delete = true;
     }
 
-    if (config.albedo_map || config.diffuse_map || config.specular_map || config.normal_map)
-    {
-        m_material = new Material();
-        m_material_need_delete = true;
+    m_material = new Material();
+    m_material_need_delete = true;
 
-        if (config.albedo_map)
-        {
-            m_material->albedo.loadTextureSurface(config.albedo_map);
-        }
-        if (config.diffuse_map)
-        {
-            m_material->diffuse.loadTextureSurface(config.albedo_map);
-        }
-        if (config.specular_map)
-        {
-            m_material->specular.loadTextureSurface(config.albedo_map);
-        }
-        if (config.normal_map)
-        {
-            m_material->normal.loadTextureSurface(config.albedo_map);
-        }
+    if (config.albedo_map)
+    {
+        m_material->albedo.loadTextureSurface(config.albedo_map);
+    }
+    if (config.diffuse_map)
+    {
+        m_material->diffuse.loadTextureSurface(config.albedo_map);
+    }
+    if (config.specular_map)
+    {
+        m_material->specular.loadTextureSurface(config.albedo_map);
+    }
+    if (config.normal_map)
+    {
+        m_material->normal.loadTextureSurface(config.albedo_map);
     }
 }
 

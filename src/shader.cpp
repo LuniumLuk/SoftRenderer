@@ -66,7 +66,22 @@ vec4 VertexNormalShader::frag(const v2f in, const Entity * entity, const Scene &
     return vec4(color.normalized(), 1.0f);
 }
 
-vec4 PhongShader::frag(const v2f in, const Entity * entity, const Scene & scene) const
+vec4 DepthShader::frag(const v2f in, const Entity * entity, const Scene & scene) const
+{
+    __unused_variable(entity);
+    __unused_variable(scene);
+
+    RGBColor rgb_color = getColorMap(in.position.z, 0.0f, 1.0f, COLORMAP_ACCENT);
+    rgb color = rgb(
+        (float)rgb_color.R / 255.0f,
+        (float)rgb_color.G / 255.0f,
+        (float)rgb_color.B / 255.0f
+    );
+    
+    return vec4(color, 1.0f);
+}
+
+vec4 BlinnPhongShader::frag(const v2f in, const Entity * entity, const Scene & scene) const
 {
     const float ambient_strength = 0.1f;
     const float diffuse_strength = 1.0f;

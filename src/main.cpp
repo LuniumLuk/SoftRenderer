@@ -6,7 +6,7 @@
 int main() {
     int return_value = 0;
     {
-        // return_value = test_math();
+        // return_value = test_colormap();
         // return_value = test_main();
         // return_value = test_basic();
         // return_value = test_shader();

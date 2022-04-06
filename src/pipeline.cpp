@@ -168,10 +168,10 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
             v2.position.z = 1.0f / v2.position.z;
 
             // AABB Bounding Box of Triangle
-            long x_min = min(v0.position.x, min(v1.position.x, v2.position.x));
-            long x_max = max(v0.position.x, max(v1.position.x, v2.position.x));
-            long y_min = min(v0.position.y, min(v1.position.y, v2.position.y));
-            long y_max = max(v0.position.y, max(v1.position.y, v2.position.y));
+            const long x_min = max(min(v0.position.x, min(v1.position.x, v2.position.x)), 0);
+            const long x_max = min(max(v0.position.x, max(v1.position.x, v2.position.x)), frame_buffer.getWidth() - 1);
+            const long y_min = max(min(v0.position.y, min(v1.position.y, v2.position.y)), 0);
+            const long y_max = min(max(v0.position.y, max(v1.position.y, v2.position.y)), frame_buffer.getHeight() - 1);
 
             const float area = edgeFunction(v0.position, v1.position, v2.position);
 
@@ -179,14 +179,14 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
             {
                 for (long y = y_min; y < y_max; y++)
                 {
-                    vec4 pos(DTOF(x), DTOF(y), 0.0f, 0.0f);
+                    vec4 pos(DTOF(x), DTOF(y), 1.0f, 0.0f);
 
                     float w0 = edgeFunction(v1.position, v2.position, pos);
                     float w1 = edgeFunction(v2.position, v0.position, pos);
                     float w2 = edgeFunction(v0.position, v1.position, pos);
 
-                    bool has_neg = w0 < -EPSILON || w1 < -EPSILON || w2 < -EPSILON;
-                    bool has_pos = w0 > EPSILON || w1 > EPSILON || w2 > EPSILON;
+                    bool has_neg = w0 < 0 || w1 < 0 || w2 < 0;
+                    bool has_pos = w0 > 0 || w1 > 0 || w2 > 0;
                     if (has_neg && has_pos)
                     {
                         continue;
@@ -196,17 +196,27 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
                     w1 /= area;
                     w2 /= area;
 
-                    pos.z = 1.0f / (w0 * v0.position.z + w1 * v1.position.z + w2 * v2.position.z);
-                    // pos.w = w0 * v0.position.w + w1 * v1.position.w + w2 * v2.position.w;
-                    vec3 barycentric = (1.0f / (w0 * v0.position.w + w1 * v1.position.w + w2 * v2.position.w)) * vec3(w0 * v0.position.w, w1 * v1.position.w, w2 * v2.position.w);
 
-                    // Near/Far Plane Clipping
-                    if (pos.z < 0.0f || pos.z > 1.0f)
+                    const float denom = (w0 * v0.position.z + w1 * v1.position.z + w2 * v2.position.z);
+                    pos.z = 1.0f / denom;
+                    if (isnan(pos.z))
                     {
                         continue;
                     }
 
-                    v2f v = v2f(
+                    // pos.w = w0 * v0.position.w + w1 * v1.position.w + w2 * v2.position.w;
+                    const vec3 barycentric = (1.0f / (w0 * v0.position.w + w1 * v1.position.w + w2 * v2.position.w)) * vec3(w0 * v0.position.w, w1 * v1.position.w, w2 * v2.position.w);
+
+                    // Near/Far Plane Clipping
+                    if (pos.z < 0.0f || pos.z > 0.999f)
+                    {
+                        continue;
+                    }
+
+                    // pos.z = clamp(pos.z, 0.5f, 1.0f);
+                    // pos.z = clamp(pos.z, 0.0f, 0.5f);
+
+                    const v2f v(
                         pos,
                         mat3( v0.frag_pos.x, v1.frag_pos.x, v2.frag_pos.x,
                               v0.frag_pos.y, v1.frag_pos.y, v2.frag_pos.y,
@@ -248,6 +258,38 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
 #endif
         }
     }
+
+#if 0
+    if (scene.getEnvmap())
+    {
+        float x_center = (float)(frame_buffer.getWidth() - 1) / 2.0f;
+        float y_center = (float)(frame_buffer.getHeight() - 1) / 2.0f;
+        for (long x = 0; x < frame_buffer.getWidth(); x++)
+        {
+            for (long y = 0; y < frame_buffer.getHeight(); y++)
+            {
+                long depth_buffer_pos = frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x;
+                if (depth_test && frame_buffer.depthBuffer()[depth_buffer_pos] < 1.0f)
+                {
+                    continue;
+                }
+
+                vec2 sh = vierDir2Spherical(scene.getCamera().getForward());
+
+                rgb color = scene.getEnvmap()->getPixel(
+                    sh.theta + (float)(y - y_center) / (frame_buffer.getHeight() - 1) * scene.getCamera().getFOV(),
+                    sh.phi + (float)(x - x_center) / (frame_buffer.getWidth() - 1) * scene.getCamera().getFOV()
+                );
+
+                byte_t *color_buffer = frame_buffer.colorBuffer();
+                long color_buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 3;
+                color_buffer[color_buffer_pos++] = FLOAT2BYTECOLOR(color.r);
+                color_buffer[color_buffer_pos++] = FLOAT2BYTECOLOR(color.g);
+                color_buffer[color_buffer_pos] = FLOAT2BYTECOLOR(color.b);
+            }
+        }
+    }
+#endif
 }
 
 
@@ -334,13 +376,13 @@ void Pipeline::pixelShaderBarycentric(
     }
 
     long depth_buffer_pos = frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x;
-    if (depth_test && frame_buffer.depthBuffer()[depth_buffer_pos] <= v.position.z)
+    if (depth_test && (frame_buffer.depthBuffer()[depth_buffer_pos] <= v.position.z))
     {
         return;
     }
 
     // TODO: here we ignore alpha channel
-    frame_buffer.depthBuffer()[depth_buffer_pos] = clamp(v.position.z, 0.0f, 1.0f);
+    frame_buffer.depthBuffer()[depth_buffer_pos] = v.position.z;
 
     // Fragment Shader 
     rgba color = shader->frag(v, entity, scene);

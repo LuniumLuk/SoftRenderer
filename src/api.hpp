@@ -16,5 +16,6 @@
 #include "misc.hpp"
 #include "material.hpp"
 #include "entity.hpp"
+#include "envmap.hpp"
 
 #endif

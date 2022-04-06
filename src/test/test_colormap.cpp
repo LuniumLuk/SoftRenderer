@@ -10,7 +10,7 @@ static void mouseDragEventCallback(AppWindow *window, float x, float y);
 static AppWindow *window;
 static FrameBuffer frame_buffer(512, 512);
 
-int test_main() {
+int test_colormap() {
 
     initializeApplication();
 
@@ -29,6 +29,21 @@ int test_main() {
         FPS_UPDATE(_fps);
 
         frame_buffer.clearColorBuffer(rgb(0.0f, 0.0f, 0.0f));
+        frame_buffer.clearDepthBuffer(1.0f);
+
+        byte_t* color_buffer = frame_buffer.colorBuffer();
+        for (long i = 0; i < 512; i++)
+        {
+            for (long j = 0; j < 512; j++)
+            {
+                drawPixel(
+                    frame_buffer, 
+                    i, j, 
+                    getColorMap((float)i / 512, 0.0f, 1.0f, COLORMAP_ACCENT),
+                    0.0f
+                );
+            }
+        }
 
         drawString(
             frame_buffer, 10.0f, 10.0f,
@@ -47,7 +62,6 @@ int test_main() {
 
 void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
 {
-    __unused_variable(window);
     if (pressed)
     {
         switch (key)
@@ -61,6 +75,7 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
             case KEY_W:
                 break;
             case KEY_ESCAPE:
+                destroyWindow(window);
                 break;
             case KEY_SPACE:
                 break;

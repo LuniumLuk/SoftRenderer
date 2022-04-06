@@ -11,69 +11,84 @@ static AppWindow *window;
 static FrameBuffer frame_buffer(512, 512);
 
 static Scene scene;
-
-entityConf config("assets/config04.txt");
-Entity ent = Entity(config);
+static Entity* entity_ptr;
 
 static float mouse_x = -1.0f; 
 static float mouse_y = -1.0f;
 
 static float camera_fov = 60.0f;
-static const int SHADER_COUNT = 4;
+static const int SHADER_COUNT = 5;
 static int current_shader = 0;
 
-static float view_distance = 2.0f;
+static float view_distance = 3.0f;
 
 DirectionalLight dir_light(
     vec3(0.0f, 0.0f, 0.0f),
     vec3(1.0f, -1.0f, 1.0f),
-    vec3(0.0f, 0.0f, 1.0f),
-    vec3(0.0f, 0.0f, 1.0f) 
+    vec3(1.0f, 1.0f, 1.0f) * 1.0f,
+    vec3(1.0f, 1.0f, 1.0f) 
 );
 
 PointLight point_light1(
     vec3(-2.0f, -2.0f, -2.0f),
     vec3(1.0f, 1.0f, 1.0f).normalized(),
-    vec3(1.0f, 0.0f, 0.0f),
-    vec3(1.0f, 0.0f, 0.0f)
+    vec3(1.0f, 0.0f, 0.5f) * 1.0f,
+    vec3(1.0f, 0.0f, 0.5f)
 );
 
 PointLight point_light2(
     vec3(-2.0f, 0.0f, 4.0f),
     vec3(2.0f, 0.0f, -4.0f).normalized(),
-    vec3(0.0f, 1.0f, 0.0f),
-    vec3(0.0f, 1.0f, 0.0f)
+    vec3(0.0f, 0.5f, 1.0f) * 1.0f,
+    vec3(0.0f, 0.5f, 1.0f)
+);
+
+const vec4 base_color = vec4(
+    188.0f / 255.0f, 
+    159.0f / 255.0f, 
+    119.0f / 255.0f, 
+    1.0f
 );
 
 int test_pipeline() {
 
-    FrameBuffer frame_buffer(512, 512);
+    entityConf config("assets/spot.txt");
+    Entity ent = Entity(config);
+    entity_ptr = &ent;
+    // ent.getMaterial()->albedo.setBaseColor(base_color);
+    // ent.getMaterial()->diffuse.setBaseColor(base_color);
+    // ent.getMaterial()->specular.setBaseColor(base_color);
 
     ent.getTriangleMesh()->computeTriangleNormals();
     ent.getTriangleMesh()->computeVertexNormals();
     ent.getTriangleMesh()->printMeshInfo();
-    ent.setTransform(mat4::fromAxisAngle(vec3::UNIT_X, -PI / 2));
+    // ent.setTransform(mat4::fromAxisAngle(vec3::UNIT_X, -PI / 2));
+
+    Envmap envmap("assets/envmaps/env01.bmp");
 
     scene.addEntity(&ent);
     scene.addLight((Light*)&dir_light);
     scene.addLight((Light*)&point_light1);
     scene.addLight((Light*)&point_light2);
+    scene.setEnvmap(&envmap);
 
     vec3 mesh_center = ent.getTriangleMesh()->getMeshCenter();
     scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -view_distance), mesh_center);
 
     Shader* shaders[SHADER_COUNT] = {
-        (Shader*)new PhongShader(),
         (Shader*)new UnlitShader(),
+        (Shader*)new BlinnPhongShader(),
         (Shader*)new TriangleNormalShader(),
-        (Shader*)new VertexNormalShader()
+        (Shader*)new VertexNormalShader(),
+        (Shader*)new DepthShader()
     };
 
     char shader_names[SHADER_COUNT][64] = {
-        "PHONG",
         "UNLIT",
+        "BLINN-PHONG",
         "TRIANGLE NORMAL",
         "VERTEX NORMAL",
+        "DEPTH"
     };
 
     Pipeline::wireframe_mode = false;
@@ -91,18 +106,10 @@ int test_pipeline() {
     setMouseDragCallback(window, mouseDragEventCallback);
 
     long _fps = 0;
-    long _frame_count_since_last_update = 0;
-    clock_t _last_update = clock();
+    FPS_SETUP();
     while (!windowShouldClose(window))
     {
-        _frame_count_since_last_update++;
-        
-        if (clock() - _last_update > CLOCKS_PER_SEC)
-        {
-            _last_update = clock();
-            _fps = _frame_count_since_last_update;
-            _frame_count_since_last_update = 0;
-        }
+        FPS_UPDATE(_fps);
 
         frame_buffer.clearColorBuffer(rgb(0.0f, 0.0f, 0.0f));
         Pipeline::draw(frame_buffer, scene, shaders[current_shader]);
@@ -148,11 +155,11 @@ int test_pipeline() {
 
 static void transformModel(float rotate_angle, float scale)
 {
-    vec3 mesh_center = vec3(ent.getTransform() * vec4(ent.getTriangleMesh()->getMeshCenter(), 1.0f));
+    vec3 mesh_center = vec3(entity_ptr->getTransform() * vec4(entity_ptr->getTriangleMesh()->getMeshCenter(), 1.0f));
     mat4 t1 = mat4::fromTRS(-mesh_center, Quaternion::IDENTITY, vec3(1.0f, 1.0f, 1.0f));
     mat4 t2 = mat4::IDENTITY.rotated(Quaternion::fromAxisAngle(vec3(0.0f, 1.0f, 0.0f), rotate_angle));
     mat4 t3 = mat4::fromTRS(mesh_center, Quaternion::IDENTITY, vec3(1.0f, 1.0f, 1.0f) * scale);
-    ent.setTransform(t3 * t2 * t1 * ent.getTransform());
+    entity_ptr->setTransform(t3 * t2 * t1 * entity_ptr->getTransform());
 }
 
 void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
@@ -168,8 +175,8 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
             case KEY_S:
                 {
                     vec3 pos = point_light1.getPosition();
-                    pos.y -= 0.1f;
-                    if (pos.y < -2.0f) pos.y = -2.0f;
+                    pos.y -= 0.4f;
+                    if (pos.y < -4.0f) pos.y = -4.0f;
                     point_light1.setPosition(pos);
                 }
                 // transformModel(0.0f, 0.9f);
@@ -180,8 +187,8 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
             case KEY_W:
                 {
                     vec3 pos = point_light1.getPosition();
-                    pos.y += 0.1f;
-                    if (pos.y > 2.0f) pos.y = 2.0f;
+                    pos.y += 0.4f;
+                    if (pos.y > 4.0f) pos.y = 4.0f;
                     point_light1.setPosition(pos);
                 }
                 // transformModel(0.0f, 1.1f);
@@ -190,12 +197,16 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
                 destroyWindow(window);
                 break;
             case KEY_SPACE:
+                // toggle depth test
+                // Pipeline::depth_test = !Pipeline::depth_test;
+#if 1
                 // switch shader
                 current_shader++;
                 if (current_shader >= SHADER_COUNT)
                 {
                     current_shader = 0;
                 }
+#endif
 #if 0
                 // reset camera
                 model_rotation_angle = 0.0f;

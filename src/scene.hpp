@@ -15,6 +15,7 @@
 #include "entity.hpp"
 #include "light.hpp"
 #include "shader.hpp"
+#include "envmap.hpp"
 
 namespace Lurdr
 {
@@ -78,12 +79,17 @@ private:
     mutable DynamicArray<Entity*>   m_entities;
     DynamicArray<Light*>    m_lights;
     Camera                  m_camera;
+    Envmap*                 m_envmap;
 
 public:
-    Scene() {}
+    Scene()
+    {
+        m_envmap = nullptr;
+    }
     ~Scene() {}
 
     void addEntity(Entity * entity);
+    void setEnvmap(Envmap * envmap);
     void addLight(Light * light);
     Camera & getCamera();
     void sortEntity() const;
@@ -92,6 +98,7 @@ public:
     const DynamicArray<Entity*> * getEntities() const { return &m_entities; }
 
     const Camera& getCamera() const { return m_camera; }
+    const Envmap* getEnvmap() const { return m_envmap; }
 
     LightComp getLight(vec3 normal, vec3 frag_pos, vec3 view_dir) const;
 };

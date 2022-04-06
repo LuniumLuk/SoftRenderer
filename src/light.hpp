@@ -36,14 +36,14 @@ public:
         const vec3 & diffuse,
         const vec3 & specular
     ):  m_position(position),
-        m_direction(direction),
+        m_direction(direction.normalized()),
         m_diffuse(diffuse),
         m_specular(specular) {}
 
     virtual LightComp getLight(vec3 normal, vec3 frag_pos, vec3 view_dir) = 0;
 
     void setPosition(const vec3 & position) { m_position = position; }
-    void setDirection(const vec3 & direction) { m_direction = direction; }
+    void setDirection(const vec3 & direction) { m_direction = direction.normalized(); }
     void setDiffuse(const vec3 & diffuse) { m_diffuse = diffuse; }
     void setSpecular(const vec3 & specular) { m_specular = specular; }
 

@@ -184,6 +184,11 @@ void Scene::addEntity(Entity * entity)
     m_entities.push_back(entity);
 }
 
+void Scene::setEnvmap(Envmap * envmap)
+{
+    m_envmap = envmap;
+}
+
 void Scene::addLight(Light * light)
 {
     m_lights.push_back(light);
