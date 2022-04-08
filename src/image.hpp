@@ -119,9 +119,9 @@ public:
     friend class UniformImage;
 };
 
-#define IMAGECOLOR_POS_INCREMENT(image, pos) vec3( image.m_buffer[pos++],  \
-                                                   image.m_buffer[pos++],  \
-                                                   image.m_buffer[pos++] ) 
+#define IMAGECOLOR_AT_POS(image, pos) vec3( image.m_buffer[pos],    \
+                                            image.m_buffer[pos+1],  \
+                                            image.m_buffer[pos+2] )
 
 class UniformImage
 {

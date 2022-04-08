@@ -48,9 +48,6 @@ class Pipeline
 {
 public:
     static void draw(const FrameBuffer & frame_buffer, const Scene & scene, const Shader * shader);
-    static bool wireframe_mode;
-    static bool depth_test;
-    static bool backface_culling;
 
 private:
     static void pixelShaderBarycentric(

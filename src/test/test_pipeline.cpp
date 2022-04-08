@@ -91,9 +91,10 @@ int test_pipeline() {
         "DEPTH"
     };
 
-    Pipeline::wireframe_mode = false;
-    Pipeline::backface_culling = true;
-    Pipeline::depth_test = true;
+    WIREFRAME_MODE(false);
+    BACKFACE_CULLING(true);
+    DEPTH_TEST(true);
+    TEXTURE_FILTERING(TF_LINEAR);
 
     initializeApplication();
 
@@ -197,8 +198,6 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
                 destroyWindow(window);
                 break;
             case KEY_SPACE:
-                // toggle depth test
-                // Pipeline::depth_test = !Pipeline::depth_test;
 #if 1
                 // switch shader
                 current_shader++;

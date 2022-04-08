@@ -31,7 +31,6 @@ int test_colormap() {
         frame_buffer.clearColorBuffer(rgb(0.0f, 0.0f, 0.0f));
         frame_buffer.clearDepthBuffer(1.0f);
 
-        byte_t* color_buffer = frame_buffer.colorBuffer();
         for (long i = 0; i < 512; i++)
         {
             for (long j = 0; j < 512; j++)

@@ -5,15 +5,6 @@ using namespace Lurdr;
 #define V2THETA(v) (2.0f * acosf(sqrtf(1 - (v))))
 #define U2PHI(u) (2.0f * PI * (u))
 
-static vec3 sh2car(const vec2 & sh)
-{
-    return vec3(
-        sinf(sh.theta) * cos(sh.phi),
-        sinf(sh.theta) * sin(sh.phi),
-        cosf(sh.theta)
-    );
-}
-
 int test_basic()
 {
     BMPImage bmp_image("assets/envmaps/env02.bmp");

@@ -15,6 +15,24 @@ namespace Lurdr
 #define ASSERT_NON_ZERO(x) assert(fabs(x)>EPSILON)
 #define ZERO_FLOAT(x) (fabs(x)<EPSILON)
 
+class Global
+{
+public:
+    static bool wireframe_mode;
+    static bool depth_test;
+    static bool backface_culling;
+    static bool texture_filtering_linear;
+};
+
+
+#define WIREFRAME_MODE(val)     (Global::wireframe_mode=val)
+#define DEPTH_TEST(val)         (Global::depth_test=val)
+#define BACKFACE_CULLING(val)   (Global::backface_culling=val)
+#define TEXTURE_FILTERING(val)  (Global::texture_filtering_linear=val)
+
+#define TF_LINEAR true
+#define TF_NEAREST false
+
 typedef unsigned char       byte_t;  // 1 bytes
 typedef unsigned short      UINT16;  // 2 bytes
 typedef short               INT16;   // 2 bytes
