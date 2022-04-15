@@ -1,0 +1,5 @@
+mesh assets/meshes/teapot_low.obj
+albedo assets/textures/wall.bmp
+diffuse assets/textures/wall.bmp
+specular assets/textures/wall.bmp
+normal

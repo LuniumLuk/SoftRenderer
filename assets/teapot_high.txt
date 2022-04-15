@@ -1,0 +1,5 @@
+mesh assets/meshes/teapot_high.obj
+albedo 
+diffuse 
+specular 
+normal

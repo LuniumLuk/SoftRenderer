@@ -1,0 +1,5 @@
+mesh assets/meshes/sphere.obj
+albedo 
+diffuse 
+specular
+normal

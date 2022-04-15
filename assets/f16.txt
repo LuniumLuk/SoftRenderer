@@ -1,0 +1,5 @@
+mesh assets/meshes/f16/f16.obj
+albedo assets/meshes/f16/f16s.bmp
+diffuse 
+specular
+normal

@@ -1,0 +1,5 @@
+mesh assets/meshes/spot.obj
+albedo assets/textures/spot.bmp
+diffuse assets/textures/spot.bmp
+specular assets/textures/spot.bmp
+normal

@@ -1,0 +1,5 @@
+mesh assets/meshes/cube.obj
+albedo assets/textures/brickwall.bmp
+diffuse assets/textures/brickwall.bmp
+specular assets/textures/brickwall.bmp
+normal assets/textures/brickwall_normal.bmp

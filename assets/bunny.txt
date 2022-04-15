@@ -1,0 +1,5 @@
+mesh assets/meshes/bunny.obj
+albedo
+diffuse 
+specular
+normal
