@@ -447,7 +447,6 @@ Vector3 UniformImage::sampler(const UniformImage & image, const Vector2 & texcoo
         vec3 color = IMAGECOLOR_AT_POS(image, buffer_pos);
         return color;
     }
-    
 }
 
 void UniformImage::createFromBMPImage(const BMPImage & bmp)

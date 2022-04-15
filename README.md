@@ -42,6 +42,7 @@ Triangle Normal Shading    |  Vertex Normal Shading
 - [ ] Normal Mapping
 - [ ] Read .mtl for Material
 - [x] Basic Lighting + Phong, Blinn Shaders
+- [x] Mipmapping
 - [ ] Sky Box + Environment Map
 - [ ] PBR
 - [ ] PostProcessing Pass

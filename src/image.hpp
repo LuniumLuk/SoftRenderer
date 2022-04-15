@@ -16,6 +16,7 @@
 #define LBI_RLE8 1   // 8bit RLE encoding
 #define LBI_RLE4 2   // 4bit RLE encoding
 
+typedef unsigned short COLOR_SPACE;
 #define COLOR_RGB 0U
 #define COLOR_BGR 1U
 #define COLOR_YUV 2U

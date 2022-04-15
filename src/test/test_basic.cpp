@@ -7,6 +7,7 @@ using namespace Lurdr;
 
 int test_basic()
 {
+#if 0
     BMPImage bmp_image("assets/envmaps/env02.bmp");
     {
         Timer t("read bmp");
@@ -71,6 +72,12 @@ int test_basic()
     }
 
     bmp_image.writeImage("test.bmp");
+#endif
+
+    Texture tex("assets/textures/lenna.bmp");
+
+    Texture::sampler(tex, vec2(0.2f, 0.31f)).print();
+    Texture::sampler(tex, vec2(0.1f, 0.115f)).print();
 
     return 0;
 }

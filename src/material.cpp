@@ -2,12 +2,11 @@
 
 using namespace Lurdr;
 
-Texture::Texture(const char * filename): 
-    m_base_color(vec4(1.0f, 1.0f, 1.0f, 1.0f)),
-    m_texture_surface(nullptr),
-    m_need_delete(false)
+Texture::Texture(const char * filename): Texture()
 {
-    loadTextureSurface(filename);
+    BMPImage bmp_image(filename);
+
+    loadTextureSurface(bmp_image);
 }
 
 // delegated constructor : c++11 feature
@@ -17,48 +16,58 @@ Texture::Texture(const vec4 & base_color, const char * filename):
     m_base_color = base_color;
 }
 
+Texture::Texture(const vec4 & base_color, const BMPImage & bmp_image):
+    Texture(bmp_image)
+{
+    m_base_color = base_color;
+}
+
+Texture::Texture(const BMPImage & bmp_image): Texture()
+{
+    loadTextureSurface(bmp_image);
+}
+
 Texture::~Texture()
 {
-    if (m_need_delete)
-    {
-        delete m_texture_surface;
-    }
+    delete[] m_buffer;
 }
 
-void Texture::setTextureSurface(UniformImage * texture_surface)
+void Texture::loadTextureSurface(const BMPImage & bmp_image)
 {
-    if (m_need_delete)
+    if (m_buffer)
     {
-        delete m_texture_surface;
-        m_need_delete = false;
-    }
-    m_texture_surface = texture_surface;
-    m_texture_surface->convertColorSpace(COLOR_RGB);
-}
-
-void Texture::loadTextureSurface(const char * filename)
-{
-    if (m_need_delete) delete m_texture_surface;
-
-    size_t len = strlen(filename);
-    if (strncmp(&filename[len - 4], "bmp", 3) == 0 || strncmp(&filename[len - 4], "BMP", 3) == 0)
-    {
-        printf("support only BMP format\n");
-        return;
+        delete[] m_buffer;
     }
 
-    BMPImage bmp_image(filename);
-    m_texture_surface = new UniformImage(bmp_image);
-    m_texture_surface->convertColorSpace(COLOR_RGB);
-    m_need_delete = true;
+    m_width = bmp_image.getImageWidth();
+    m_height = bmp_image.getImageHeight();
+
+    long texture_size = m_width * m_height * 4;
+
+    m_buffer = new float[texture_size];
+    const byte_t* image_buffer = bmp_image.getImageBufferConst();
+
+    for (long x = 0; x < m_width; x++)
+    {
+        for (long y = 0; y < m_height; y++)
+        {
+            long texture_pos = (y * m_width + x) * 4;
+            // long texture_pos = ((m_height - y - 1) * m_width + x) * 4;
+            long image_pos = (y * m_width + x) * 3;
+            m_buffer[texture_pos] = image_buffer[image_pos + 2] / 255.0f;
+            m_buffer[texture_pos + 1] = image_buffer[image_pos + 1] / 255.0f;
+            m_buffer[texture_pos + 2] = image_buffer[image_pos] / 255.0f;
+            m_buffer[texture_pos + 3] = 1.0f;
+        }
+    }
 }
 
 vec4 Texture::sampleAt(const vec2 & texcoord) const
 {
-    if (m_texture_surface)
+    if (m_buffer)
     {
-        vec3 surface_color = UniformImage::sampler(*m_texture_surface, texcoord) / 255.0f;
-        vec4 result_color = m_base_color.multiply(vec4(surface_color, 1.0f)); 
+        vec4 surface_color = sampler(*this, texcoord);
+        vec4 result_color = m_base_color.multiply(surface_color); 
 
         return result_color;
     }
@@ -68,7 +77,54 @@ vec4 Texture::sampleAt(const vec2 & texcoord) const
     }
 }
 
+vec4 Texture::colorAt(long x, long y) const
+{
+    assert(x >= 0);
+    assert(y >= 0);
+    if (x >= m_width)
+    {
+        x = m_width - 1;
+    }
+    if (y >= m_height)
+    {
+        y = m_height - 1;
+    }
+
+    return vec4(&m_buffer[(y * m_width + x) * 4]);
+}
+
+
 vec4 Texture::sampler(const Texture & texture, const vec2 & texcoord)
 {
-    return texture.sampleAt(texcoord);
+    if (Singleton<Global>::get().texture_filtering_linear)
+    {
+        float xf = (float)texture.m_width * clamp(texcoord.u, 0.0f, 1.0f);
+        float yf = (float)texture.m_height * clamp(texcoord.v, 0.0f, 1.0f);
+        long x = FTOD(xf);
+        long y = FTOD(yf);
+        float alpha_x = (xf - x);
+        float alpha_y = (yf - y);
+
+        vec4 color0 = texture.colorAt(x,     y    );
+        vec4 color1 = texture.colorAt(x + 1, y    );
+        vec4 color2 = texture.colorAt(x,     y + 1);
+        vec4 color3 = texture.colorAt(x + 1, y + 1);
+
+        // duel linear filtering
+        return vec4::lerp(
+            vec4::lerp(color0, color1, alpha_x),
+            vec4::lerp(color2, color3, alpha_x),
+            alpha_y
+        );
+    }
+    else
+    {
+        float xf = (float)texture.m_width * clamp(texcoord.u, 0.0f, 1.0f);
+        float yf = (float)texture.m_height * clamp(texcoord.v, 0.0f, 1.0f);
+        long x = FTOD(xf);
+        long y = FTOD(yf);
+
+        // nearest filtering
+        return texture.colorAt(x, y);
+    }
 }
