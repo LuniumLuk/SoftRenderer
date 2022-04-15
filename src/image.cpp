@@ -406,7 +406,7 @@ Vector3 UniformImage::sampler(const UniformImage & image, const Vector2 & texcoo
     // assert(texcoord.u >= 0.0f && texcoord.u <= 1.0f);
     // assert(texcoord.v >= 0.0f && texcoord.v <= 1.0f);
 
-    if (Global::texture_filtering_linear)
+    if (Singleton<Global>::get().texture_filtering_linear)
     {
         float uf = (float)image.m_width * clamp(texcoord.u, 0.0f, 1.0f);
         float vf = (float)image.m_height * clamp(texcoord.v, 0.0f, 1.0f);

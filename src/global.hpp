@@ -15,23 +15,28 @@ namespace Lurdr
 #define ASSERT_NON_ZERO(x) assert(fabs(x)>EPSILON)
 #define ZERO_FLOAT(x) (fabs(x)<EPSILON)
 
+#define TF_LINEAR true
+#define TF_NEAREST false
+
 class Global
 {
 public:
-    static bool wireframe_mode;
-    static bool depth_test;
-    static bool backface_culling;
-    static bool texture_filtering_linear;
+    bool wireframe_mode;
+    bool depth_test;
+    bool backface_culling;
+    bool texture_filtering_linear;
+
+    Global():
+        wireframe_mode(false),
+        depth_test(true),
+        backface_culling(true),
+        texture_filtering_linear(TF_LINEAR) {}
 };
 
-
-#define WIREFRAME_MODE(val)     (Global::wireframe_mode=val)
-#define DEPTH_TEST(val)         (Global::depth_test=val)
-#define BACKFACE_CULLING(val)   (Global::backface_culling=val)
-#define TEXTURE_FILTERING(val)  (Global::texture_filtering_linear=val)
-
-#define TF_LINEAR true
-#define TF_NEAREST false
+#define WIREFRAME_MODE(val)     (Singleton<Global>::get().wireframe_mode=val)
+#define DEPTH_TEST(val)         (Singleton<Global>::get().depth_test=val)
+#define BACKFACE_CULLING(val)   (Singleton<Global>::get().backface_culling=val)
+#define TEXTURE_FILTERING(val)  (Singleton<Global>::get().texture_filtering_linear=val)
 
 typedef unsigned char       byte_t;  // 1 bytes
 typedef unsigned short      UINT16;  // 2 bytes
@@ -84,6 +89,24 @@ typedef struct RGBECOLOR
         E = e;
     }
 } RGBEColor;
+
+template<typename T>
+class Singleton
+{
+private:
+    Singleton() = default;
+
+public:
+    static T& get()
+    {
+        static T instance;
+        return instance;
+    }
+
+    virtual ~Singleton() noexcept = default;
+    Singleton(const Singleton &) = delete;
+    Singleton& operator= (const Singleton &) = delete;
+};
 
 }
 

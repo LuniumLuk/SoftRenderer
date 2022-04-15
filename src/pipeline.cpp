@@ -8,11 +8,6 @@ using namespace Lurdr;
 
 #define WIREFRAME_EPSILON 0.5f
 
-bool Global::wireframe_mode = false;
-bool Global::depth_test = true;
-bool Global::backface_culling = true;
-bool Global::texture_filtering_linear = true;
-
 // reference : https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/perspective-correct-interpolation-vertex-attributes
 static inline float edgeFunction(const vec3 & a, const vec3 & b, const vec3 & c)
 {
@@ -73,7 +68,7 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
                 continue;
             }
 
-            if (Global::backface_culling) { // Back-face Culling
+            if (Singleton<Global>::get().backface_culling) { // Back-face Culling
                 vec3 u = vec3(v1.position - v0.position);
                 vec3 v = vec3(v2.position - v0.position);
                 vec3 face_normal = u.cross(v);
@@ -353,7 +348,7 @@ void Pipeline::rasterizeScanLine(
         }
 
         float alpha = (float)(x - x_start) / (float)x_span + EPSILON;
-        if (Global::wireframe_mode && (x != x_start) && (x != x_end - dx))
+        if (Singleton<Global>::get().wireframe_mode && (x != x_start) && (x != x_end - dx))
         {
             continue;
         }
@@ -377,7 +372,7 @@ void Pipeline::pixelShaderBarycentric(
     }
 
     long depth_buffer_pos = frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x;
-    if (Global::depth_test && (frame_buffer.depthBuffer()[depth_buffer_pos] <= v.position.z))
+    if (Singleton<Global>::get().depth_test && (frame_buffer.depthBuffer()[depth_buffer_pos] <= v.position.z))
     {
         return;
     }
@@ -414,7 +409,7 @@ void Pipeline::pixelShader(
     }
 
     long depth_buffer_pos = frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x;
-    if (Global::depth_test && frame_buffer.depthBuffer()[depth_buffer_pos] <= v.position.z)
+    if (Singleton<Global>::get().depth_test && frame_buffer.depthBuffer()[depth_buffer_pos] <= v.position.z)
     {
         return;
     }
