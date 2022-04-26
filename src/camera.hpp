@@ -26,6 +26,8 @@ public:
     void setTransform(const Vector3 & position, const Vector3 & target);
     void setAspect(float aspect);
     void setFOV(float fov);
+    void setNear(float near);
+    void setFar(float far);
     void setUp(const Vector3 & up);
     Vector3 getPosition() const;
     Vector3 getForward() const;

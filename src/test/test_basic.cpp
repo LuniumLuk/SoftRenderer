@@ -74,10 +74,27 @@ int test_basic()
     bmp_image.writeImage("test.bmp");
 #endif
 
-    Texture tex("assets/textures/lenna.bmp");
+    // Texture tex("assets/textures/lenna.bmp");
 
-    Texture::sampler(tex, vec2(0.2f, 0.31f)).print();
-    Texture::sampler(tex, vec2(0.1f, 0.115f)).print();
+    // Texture::sampler(tex, vec2(0.2f, 0.31f)).print();
+    // Texture::sampler(tex, vec2(0.1f, 0.115f)).print();
+
+    vec4 p = vec4(0, 0, 1, 1);
+
+    Camera camera;
+
+    camera.setFOV(PI / 4);
+    camera.setNear(0.1);
+    camera.setFar(5000);
+
+    vec4 pp = camera.getProjectMatrix() * p;
+
+    pp.w = 1.0f / pp.w;
+    pp.x *= pp.w;
+    pp.y *= pp.w;
+    pp.z *= pp.w;
+
+    pp.print();
 
     return 0;
 }
