@@ -34,6 +34,14 @@ void Camera::setFOV(float fov)
 {
     m_FOV = fov;
 }
+void Camera::setNear(float near)
+{
+    m_near = near;
+}
+void Camera::setFar(float far)
+{
+    m_far = far;
+}
 void Camera::setUp(const Vector3 & up)
 {
     m_up = up;
