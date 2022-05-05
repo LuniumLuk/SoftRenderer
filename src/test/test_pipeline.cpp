@@ -17,7 +17,7 @@ static float mouse_x = -1.0f;
 static float mouse_y = -1.0f;
 
 static float camera_fov = 60.0f;
-static const int SHADER_COUNT = 5;
+static const int SHADER_COUNT = 7;
 static int current_shader = 0;
 
 static float view_distance = 3.0f;
@@ -50,6 +50,26 @@ const vec4 base_color = vec4(
     1.0f
 );
 
+class LightShader : public LitShader
+{
+public:
+    virtual vec4 frag(const v2f in, const Entity * entity, const Scene & scene) const
+    {
+        const float diffuse_strength = 1.0f;
+        const float specular_strength = 0.8f;
+
+        vec3 normal = in.normal;
+        // vec3 tex_normal = vec3(SAMPLER_2D(TEXTURE_NORMAL, in.texcoord)) * 2.0f - vec3(1.0f, 1.0f, 1.0f);
+        // vec3 normal = (in.normal + tex_normal).normalized();
+
+        vec3 view_dir = (scene.getCamera().getPosition() - in.frag_pos).normalized();
+        LightComp light_comp = scene.getLight(normal, in.frag_pos, view_dir);
+        vec3 color = diffuse_strength * light_comp.diffuse + specular_strength * light_comp.specular;
+
+        return vec4(color, 1.0f);
+    }
+};
+
 int test_pipeline() {
 
     entityConf config("assets/spot.txt");
@@ -77,6 +97,8 @@ int test_pipeline() {
 
     Shader* shaders[SHADER_COUNT] = {
         (Shader*)new UnlitShader(),
+        (Shader*)new UnlitShader(),
+        (Shader*)new LightShader(),
         (Shader*)new BlinnPhongShader(),
         (Shader*)new TriangleNormalShader(),
         (Shader*)new VertexNormalShader(),
@@ -85,16 +107,18 @@ int test_pipeline() {
 
     char shader_names[SHADER_COUNT][64] = {
         "UNLIT",
+        "WIREFRAME",
         "BLINN-PHONG",
+        "LIGHT",
         "TRIANGLE NORMAL",
         "VERTEX NORMAL",
         "DEPTH"
     };
 
-    WIREFRAME_MODE(false);
-    BACKFACE_CULLING(true);
-    DEPTH_TEST(true);
-    TEXTURE_FILTERING(TF_LINEAR);
+    LURDR_WIREFRAME_MODE(false);
+    LURDR_BACKFACE_CULLING(true);
+    LURDR_DEPTH_TEST(true);
+    LURDR_TEXTURE_FILTERING(TF_LINEAR);
 
     initializeApplication();
 
@@ -121,6 +145,7 @@ int test_pipeline() {
         drawInteger(
             frame_buffer, 40.0f, 10.0f, 
             _fps, 6.0f, COLOR_RED);
+#if 1
         drawString(
             frame_buffer, 10.0f, 30.0f,
             "KEY A D      --------- ROTATE MODEL", 6.0f, COLOR_WHITE);
@@ -145,7 +170,7 @@ int test_pipeline() {
         drawString(
             frame_buffer, 10.0f, 105.0f,
             "KEY ESCAPE   --------- EXIT", 6.0f, COLOR_WHITE);
-
+#endif
         swapBuffer(window);
         pollEvent();
     }
@@ -204,6 +229,14 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
                 if (current_shader >= SHADER_COUNT)
                 {
                     current_shader = 0;
+                }
+                if (current_shader == 1)
+                {
+                    LURDR_WIREFRAME_MODE(true);
+                }
+                else
+                {
+                    LURDR_WIREFRAME_MODE(false);
                 }
 #endif
 #if 0

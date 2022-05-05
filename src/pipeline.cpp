@@ -68,7 +68,7 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
                 continue;
             }
 
-            if (Singleton<Global>::get().backface_culling) { // Back-face Culling
+            if (Singleton<Global>::get().backface_culling && !Singleton<Global>::get().wireframe_mode) { // Back-face Culling
                 vec3 u = vec3(v1.position - v0.position);
                 vec3 v = vec3(v2.position - v0.position);
                 vec3 face_normal = u.cross(v);
@@ -163,6 +163,15 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
             v1.position.z = 1.0f / v1.position.z;
             v2.position.z = 1.0f / v2.position.z;
 
+            if (Singleton<Global>::get().wireframe_mode)
+            {
+                drawLinePipeline(frame_buffer, v0, v1, shader, entity, scene);
+                drawLinePipeline(frame_buffer, v1, v2, shader, entity, scene);
+                drawLinePipeline(frame_buffer, v2, v0, shader, entity, scene);
+
+                continue;
+            }
+
             // AABB Bounding Box of Triangle
             const long x_min = max(min(v0.position.x, min(v1.position.x, v2.position.x)), 0);
             const long x_max = min(max(v0.position.x, max(v1.position.x, v2.position.x)), frame_buffer.getWidth() - 1);
@@ -208,9 +217,6 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
                     {
                         continue;
                     }
-
-                    // pos.z = clamp(pos.z, 0.5f, 1.0f);
-                    // pos.z = clamp(pos.z, 0.0f, 0.5f);
 
                     const v2f v(
                         pos,
@@ -286,6 +292,63 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
         }
     }
 #endif
+}
+
+void Pipeline::drawLinePipeline(
+    const FrameBuffer & frame_buffer, const v2f & v0, const v2f & v1, const Shader * shader,
+    const Entity * entity, const Scene & scene
+) {
+    long x0 = FTOD(v0.position.x);
+    long y0 = FTOD(v0.position.y);
+    long x1 = FTOD(v1.position.x);
+    long y1 = FTOD(v1.position.y);
+
+    long dx = fabs(x1 - x0);
+    long dy = -fabs(y1 - y0);
+    long sx = x0 < x1 ? 1 : -1;
+    long sy = y0 < y1 ? 1 : -1;
+    long err = dx + dy; 
+    long e2;
+
+    while (true)
+    {
+        pixelShaderWireframe(frame_buffer, x0, y0, shader, entity, scene);
+
+        if (x0 == x1 && y0 == y1) break;
+
+        e2 = 2 * err;
+        if (e2 >= dy)
+        {
+            err += dy;
+            x0 += sx;
+        }
+
+        if (e2 <= dx)
+        {
+            err += dx;
+            y0 += sy;
+        }
+    }
+}
+
+void Pipeline::pixelShaderWireframe(
+    const FrameBuffer & frame_buffer, long x, long y, const Shader * shader,
+    const Entity * entity, const Scene & scene
+) {
+    // Depth Test
+    if (x < 0 || x >= frame_buffer.getWidth() || y < 0 || y >= frame_buffer.getHeight())
+    {
+        return;
+    }
+
+    long depth_buffer_pos = frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x;
+    frame_buffer.depthBuffer()[depth_buffer_pos] = 0.0f;
+
+    byte_t *color_buffer = frame_buffer.colorBuffer();
+    long color_buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 3;
+    color_buffer[color_buffer_pos++] = FLOAT2BYTECOLOR(1.0f);
+    color_buffer[color_buffer_pos++] = FLOAT2BYTECOLOR(1.0f);
+    color_buffer[color_buffer_pos] = FLOAT2BYTECOLOR(1.0f);
 }
 
 

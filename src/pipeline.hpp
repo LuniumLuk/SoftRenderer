@@ -54,6 +54,10 @@ private:
         const FrameBuffer & frame_buffer, const v2f & v, const Shader * shader,
         const Entity * entity, const Scene & scene
     );
+    static void pixelShaderWireframe(
+        const FrameBuffer & frame_buffer, long x, long y, const Shader * shader,
+        const Entity * entity, const Scene & scene
+    );
     static void pixelShader(
         const FrameBuffer & frame_buffer, const v2f & v, const Shader * shader,
         const Entity * entity, const Scene & scene
@@ -67,6 +71,8 @@ private:
         const Entity * entity, const Scene & scene
     );
     static void sortVerticesByY(v2f & v0, v2f & v1, v2f & v2);
+    static void drawLinePipeline(const FrameBuffer & frame_buffer, const v2f & v0, const v2f & v1, const Shader * shader,
+        const Entity * entity, const Scene & scene);
 };
 
 void drawTriangles(
