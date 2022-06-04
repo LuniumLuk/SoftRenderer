@@ -1,8 +1,6 @@
-# Lu Renderer
+# Soft Renderer
 
-This is a Tiny Renderer on CPU with single-thread built from scratch, designed to rely on minimum dependencies (with standard C library, but written in C++ style).
-
-:construction: **currently under construction** :construction:
+This is a Tiny Renderer on CPU with single-thread built from scratch, using OpenGL-like API design.
 
 - Meanwhile, this project also serve as practice while learning the book 'Real-Time Rendering' :book: https://www.realtimerendering.com/
 
