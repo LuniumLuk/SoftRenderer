@@ -264,3 +264,19 @@ rgb Envmap::getPixel(float theta, float phi) const
 
     return color / 255.0f;
 }
+
+LightComp EnvLight::getLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
+{
+    __unused_variable(frag_pos);
+    __unused_variable(view_dir);
+
+    const float phi = 0.0f;
+    const float theta = 0.0f;
+    rgb color = m_envmap.getPixel(phi, theta);
+
+    LightComp comp = {
+        .diffuse = m_diffuse * lambertian,
+        .specular = m_specular * spec
+    };
+    return comp;
+}

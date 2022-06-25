@@ -6,6 +6,7 @@
 #include "assert.h"
 #include "global.hpp"
 #include "image.hpp"
+#include "light.hpp"
 
 namespace Lurdr
 {
@@ -34,6 +35,18 @@ public:
 
     rgb getPixel(float theta, float phi) const;
 };
+
+class EnvLight : public Light
+{
+private:
+    Envmap * m_envmap;
+
+public:
+    EnvLight() = delete;
+    EnvLight(const char * filename);
+
+    virtual LightComp getLight(vec3 normal, vec3 frag_pos, vec3 view_dir);
+}
 
 }
 
