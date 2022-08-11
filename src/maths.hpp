@@ -40,8 +40,8 @@ public:
     Vector2(const Vector2 & vec): x(vec.x), y(vec.y) {}
     Vector2(const Vector4 & vec);
     Vector2(float * array):
-        x(*array++),
-        y(*array) {}
+        x(*(array + 0)),
+        y(*(array + 1)) {}
 
     /* Static Members */
     static Vector2 UNIT_X;
@@ -91,9 +91,9 @@ public:
     Vector3(const Vector3 & vec): x(vec.x), y(vec.y), z(vec.z) {}
     Vector3(const Vector4 & vec);
     Vector3(float * array):
-        x(*array++),
-        y(*array++),
-        z(*array) {}
+        x(*(array + 0)),
+        y(*(array + 1)),
+        z(*(array + 2)) {}
 
     /* Static Members */
     static Vector3 UNIT_X;
@@ -150,10 +150,10 @@ public:
     Vector4(const Vector4 & vec): x(vec.x), y(vec.y), z(vec.z), w(vec.w) {}
     Vector4(const Vector3 & vec, float w): x(vec.x), y(vec.y), z(vec.z), w(w) {}
     Vector4(float * array):
-        x(*array++),
-        y(*array++),
-        z(*array++),
-        w(*array) {}
+        x(*(array + 0)),
+        y(*(array + 1)),
+        z(*(array + 2)),
+        w(*(array + 3)) {}
 
     /* Static Members */
     static Vector4 UNIT_X;
@@ -197,10 +197,10 @@ public:
     Quaternion(float x, float y, float z, float w): x(x), y(y), z(z), w(w) {}
     Quaternion(const Quaternion & quat): x(quat.x), y(quat.y), z(quat.z), w(quat.w) {}
     Quaternion(float * array):
-        x(*array++),
-        y(*array++),
-        z(*array++),
-        w(*array) {}
+        x(*(array + 0)),
+        y(*(array + 1)),
+        z(*(array + 2)),
+        w(*(array + 3)) {}
         
     /* Static Members */
     static Quaternion IDENTITY;
