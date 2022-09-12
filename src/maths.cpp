@@ -1302,9 +1302,9 @@ Matrix4 Matrix4::getProjection(const float & fov, const float & aspect, const fl
 Matrix4 Matrix4::translated(const Vector3 & translation) const
 {
     Matrix4 mat(
-        m[0],  m[1],  m[2],  m[3]  + translation.x * m[0] + translation.y * m[1] + translation.z * m[2],
-        m[4],  m[5],  m[6],  m[7]  + translation.x * m[4] + translation.y * m[5] + translation.z * m[6],
-        m[8],  m[9],  m[10], m[11] + translation.z * m[8] + translation.y * m[9] + translation.z * m[10],
+        m[0],  m[1],  m[2],  m[3]  + translation.x,
+        m[4],  m[5],  m[6],  m[7]  + translation.y,
+        m[8],  m[9],  m[10], m[11] + translation.z,
         m[12], m[13], m[14], m[15]
     );
     return mat;
@@ -1316,29 +1316,27 @@ Matrix4 Matrix4::scaled(const Vector3 & scale) const
     ASSERT_NON_ZERO(scale.z);
 
     Matrix4 mat(
-        m[0] * scale.x, m[1] * scale.y, m[2] * scale.z,  m[3],
-        m[4] * scale.x, m[5] * scale.y, m[6] * scale.z,  m[7],
-        m[8] * scale.x, m[9] * scale.y, m[10] * scale.z, m[11],
-        m[12],          m[13],          m[14],           m[15]
+        m[0]  * scale.x, m[1]  * scale.y, m[2]  * scale.z, m[3],
+        m[4]  * scale.x, m[5]  * scale.y, m[6]  * scale.z, m[7],
+        m[8]  * scale.x, m[9]  * scale.y, m[10] * scale.z, m[11],
+        m[12] * scale.x, m[13] * scale.y, m[14] * scale.z, m[15]
     );
     return mat;
 }
 Matrix4 Matrix4::rotated(const Vector3 & axis, const float & angle) const
 {
-    Matrix4 mat = fromAxisAngle(axis, angle);
-    return (*this) * mat;
+    return fromAxisAngle(axis, angle) * (*this);
 }
 Matrix4 Matrix4::rotated(const Quaternion & rotation) const
 {
-    Matrix4 mat = fromQuaternion(rotation);
-    return (*this) * mat;
+    return fromQuaternion(rotation) * (*this);
 }
 
 void Matrix4::translate(const Vector3 & translation)
 {
-    m[3]  += translation.x * m[0] + translation.y * m[1] + translation.z * m[2];
-    m[7]  += translation.x * m[4] + translation.y * m[5] + translation.z * m[6];
-    m[11] += translation.z * m[8] + translation.y * m[9] + translation.z * m[10];
+    m[3]  += translation.x;
+    m[7]  += translation.y;
+    m[11] += translation.z;
 }
 void Matrix4::scale(const Vector3 & scale)
 {
@@ -1346,21 +1344,16 @@ void Matrix4::scale(const Vector3 & scale)
     ASSERT_NON_ZERO(scale.y);
     ASSERT_NON_ZERO(scale.z);
 
-    m[0]  *= scale.x;
-    m[1]  *= scale.y;
-    m[2]  *= scale.z;
-    m[4]  *= scale.x;
-    m[5]  *= scale.y;
-    m[6]  *= scale.z;
-    m[8]  *= scale.x;
-    m[9]  *= scale.y;
-    m[10] *= scale.z;
+    m[0]  *= scale.x; m[1]  *= scale.y; m[2]  *= scale.z;
+    m[4]  *= scale.x; m[5]  *= scale.y; m[6]  *= scale.z;
+    m[8]  *= scale.x; m[9]  *= scale.y; m[10] *= scale.z;
+    m[12] *= scale.x; m[13] *= scale.y; m[14] *= scale.z;
 }
 void Matrix4::rotate(const Vector3 & axis, const float & angle)
 {
-    (*this).multiply(fromAxisAngle(axis, angle));
+    (*this) = fromAxisAngle(axis, angle) * (*this);
 }
 void Matrix4::rotate(const Quaternion & rotation)
 {
-    (*this).multiply(fromQuaternion(rotation));
+    (*this) = fromQuaternion(rotation) * (*this);
 }
