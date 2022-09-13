@@ -22,7 +22,7 @@ static int current_shader = 0;
 
 static float view_distance = 3.0f;
 
-int test_pipeline() {
+int test_envmap() {
 
     entityConf config("assets/sphere.txt");
     Entity ent = Entity(config);
@@ -35,15 +35,15 @@ int test_pipeline() {
     Envmap envmap("assets/envmaps/env01.bmp");
 
     scene.addEntity(&ent);
-    scene.addLight((Light*)&dir_light);
-    scene.addLight((Light*)&point_light1);
-    scene.addLight((Light*)&point_light2);
+    // scene.addLight((Light*)&dir_light);
+    // scene.addLight((Light*)&point_light1);
+    // scene.addLight((Light*)&point_light2);
     scene.setEnvmap(&envmap);
 
     vec3 mesh_center = ent.getTriangleMesh()->getMeshCenter();
     scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -view_distance), mesh_center);
 
-    const Shader * shader = new BlinnPhongShader();
+    // const Shader * shader = new BlinnPhongShader();
 
     LURDR_WIREFRAME_MODE(false);
     LURDR_BACKFACE_CULLING(true);
@@ -67,7 +67,7 @@ int test_pipeline() {
         FPS_UPDATE(_fps);
 
         frame_buffer.clearColorBuffer(rgb(0.0f, 0.0f, 0.0f));
-        Pipeline::draw(frame_buffer, scene, shader);
+        // Pipeline::draw(frame_buffer, scene, shader);
 
         drawString(
             frame_buffer, 10.0f, 10.0f,

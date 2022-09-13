@@ -36,17 +36,17 @@ public:
     rgb getPixel(float theta, float phi) const;
 };
 
-class EnvLight : public Light
-{
-private:
-    Envmap * m_envmap;
+// class EnvLight : public Light
+// {
+// private:
+//     Envmap * m_envmap;
 
-public:
-    EnvLight() = delete;
-    EnvLight(const char * filename);
+// public:
+//     EnvLight() = delete;
+//     EnvLight(const char * filename);
 
-    virtual LightComp getLight(vec3 normal, vec3 frag_pos, vec3 view_dir);
-}
+//     virtual LightComp getLight(vec3 normal, vec3 frag_pos, vec3 view_dir);
+// };
 
 }
 
