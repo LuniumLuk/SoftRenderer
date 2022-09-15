@@ -21,6 +21,8 @@ private:
     long   m_size;
     byte_t *m_color_buffer;
     float  *m_depth_buffer;
+    byte_t *m_msaa_color_buffer;
+    float  *m_msaa_depth_buffer;
 public:
     FrameBuffer();
     FrameBuffer(long width, long height);
@@ -31,6 +33,8 @@ public:
     long getSize() const;
     byte_t* colorBuffer() const;
     float* depthBuffer() const;
+    byte_t* colorBufferMSAA() const;
+    float* depthBufferMSAA() const;
 
     void clearColorBuffer(const RGBCOLOR & color) const;
     void clearColorBuffer(const rgb & color) const;

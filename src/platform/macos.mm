@@ -100,6 +100,9 @@ void handleKeyEvent(AppWindow *window, long virtual_key, bool pressed)
         case 0x0D: key = KEY_W;      break;
         case 0x31: key = KEY_SPACE;  break;
         case 0x35: key = KEY_ESCAPE; break;
+        case 0x0C: key = KEY_I;      break;
+        case 0x12: key = KEY_O;      break;
+        case 0x13: key = KEY_P;      break;
         default:   key = KEY_NUM;    break;
     }
     if (key < KEY_NUM)

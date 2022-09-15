@@ -119,6 +119,7 @@ int test_pipeline() {
     LURDR_BACKFACE_CULLING(true);
     LURDR_DEPTH_TEST(true);
     LURDR_TEXTURE_FILTERING(TF_LINEAR);
+    LURDR_MSAA(true);
 
     initializeApplication();
 
@@ -140,36 +141,42 @@ int test_pipeline() {
         Pipeline::draw(frame_buffer, scene, shaders[current_shader]);
 
         drawString(
-            frame_buffer, 10.0f, 10.0f,
-            "FPS", 6.0f, COLOR_WHITE);
+            frame_buffer, 10.0f, 5.0f,
+            "FPS", 4.0f, COLOR_WHITE);
         drawInteger(
-            frame_buffer, 40.0f, 10.0f, 
-            _fps, 6.0f, COLOR_RED);
+            frame_buffer, 40.0f, 5.0f, 
+            _fps, 4.0f, COLOR_RED);
 #if 1
         drawString(
-            frame_buffer, 10.0f, 30.0f,
-            "KEY A D      --------- ROTATE MODEL", 6.0f, COLOR_WHITE);
+            frame_buffer, 10.0f, 20.0f,
+            "KEY A D      --------- ROTATE MODEL", 4.0f, COLOR_WHITE);
         drawString(
-            frame_buffer, 10.0f, 45.0f,
-            "KEY S W      --------- SCALE MODEL", 6.0f, COLOR_WHITE);
+            frame_buffer, 10.0f, 30.0f,
+            "KEY S W      --------- SCALE MODEL", 4.0f, COLOR_WHITE);
+        drawString(
+            frame_buffer, 10.0f, 40.0f,
+            "MOUSE DRAG   --------- ROTATE CAMERA", 4.0f, COLOR_WHITE);
+        drawString(
+            frame_buffer, 10.0f, 50.0f,
+            "MOUSE SCROLL --------- CAMERA FOV", 4.0f, COLOR_WHITE);
+        drawInteger(
+            frame_buffer, 350.0f, 50.0f, 
+            (int)camera_fov, 4.0f, COLOR_RED);
         drawString(
             frame_buffer, 10.0f, 60.0f,
-            "MOUSE DRAG   --------- ROTATE CAMERA", 6.0f, COLOR_WHITE);
+            "KEY SPACE    --------- SWITCH SHADER", 4.0f, COLOR_WHITE);
         drawString(
-            frame_buffer, 10.0f, 75.0f,
-            "MOUSE SCROLL --------- CAMERA FOV", 6.0f, COLOR_WHITE);
-        drawInteger(
-            frame_buffer, 350.0f, 75.0f, 
-            (int)camera_fov, 6.0f, COLOR_RED);
+            frame_buffer, 350.0f, 60.0f,
+            shader_names[current_shader], 4.0f, COLOR_RED);
+        drawString(
+            frame_buffer, 10.0f, 70.0f,
+            "KEY ESCAPE   --------- EXIT", 4.0f, COLOR_WHITE);
+        drawString(
+            frame_buffer, 10.0f, 80.0f,
+            "KEY O        --------- TOGGLE MSAA", 4.0f, COLOR_WHITE);
         drawString(
             frame_buffer, 10.0f, 90.0f,
-            "KEY SPACE    --------- SWITCH SHADER", 6.0f, COLOR_WHITE);
-        drawString(
-            frame_buffer, 350.0f, 90.0f,
-            shader_names[current_shader], 6.0f, COLOR_RED);
-        drawString(
-            frame_buffer, 10.0f, 105.0f,
-            "KEY ESCAPE   --------- EXIT", 6.0f, COLOR_WHITE);
+            "KEY P        --------- SCREEN SHOT", 4.0f, COLOR_WHITE);
 #endif
         swapBuffer(window);
         pollEvent();
@@ -248,6 +255,24 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
                 scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -view_distance), mesh_center);
                 scene.getCamera().setUp(vec3::UNIT_Y);
 #endif
+                break;
+            case KEY_I:
+                break;
+            case KEY_O:
+                LURDR_MSAA(!Singleton<Global>::get().multisample_antialias);
+                break;
+            case KEY_P:
+                {
+                    size_t img_size = frame_buffer.getWidth() * frame_buffer.getHeight() * 3;
+                    UniformImage ss_uni_img(frame_buffer.getWidth(), frame_buffer.getHeight());
+                    memcpy(ss_uni_img.getImageBuffer(), frame_buffer.colorBuffer(), img_size);
+                    ss_uni_img.convertColorSpace(COLOR_BGR);
+
+                    BMPImage screenshot_img(frame_buffer.getWidth(), frame_buffer.getHeight());
+                    memcpy(screenshot_img.getImageBuffer(), ss_uni_img.getImageBufferConst(), img_size);
+                    screenshot_img.setReverseY(true);
+                    screenshot_img.writeImage("screenshot.bmp");
+                }
                 break;
             default:
                 return;

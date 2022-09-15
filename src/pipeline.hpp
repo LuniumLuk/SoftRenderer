@@ -21,6 +21,7 @@ namespace Lurdr
                               v.z *= v.w;
 
 #define FLOAT2BYTECOLOR(x) FTOD(clamp(x,0.0f,1.0f)*255)
+#define BYTE2FLOATCOLOR(x) DTOF((float)x/255.0f)
                               
 
 #define TRIANGLE_VERTEX(fidx,vidx) (mesh->getVertices()[mesh->getFaces()[fidx][vidx]])
@@ -52,7 +53,7 @@ public:
 private:
     static void pixelShaderBarycentric(
         const FrameBuffer & frame_buffer, const v2f & v, const Shader * shader,
-        const Entity * entity, const Scene & scene
+        const Entity * entity, const Scene & scene, unsigned short mask = 0
     );
     static void pixelShaderWireframe(
         const FrameBuffer & frame_buffer, long x, long y, const Shader * shader,

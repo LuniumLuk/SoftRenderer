@@ -17,6 +17,46 @@ I intend to implement a shader-based renderer that runs on CPU from scratch usin
 - Support Cross Platform (MacOS, Windows)
 - Image and Geometry Process Functionalities
 
+### Shader-based pipeline
+
+A simple example for creating a shader
+```c++
+class ExampleShader : public Shader
+{
+public:
+    virtual v2f vert(const vdata in, const Entity * entity, const Scene & scene) const;
+    virtual vec4 frag(const v2f in, const Entity * entity, const Scene & scene) const;
+};
+
+v2f ExampleShader::vert(const vdata in, const Entity * entity, const Scene & scene) const
+{
+    v2f out;
+
+    out.position = MVP_MATRIX * vec4(in.position, 1.0f);
+    out.texcoord = in.texcoord;
+    out.normal   = MODEL_INV_TRANSPOSE * in.normal;
+
+    return out;
+}
+
+vec4 ExampleShader::frag(const v2f in, const Entity * entity, const Scene & scene) const
+{
+    rgb color = rgb(
+        in.normal.x * 0.5f + 0.5f,
+        in.normal.y * 0.5f + 0.5f,
+        in.normal.z * 0.5f + 0.5f );
+    
+    return vec4(color.normalized(), 1.0f);
+}
+```
+
+### MSAA
+
+With MSAA    |  Without MSAA
+:-------------------------:|:-------------------------:
+<img src="images/MSAA.jpg" width="300px" />  |  <img src="images/NOAA.jpg" width="300px" />
+13 FPS | 25 FPS
+
 ### Switch Shading & Mouse Manipulation
 
 <img src="images/phong_shading.gif" width="480px" />
@@ -36,20 +76,17 @@ Triangle Normal Shading    |  Vertex Normal Shading
 - [x] Simple Shaders (Unlit, VertexNormal, TriangleNormal)
 - [x] Hovering Camera by Mouse Drag
 - [x] Implement Barycentric Triangle Rastrization with Perspective Correction Interpolation
-- [ ] Wireframe Display
+- [x] Wireframe Display
+- [x] Multisample anti-aliasing
 - [ ] Normal Mapping
 - [ ] Read .mtl for Material
 - [x] Basic Lighting + Phong, Blinn Shaders
-- [x] Mipmapping
+- [ ] Mipmapping
 - [ ] Sky Box + Environment Map
 - [ ] PBR
 - [ ] PostProcessing Pass
 - [ ] Alpha Test + Alpha Blending
 - [ ] Multi-thread
-
-## Bug Report
-
-- Error Depth value appear in back-face
 
 ## Current Features
 
@@ -66,7 +103,8 @@ Triangle Normal Shading    |  Vertex Normal Shading
   - basic rasterization algorithm
   - colormap
   - digit display
-  - easy programable shader
+  - programable shader
+  - MSAA
 
 - Others
   - dynamic array

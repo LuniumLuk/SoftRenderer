@@ -44,6 +44,9 @@ static void handleKeyPress(WPARAM wParam, bool pressed)
         case 0x57: key = Lurdr::KEY_W;      break;
         case 0x20: key = Lurdr::KEY_SPACE;  break;
         case 0x1B: key = Lurdr::KEY_ESCAPE; break;
+        case 0x49: key = Lurdr::KEY_I;      break;
+        case 0x4F: key = Lurdr::KEY_O;      break;
+        case 0x50: key = Lurdr::KEY_P;      break;
         default:   key = Lurdr::KEY_NUM;    break;
     }
 

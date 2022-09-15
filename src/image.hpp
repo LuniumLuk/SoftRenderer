@@ -104,9 +104,10 @@ public:
 
     UINT32 getBufferSize()  const { return m_info_header.image_size; }
     INT32  getImageWidth()  const { return m_info_header.width; }
-    INT32  getImageHeight() const { return m_info_header.height; }
-    bool    isLoaded()       const { return m_is_loaded; }
-    size_t  getChannelNum()  const;
+    INT32  getImageHeight() const { return abs(m_info_header.height); }
+    bool   isLoaded()       const { return m_is_loaded; }
+    size_t getChannelNum()  const;
+    void   setReverseY(bool val);
 
     /* Operator Overload Functions */
     byte_t& operator() (const size_t & row, const size_t & column, const size_t & channel);

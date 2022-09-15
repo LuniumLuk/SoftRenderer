@@ -14,6 +14,17 @@ static inline float edgeFunction(const vec3 & a, const vec3 & b, const vec3 & c)
     return (c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x);
 }
 
+static inline bool outsideTest(v2f const& v0, v2f const& v1, v2f const& v2, vec3 const& pos, float* w0, float* w1, float* w2)
+{
+    *w0 = edgeFunction(v1.position, v2.position, pos);
+    *w1 = edgeFunction(v2.position, v0.position, pos);
+    *w2 = edgeFunction(v0.position, v1.position, pos);
+
+    bool has_neg = *w0 < 0 || *w1 < 0 || *w2 < 0;
+    bool has_pos = *w0 > 0 || *w1 > 0 || *w2 > 0;
+    return has_neg && has_pos;
+}
+
 void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const Shader * shader)
 {
     // scene.sortEntity();
@@ -179,6 +190,7 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
             const long y_max = min(max(v0.position.y, max(v1.position.y, v2.position.y)), frame_buffer.getHeight() - 1);
 
             const float area = edgeFunction(v0.position, v1.position, v2.position);
+            unsigned short mask;
 
             for (long x = x_min; x < x_max; x++)
             {
@@ -186,15 +198,30 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
                 {
                     vec4 pos(DTOF(x), DTOF(y), 1.0f, 0.0f);
 
-                    float w0 = edgeFunction(v1.position, v2.position, pos);
-                    float w1 = edgeFunction(v2.position, v0.position, pos);
-                    float w2 = edgeFunction(v0.position, v1.position, pos);
+                    float w0, w1, w2;
+                    if (Singleton<Global>::get().multisample_antialias) {
+                        float tp0, tp1, tp2;
+                        vec4 pos0(x + 0.0f, y + 0.0f, 1.0f, 0.0f);
+                        vec4 pos1(x + 1.0f, y + 0.0f, 1.0f, 0.0f);
+                        vec4 pos2(x + 0.0f, y + 1.0f, 1.0f, 0.0f);
+                        vec4 pos3(x + 1.0f, y + 1.0f, 1.0f, 0.0f);
 
-                    bool has_neg = w0 < 0 || w1 < 0 || w2 < 0;
-                    bool has_pos = w0 > 0 || w1 > 0 || w2 > 0;
-                    if (has_neg && has_pos)
-                    {
-                        continue;
+                        mask = 0;
+
+                        if (!outsideTest(v0, v1, v2, pos0, &tp0, &tp1, &tp2)) mask |= 1;
+                        if (!outsideTest(v0, v1, v2, pos1, &tp0, &tp1, &tp2)) mask |= 2;
+                        if (!outsideTest(v0, v1, v2, pos2, &tp0, &tp1, &tp2)) mask |= 4;
+                        if (!outsideTest(v0, v1, v2, pos3, &tp0, &tp1, &tp2)) mask |= 8;
+
+                        if (mask == 0) continue;
+
+                        outsideTest(v0, v1, v2, pos, &w0, &w1, &w2);
+
+                    } else {
+                        if (outsideTest(v0, v1, v2, pos, &w0, &w1, &w2))
+                        {
+                            continue;
+                        }
                     }
 
                     w0 /= area;
@@ -233,7 +260,7 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
                               vec3(v0.texcoord.v, v1.texcoord.v, v2.texcoord.v).dot(barycentric) )
                     );
 
-                    pixelShaderBarycentric(frame_buffer, v, shader, entity, scene);
+                    pixelShaderBarycentric(frame_buffer, v, shader, entity, scene, mask);
                 }
             }
 #endif
@@ -424,7 +451,7 @@ void Pipeline::rasterizeScanLine(
 
 void Pipeline::pixelShaderBarycentric(
     const FrameBuffer & frame_buffer, const v2f & v, const Shader * shader,
-    const Entity * entity, const Scene & scene
+    const Entity * entity, const Scene & scene, unsigned short mask
 ) {
     // Depth Test
     long x = v.position.x;
@@ -434,23 +461,75 @@ void Pipeline::pixelShaderBarycentric(
         return;
     }
 
-    long depth_buffer_pos = frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x;
-    if (Singleton<Global>::get().depth_test && (frame_buffer.depthBuffer()[depth_buffer_pos] <= v.position.z))
+    if (Singleton<Global>::get().multisample_antialias)
     {
-        return;
+        if (Singleton<Global>::get().depth_test)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                long msaa_depth_buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 4 + i;
+                if ((frame_buffer.depthBufferMSAA()[msaa_depth_buffer_pos] <= v.position.z))
+                {
+                    mask &= (~(1 << i) & 15);
+                }
+            }
+        }
+        if ((mask & 15) == 0) return;
+
+        rgba color = shader->frag(v, entity, scene);
+
+        long rgb_sum[3] = { 0, 0, 0 };
+        float depth_sum;
+
+        byte_t *msaa_color_buffer = frame_buffer.colorBufferMSAA();
+        for (int i = 0; i < 4; i++)
+        {
+            long msaa_depth_buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 4 + i;
+            long msaa_color_buffer_pos = ((frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 4 + i) * 3;
+            if (mask & (1 << i))
+            {
+                frame_buffer.depthBufferMSAA()[msaa_depth_buffer_pos] = v.position.z;
+                msaa_color_buffer[msaa_color_buffer_pos++] = FLOAT2BYTECOLOR(color.r);
+                msaa_color_buffer[msaa_color_buffer_pos++] = FLOAT2BYTECOLOR(color.g);
+                msaa_color_buffer[msaa_color_buffer_pos]   = FLOAT2BYTECOLOR(color.b);
+            }
+
+            msaa_color_buffer_pos = ((frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 4 + i) * 3;
+            rgb_sum[0] += msaa_color_buffer[msaa_color_buffer_pos++];
+            rgb_sum[1] += msaa_color_buffer[msaa_color_buffer_pos++];
+            rgb_sum[2] += msaa_color_buffer[msaa_color_buffer_pos];
+            depth_sum += frame_buffer.depthBufferMSAA()[msaa_depth_buffer_pos];
+        }
+
+        long depth_buffer_pos = frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x;
+        frame_buffer.depthBuffer()[depth_buffer_pos] = depth_sum / 4;
+
+        byte_t *color_buffer = frame_buffer.colorBuffer();
+        long color_buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 3;
+        color_buffer[color_buffer_pos++] = rgb_sum[0] / 4;
+        color_buffer[color_buffer_pos++] = rgb_sum[1] / 4;
+        color_buffer[color_buffer_pos]   = rgb_sum[2] / 4;
     }
+    else
+    {
+        long depth_buffer_pos = frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x;
+        if (Singleton<Global>::get().depth_test && (frame_buffer.depthBuffer()[depth_buffer_pos] <= v.position.z))
+        {
+            return;
+        }
 
-    // TODO: here we ignore alpha channel
-    frame_buffer.depthBuffer()[depth_buffer_pos] = v.position.z;
+        // TODO: here we ignore alpha channel
+        frame_buffer.depthBuffer()[depth_buffer_pos] = v.position.z;
 
-    // Fragment Shader 
-    rgba color = shader->frag(v, entity, scene);
+        // Fragment Shader 
+        rgba color = shader->frag(v, entity, scene);
 
-    byte_t *color_buffer = frame_buffer.colorBuffer();
-    long color_buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 3;
-    color_buffer[color_buffer_pos++] = FLOAT2BYTECOLOR(color.r);
-    color_buffer[color_buffer_pos++] = FLOAT2BYTECOLOR(color.g);
-    color_buffer[color_buffer_pos] = FLOAT2BYTECOLOR(color.b);
+        byte_t *color_buffer = frame_buffer.colorBuffer();
+        long color_buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 3;
+        color_buffer[color_buffer_pos++] = FLOAT2BYTECOLOR(color.r);
+        color_buffer[color_buffer_pos++] = FLOAT2BYTECOLOR(color.g);
+        color_buffer[color_buffer_pos]   = FLOAT2BYTECOLOR(color.b);
+    }
 }
 
 void Pipeline::pixelShader(

@@ -111,6 +111,10 @@ void BMPImage::loadImage()
     m_is_loaded = true;
     fclose(fp);
 }
+void BMPImage::setReverseY(bool val)
+{
+    m_info_header.height = val ? copysign(m_info_header.height, -1) : copysign(m_info_header.height, 1);
+}
 void BMPImage::clean() 
 {
     delete[] m_color_tables;

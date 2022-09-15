@@ -25,18 +25,21 @@ public:
     bool depth_test;
     bool backface_culling;
     bool texture_filtering_linear;
+    bool multisample_antialias;
 
     Global():
         wireframe_mode(false),
         depth_test(true),
         backface_culling(true),
-        texture_filtering_linear(TF_LINEAR) {}
+        texture_filtering_linear(TF_LINEAR),
+        multisample_antialias(true) {}
 };
 
 #define LURDR_WIREFRAME_MODE(val)     (Singleton<Global>::get().wireframe_mode=val)
 #define LURDR_DEPTH_TEST(val)         (Singleton<Global>::get().depth_test=val)
 #define LURDR_BACKFACE_CULLING(val)   (Singleton<Global>::get().backface_culling=val)
 #define LURDR_TEXTURE_FILTERING(val)  (Singleton<Global>::get().texture_filtering_linear=val)
+#define LURDR_MSAA(val)               (Singleton<Global>::get().multisample_antialias=val)
 
 typedef unsigned char       byte_t;  // 1 bytes
 typedef unsigned short      UINT16;  // 2 bytes
