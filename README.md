@@ -59,7 +59,9 @@ With MSAA    |  Without MSAA
 
 ### Switch Shading & Mouse Manipulation
 
-<img src="images/phong_shading.gif" width="480px" />
+Teapot    |  Spot
+:-------------------------:|:-------------------------:
+<img src="images/phong_shading.gif" width="360px" />  |  <img src="images/spot_model.gif" width="360px" />
 
 Triangle Normal Shading    |  Vertex Normal Shading
 :-------------------------:|:-------------------------:
