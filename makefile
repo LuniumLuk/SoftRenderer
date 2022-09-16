@@ -9,14 +9,14 @@ SOURCEDIR  := src
 INCLUDEDIR := src
 BUILDDIR   := build
 DLLDIR	   := bin
-TESTDIR	   := $(SOURCEDIR)/test
-TESTSRCS   := $(wildcard $(addprefix $(TESTDIR)/, *.cpp))
-TESTOBJS   := $(addprefix $(BUILDDIR)/, $(notdir $(TESTSRCS:.cpp=.o)))
+SAMPLEDIR  := $(SOURCEDIR)/sample
+SAMPLESRCS := $(wildcard $(addprefix $(SAMPLEDIR)/, *.cpp))
+SAMPLEOBJS := $(addprefix $(BUILDDIR)/, $(notdir $(SAMPLESRCS:.cpp=.o)))
 PLATDIR    := $(SOURCEDIR)/platform
 SOURCES    := $(wildcard $(addprefix $(SOURCEDIR)/, *.cpp))
-OBJECTS    := $(addprefix $(BUILDDIR)/, $(notdir $(SOURCES:.cpp=.o))) $(TESTOBJS)
+OBJECTS    := $(addprefix $(BUILDDIR)/, $(notdir $(SOURCES:.cpp=.o))) $(SAMPLEOBJS)
 INCLUDES   := -I$(INCLUDEDIR)
-HEADERS    := $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp)) $(PLATDIR)/platform.hpp $(TESTDIR)/test.hpp
+HEADERS    := $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp)) $(PLATDIR)/platform.hpp $(SAMPLEDIR)/sample.hpp
 # MacOS Compile
 MACSOURCES := $(SOURCEDIR)/macos.mm
 MACOBJECTS := $(filter-out build/$(MAIN).o, $(OBJECTS))
@@ -24,7 +24,7 @@ MACOBJECTS := $(filter-out build/$(MAIN).o, $(OBJECTS))
 DLLOBJECTS := $(filter-out build/$(MAIN).o, $(OBJECTS))
 
 TARGET     = viewer
-TEST 	   = test
+SAMPLE 	   = sample
 DLLTARGET  = $(DLLDIR)/lurdr.dll
 
 RM         := rm -f
@@ -79,7 +79,7 @@ macos_prepare:
 $(TARGET): $(OBJECTS)
 	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
 
-$(BUILDDIR)/test_%.o: $(TESTDIR)/test_%.cpp $(HEADERS)
+$(BUILDDIR)/%.o: $(SAMPLEDIR)/%.cpp $(HEADERS)
 	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
 $(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp $(HEADERS)
@@ -94,14 +94,14 @@ help:
 	@echo "macos : compile for MacOS App"
 	@echo "win32 : compile for Win32 App"
 	@echo "  dll : compile for DLL"
-	@echo " test : compile for test script $(TESTSOURCE)"
+	@echo " sample : compile for sample script $(SAMPLESOURCE)"
 	@echo " help : show makefile options"
 	@echo "debug : add '#define DEBUG'"
 	@echo "clean : clean target, bin/ and build/"
 
 show:
-	@echo $(TESTSRCS)
-	@echo $(TESTOBJS)
+	@echo $(SAMPLESRCS)
+	@echo $(SAMPLEOBJS)
 
 .PHONY: clean
 clean:
@@ -134,5 +134,5 @@ $(DLLTARGET): $(DLLOBJECTS)
 	@$(MD) $(dir $@)
 	@$(CC) $(CFLAGS) $(INCLUDES) -shared -o $@ $^
 
-test: dll_compile
-	@$(CC) $(CFLAGS) -o $(TEST) $(TESTSOURCE) $(DLLTARGET)
+sample: dll_compile
+	@$(CC) $(CFLAGS) -o $(SAMPLE) $(SAMPLESOURCE) $(DLLTARGET)

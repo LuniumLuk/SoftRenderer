@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "api.hpp"
-#include "test/test.hpp"
+#include "sample/sample.hpp"
 
 int main(int argc, char * argv[]) {
     int return_value = 0;
@@ -11,19 +11,13 @@ int main(int argc, char * argv[]) {
         switch (launch_case)
         {
             case 0:
-                return_value = test_pipeline();
+                return_value = main_demo();
                 break;
             case 1:
-                return_value = test_main();
+                return_value = blank_demo();
                 break;
-            case 2:
-                return_value = test_basic();
-                break;
-            case 3:
-                return_value = test_shader();  
-                break;
-            case 4:     
-                return_value = test_colormap();
+            case 2:     
+                return_value = colormap_demo();
                 break;
         }
     }

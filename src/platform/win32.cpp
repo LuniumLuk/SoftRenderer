@@ -241,6 +241,16 @@ LuGL::AppWindow* LuGL::createWindow(const char *title, long width, long height, 
         return 0;
     }
 
+    // fix incorrect window size due to titlebar and border
+    RECT winRect, cliRect;
+    GetWindowRect(hwnd, &winRect);
+    GetClientRect(hwnd, &cliRect);
+
+    long wDiff = width - cliRect.right;
+    long hDiff = height - cliRect.bottom;
+
+    MoveWindow(hwnd, winRect.left, winRect.top, width + wDiff, height + hDiff, TRUE);
+
     g_bitmapinfo.bmiHeader.biSize           = sizeof(BITMAPINFOHEADER);
     g_bitmapinfo.bmiHeader.biBitCount       = 24;
     g_bitmapinfo.bmiHeader.biWidth          = width;

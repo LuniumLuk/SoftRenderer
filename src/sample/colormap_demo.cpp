@@ -1,4 +1,4 @@
-#include "test.hpp"
+#include "sample.hpp"
 
 using namespace LuGL;
 
@@ -10,7 +10,54 @@ static void mouseDragEventCallback(AppWindow *window, float x, float y);
 static AppWindow *window;
 static FrameBuffer frame_buffer(512, 512);
 
-int test_colormap() {
+unsigned short current_colormap = COLORMAP_PARULA;
+
+const char colormap_names[][32] = {
+    "COLORMAP_PARULA",
+    "COLORMAP_ACCENT",
+    "COLORMAP_BLUES",
+    "COLORMAP_BRBG",
+    "COLORMAP_BUGN",
+    "COLORMAP_BUPU",
+    "COLORMAP_CHROMAJS",
+    "COLORMAP_DARK2",
+    "COLORMAP_GNBU",
+    "COLORMAP_WHGNBU",
+    "COLORMAP_GNPU",
+    "COLORMAP_GREENS",
+    "COLORMAP_GREYS",
+    "COLORMAP_ORANGES",
+    "COLORMAP_ORRD",
+    "COLORMAP_PAIRED",
+    "COLORMAP_PASTEL1",
+    "COLORMAP_PASTEL2",
+    "COLORMAP_PIYG",
+    "COLORMAP_PRGN",
+    "COLORMAP_PUBUGN",
+    "COLORMAP_PUBU",
+    "COLORMAP_PUOR",
+    "COLORMAP_PURD",
+    "COLORMAP_PURPLES",
+    "COLORMAP_RDBU",
+    "COLORMAP_RDGY",
+    "COLORMAP_RDPU",
+    "COLORMAP_RDYLBU",
+    "COLORMAP_RDYLGN",
+    "COLORMAP_REDS",
+    "COLORMAP_SAND",
+    "COLORMAP_SET1",
+    "COLORMAP_SET2",
+    "COLORMAP_SET3",
+    "COLORMAP_SPECTRAL",
+    "COLORMAP_WHYLRD",
+    "COLORMAP_YLGNBU",
+    "COLORMAP_YLGN",
+    "COLORMAP_YLORBR",
+    "COLORMAP_YLORRD",
+    "COLORMAP_YLRD",
+};
+
+int colormap_demo() {
 
     initializeApplication();
 
@@ -31,14 +78,14 @@ int test_colormap() {
         frame_buffer.clearColorBuffer(rgb(0.0f, 0.0f, 0.0f));
         frame_buffer.clearDepthBuffer(1.0f);
 
-        for (long i = 0; i < 512; i++)
+        for (long i = 100; i < 412; i++)
         {
-            for (long j = 0; j < 512; j++)
+            for (long j = 100; j < 412; j++)
             {
                 drawPixel(
                     frame_buffer, 
                     i, j, 
-                    getColorMap((float)i / 512, 0.0f, 1.0f, COLORMAP_ACCENT),
+                    getColorMap((float)(i - 100) / 312, 0.0f, 1.0f, (COLORMAP_TYPE)current_colormap),
                     0.0f
                 );
             }
@@ -50,6 +97,16 @@ int test_colormap() {
         drawInteger(
             frame_buffer, 40.0f, 10.0f, 
             _fps, 6.0f, COLOR_RED);
+
+        drawString(
+            frame_buffer, 10.0f, 30.0f,
+            "KEY ESC   ---- QUIT", 6.0f, COLOR_WHITE);
+        drawString(
+            frame_buffer, 10.0f, 45.0f,
+            "KEY SPACE ---- SWITCH COLORMAP", 6.0f, COLOR_WHITE);
+        drawString(
+            frame_buffer, 320.0f, 45.0f,
+            colormap_names[current_colormap], 6.0f, COLOR_RED);
 
         swapBuffer(window);
         pollEvent();
@@ -77,6 +134,7 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
                 destroyWindow(window);
                 break;
             case KEY_SPACE:
+                current_colormap = (current_colormap + 1) % COLORMAP_NUM;
                 break;
             default:
                 return;

@@ -1,5 +1,5 @@
-#ifndef __TEST_HPP__
-#define __TEST_HPP__
+#ifndef __SAMPLE_HPP__
+#define __SAMPLE_HPP__
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,10 +17,8 @@
                       x = _frame_count_since_last_update;                 \
                       _frame_count_since_last_update = 0; } } while(0)
 
-int test_main();
-int test_basic();
-int test_shader();
-int test_pipeline();
-int test_colormap();
+int main_demo();
+int blank_demo();
+int colormap_demo();
 
 #endif

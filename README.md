@@ -53,14 +53,16 @@ vec4 ExampleShader::frag(const v2f in, const Entity * entity, const Scene & scen
 }
 ```
 
-### MSAA
+### AntiAliasing
 
-4X MSAA    |  Without MSAA
-:-------------------------:|:-------------------------:
-<img src="images/MSAA.jpg" width="300px" />  |  <img src="images/NOAA.jpg" width="300px" />
-13 FPS | 25 FPS
+8X MSAA    |  4X MSAA | 2X MSAA | No AA
+:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
+<img src="images/8xMSAA.jpg" width="200px" />  |  <img src="images/4xMSAA.jpg" width="200px" /> | <img src="images/2xMSAA.jpg" width="200px" /> | <img src="images/NOAA.jpg" width="200px" />
+7 FPS | 10 FPS | 12 FPS | 21 FPS
 
 ### Switch Shading & Mouse Manipulation
+
+> Code Sample in `src/sample/demo.cpp`
 
 Teapot    |  Spot
 :-------------------------:|:-------------------------:
@@ -90,8 +92,11 @@ Triangle Normal Shading    |  Vertex Normal Shading
 - [ ] Sky Box + Environment Map
 - [ ] PBR
 - [ ] PostProcessing Pass
+- [ ] Shadow
+- [ ] SSAO
+- [ ] SS Reflection
 - [ ] Alpha Test + Alpha Blending
-- [ ] Multi-thread
+- [ ] Multi-threading
 
 ## Bug Report
 

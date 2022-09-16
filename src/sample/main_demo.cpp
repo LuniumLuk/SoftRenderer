@@ -1,4 +1,4 @@
-#include "test.hpp"
+#include "sample.hpp"
 
 using namespace LuGL;
 
@@ -70,7 +70,7 @@ public:
     }
 };
 
-int test_pipeline() {
+int main_demo() {
 
     entityConf config("assets/spot.txt");
     Entity ent = Entity(config);

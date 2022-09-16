@@ -1,4 +1,4 @@
-#include "test.hpp"
+#include "sample.hpp"
 
 using namespace LuGL;
 
@@ -10,8 +10,7 @@ static void mouseDragEventCallback(AppWindow *window, float x, float y);
 static AppWindow *window;
 static FrameBuffer frame_buffer(512, 512);
 
-int test_main() {
-
+int blank_demo() {
     initializeApplication();
 
     const char * title = "Viewer @ Lu Renderer";
@@ -30,11 +29,13 @@ int test_main() {
 
         frame_buffer.clearColorBuffer(rgb(0.0f, 0.0f, 0.0f));
 
+        // it is possible that nothing can be seen if frame rate is too high
+        // maybe due to buffer swapping in some platform is not that smooth 
         drawString(
             frame_buffer, 10.0f, 10.0f,
             "FPS", 6.0f, COLOR_WHITE);
         drawInteger(
-            frame_buffer, 40.0f, 10.0f, 
+            frame_buffer, 40.0f, 10.0f,
             _fps, 6.0f, COLOR_RED);
 
         swapBuffer(window);
