@@ -45,10 +45,10 @@ int test_envmap() {
 
     // const Shader * shader = new BlinnPhongShader();
 
-    LURDR_WIREFRAME_MODE(false);
-    LURDR_BACKFACE_CULLING(true);
-    LURDR_DEPTH_TEST(true);
-    LURDR_TEXTURE_FILTERING(TF_LINEAR);
+    LUGL_WIREFRAME_MODE(false);
+    LUGL_BACKFACE_CULLING(true);
+    LUGL_DEPTH_TEST(true);
+    LUGL_TEXTURE_FILTERING(TF_LINEAR);
 
     initializeApplication();
 

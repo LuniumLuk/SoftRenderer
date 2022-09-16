@@ -55,7 +55,7 @@ vec4 ExampleShader::frag(const v2f in, const Entity * entity, const Scene & scen
 
 ### MSAA
 
-With MSAA    |  Without MSAA
+4X MSAA    |  Without MSAA
 :-------------------------:|:-------------------------:
 <img src="images/MSAA.jpg" width="300px" />  |  <img src="images/NOAA.jpg" width="300px" />
 13 FPS | 25 FPS
@@ -82,7 +82,7 @@ Triangle Normal Shading    |  Vertex Normal Shading
 - [x] Hovering Camera by Mouse Drag
 - [x] Implement Barycentric Triangle Rastrization with Perspective Correction Interpolation
 - [x] Wireframe Display
-- [x] Multisample anti-aliasing
+- [x] Multisample anti-aliasing (2X/4X/8X)
 - [ ] Normal Mapping
 - [ ] Read .mtl for Material
 - [x] Basic Lighting + Phong, Blinn Shaders

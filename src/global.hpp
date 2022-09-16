@@ -18,28 +18,31 @@ namespace LuGL
 #define TF_LINEAR true
 #define TF_NEAREST false
 
+enum SampleOption {
+    LUGL_SAMPLE_DEFAULT,
+    LUGL_SAMPLE_2xMSAA,
+    LUGL_SAMPLE_4xMSAA,
+    LUGL_SAMPLE_8xMSAA,
+    LUGL_SAMPLE_OPTION_NUM,
+};
+
 class Global
 {
 public:
-    bool wireframe_mode;
-    bool depth_test;
-    bool backface_culling;
-    bool texture_filtering_linear;
-    bool multisample_antialias;
+    bool wireframe_mode = false;
+    bool depth_test = true;
+    bool backface_culling = true;
+    bool texture_filtering_linear = TF_LINEAR;
+    unsigned short sample_option = LUGL_SAMPLE_DEFAULT;
 
-    Global():
-        wireframe_mode(false),
-        depth_test(true),
-        backface_culling(true),
-        texture_filtering_linear(TF_LINEAR),
-        multisample_antialias(true) {}
+    Global() {}
 };
 
-#define LURDR_WIREFRAME_MODE(val)     (Singleton<Global>::get().wireframe_mode=val)
-#define LURDR_DEPTH_TEST(val)         (Singleton<Global>::get().depth_test=val)
-#define LURDR_BACKFACE_CULLING(val)   (Singleton<Global>::get().backface_culling=val)
-#define LURDR_TEXTURE_FILTERING(val)  (Singleton<Global>::get().texture_filtering_linear=val)
-#define LURDR_MSAA(val)               (Singleton<Global>::get().multisample_antialias=val)
+#define LUGL_WIREFRAME_MODE(val)     (Singleton<Global>::get().wireframe_mode=val)
+#define LUGL_DEPTH_TEST(val)         (Singleton<Global>::get().depth_test=val)
+#define LUGL_BACKFACE_CULLING(val)   (Singleton<Global>::get().backface_culling=val)
+#define LUGL_TEXTURE_FILTERING(val)  (Singleton<Global>::get().texture_filtering_linear=val)
+#define LUGL_SAMPLE_OPTION(val)      (Singleton<Global>::get().sample_option=val)
 
 typedef unsigned char       byte_t;  // 1 bytes
 typedef unsigned short      UINT16;  // 2 bytes
@@ -109,6 +112,54 @@ public:
     virtual ~Singleton() noexcept = default;
     Singleton(const Singleton &) = delete;
     Singleton& operator= (const Singleton &) = delete;
+};
+
+/* MSAA Specs */
+
+/*  2X MSAA pattern
+ *    ------------
+ *   |    +       |        (-0.1,  0.4) for case0
+ *   |         -  |        ( 0.4,  0.1) for case1
+ *   |  -         |        (-0.4, -0.1) for case1
+ *   |       +    |        ( 0.1, -0.4) for case0
+ *    ------------
+ */
+
+/*  4X MSAA pattern
+ *    ------------
+ *   |    *       |        (-0.1,  0.4)
+ *   |         *  |        ( 0.4,  0.1)
+ *   |  *         |        (-0.4, -0.1)
+ *   |       *    |        ( 0.1, -0.4)
+ *    ------------
+ */
+
+/*  8X MSAA pattern
+ *    ------------
+ *   | *     *    |        (-0.375,  0.375) (0.125,  0.375)
+ *   |    *     * |        (-0.125,  0.125) (0.375,  0.125)
+ *   | *     *    |        (-0.375, -0.125) (0.125, -0.125)
+ *   |    *     * |        (-0.125, -0.375) (0.375, -0.375)
+ *    ------------
+ */
+
+const float LUGL_2xMSAA_PATTERN[][2] = {
+    {-0.1,  0.4},
+    { 0.1, -0.4},
+};
+
+const float LUGL_4xMSAA_PATTERN[][2] = {
+    {-0.1,  0.4},
+    { 0.4,  0.1},
+    {-0.4, -0.1},
+    { 0.1, -0.4},
+};
+
+const float LUGL_8xMSAA_PATTERN[][2] = {
+    {-0.375,  0.375}, {0.125,  0.375},
+    {-0.125,  0.125}, {0.375,  0.125},
+    {-0.375, -0.125}, {0.125, -0.125},
+    {-0.125, -0.375}, {0.375, -0.375},
 };
 
 }

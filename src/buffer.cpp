@@ -15,8 +15,8 @@ FrameBuffer::FrameBuffer(long width, long height): m_width(width), m_height(heig
     long buffer_size = m_width * m_height;
     m_color_buffer = new byte_t[buffer_size * 3];
     m_depth_buffer = new float[buffer_size];
-    m_msaa_color_buffer = new byte_t[buffer_size * 3 * 4];
-    m_msaa_depth_buffer = new float[buffer_size * 4];
+
+    setupSamplingOption();
 }
 
 FrameBuffer::~FrameBuffer()
@@ -62,6 +62,36 @@ float* FrameBuffer::depthBufferMSAA() const
     return m_msaa_depth_buffer;
 }
 
+void FrameBuffer::setupSamplingOption()
+{
+    if (m_sample_option == Singleton<Global>::get().sample_option) return;
+    m_sample_option = Singleton<Global>::get().sample_option;
+
+    if (m_msaa_color_buffer) delete[] m_msaa_color_buffer;
+    m_msaa_color_buffer = nullptr;
+    if (m_msaa_depth_buffer) delete[] m_msaa_depth_buffer;
+    m_msaa_depth_buffer = nullptr;
+
+    long buffer_size = m_width * m_height;
+    switch (m_sample_option)
+    {
+        case LUGL_SAMPLE_DEFAULT:
+            break;
+        case LUGL_SAMPLE_2xMSAA:
+            m_msaa_color_buffer = new byte_t[buffer_size * 3 * 2];
+            m_msaa_depth_buffer = new float[buffer_size * 2];
+            break;
+        case LUGL_SAMPLE_4xMSAA:
+            m_msaa_color_buffer = new byte_t[buffer_size * 3 * 4];
+            m_msaa_depth_buffer = new float[buffer_size * 4];
+            break;
+        case LUGL_SAMPLE_8xMSAA:
+            m_msaa_color_buffer = new byte_t[buffer_size * 3 * 8];
+            m_msaa_depth_buffer = new float[buffer_size * 8];
+            break;
+    }
+}
+
 void FrameBuffer::clearColorBuffer(const rgb & color) const
 {
     size_t temp_buffer_size = 3 * sizeof(byte_t);
@@ -75,15 +105,26 @@ void FrameBuffer::clearColorBuffer(const rgb & color) const
         memcpy(color_buffer_ptr, temp_buffer, temp_buffer_size);
         color_buffer_ptr += 3;
     }
-    if (Singleton<Global>::get().multisample_antialias)
+    color_buffer_ptr = m_msaa_color_buffer;
+    long msaa_buffer_size = 0;
+    switch (m_sample_option)
     {
-        color_buffer_ptr = m_msaa_color_buffer;
-        const long msaa_buffer_size = m_size * 4;
-        for (long i = 0; i < msaa_buffer_size; i++)
-        {
-            memcpy(color_buffer_ptr, temp_buffer, temp_buffer_size);
-            color_buffer_ptr += 3;
-        }
+        case LUGL_SAMPLE_DEFAULT:
+            break;
+        case LUGL_SAMPLE_2xMSAA:
+            msaa_buffer_size = m_size * 2;
+            break;
+        case LUGL_SAMPLE_4xMSAA:
+            msaa_buffer_size = m_size * 4;
+            break;
+        case LUGL_SAMPLE_8xMSAA:
+            msaa_buffer_size = m_size * 8;
+            break;
+    }
+    for (long i = 0; i < msaa_buffer_size; i++)
+    {
+        memcpy(color_buffer_ptr, temp_buffer, temp_buffer_size);
+        color_buffer_ptr += 3;
     }
 }
 
@@ -97,15 +138,26 @@ void FrameBuffer::clearColorBuffer(const RGBCOLOR & color) const
         memcpy(color_buffer_ptr, temp_buffer, temp_buffer_size);
         color_buffer_ptr += 3;
     }
-    if (Singleton<Global>::get().multisample_antialias)
+    color_buffer_ptr = m_msaa_color_buffer;
+    long msaa_buffer_size = 0;
+    switch (m_sample_option)
     {
-        color_buffer_ptr = m_msaa_color_buffer;
-        const long msaa_buffer_size = m_size * 4;
-        for (long i = 0; i < msaa_buffer_size; i++)
-        {
-            memcpy(color_buffer_ptr, temp_buffer, temp_buffer_size);
-            color_buffer_ptr += 3;
-        }
+        case LUGL_SAMPLE_DEFAULT:
+            break;
+        case LUGL_SAMPLE_2xMSAA:
+            msaa_buffer_size = m_size * 2;
+            break;
+        case LUGL_SAMPLE_4xMSAA:
+            msaa_buffer_size = m_size * 4;
+            break;
+        case LUGL_SAMPLE_8xMSAA:
+            msaa_buffer_size = m_size * 8;
+            break;
+    }
+    for (long i = 0; i < msaa_buffer_size; i++)
+    {
+        memcpy(color_buffer_ptr, temp_buffer, temp_buffer_size);
+        color_buffer_ptr += 3;
     }
 }
 
@@ -115,12 +167,23 @@ void FrameBuffer::clearDepthBuffer(const float & depth) const
     {
         m_depth_buffer[i] = depth;
     }
-    if (Singleton<Global>::get().multisample_antialias)
+    long msaa_buffer_size = 0;
+    switch (m_sample_option)
     {
-        const long msaa_buffer_size = m_size * 4;
-        for (long i = 0; i < msaa_buffer_size; i++)
-        {
-            m_msaa_depth_buffer[i] = depth;
-        }
+        case LUGL_SAMPLE_DEFAULT:
+            break;
+        case LUGL_SAMPLE_2xMSAA:
+            msaa_buffer_size = m_size * 2;
+            break;
+        case LUGL_SAMPLE_4xMSAA:
+            msaa_buffer_size = m_size * 4;
+            break;
+        case LUGL_SAMPLE_8xMSAA:
+            msaa_buffer_size = m_size * 8;
+            break;
+    }
+    for (long i = 0; i < msaa_buffer_size; i++)
+    {
+        m_msaa_depth_buffer[i] = depth;
     }
 }

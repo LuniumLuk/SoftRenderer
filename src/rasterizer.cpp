@@ -745,6 +745,14 @@ void LuGL::drawString(
                 size, color, ratio, segment
             );
         }
+        else if (string[i] >= '0' && string[i] <= '9')
+        {
+            drawInteger(
+                frame_buffer,
+                offset_x, y, (long)(string[i] - '0'),
+                size, color, gap, ratio, segment
+            );
+        }
         offset_x += size * (1.0f + gap);
     }
 }

@@ -72,9 +72,6 @@ public:
 
 int test_pipeline() {
 
-    BMPImage test_img("assets/textures/lenna.bmp");
-    test_img.writeImage("test.bmp");
-
     entityConf config("assets/spot.txt");
     Entity ent = Entity(config);
     entity_ptr = &ent;
@@ -117,12 +114,19 @@ int test_pipeline() {
         "VERTEX NORMAL",
         "DEPTH"
     };
+    char sample_option_names[LUGL_SAMPLE_OPTION_NUM][64] = {
+        "DEFAULT",
+        "2X MSAA",
+        "4X MSAA",
+        "8X MSAA",
+    };
 
-    LURDR_WIREFRAME_MODE(false);
-    LURDR_BACKFACE_CULLING(true);
-    LURDR_DEPTH_TEST(true);
-    LURDR_TEXTURE_FILTERING(TF_LINEAR);
-    LURDR_MSAA(true);
+    LUGL_WIREFRAME_MODE(false);
+    LUGL_BACKFACE_CULLING(true);
+    LUGL_DEPTH_TEST(true);
+    LUGL_TEXTURE_FILTERING(TF_LINEAR);
+    LUGL_SAMPLE_OPTION(LUGL_SAMPLE_4xMSAA);
+    frame_buffer.setupSamplingOption();
 
     initializeApplication();
 
@@ -179,7 +183,7 @@ int test_pipeline() {
             "KEY O        --------- TOGGLE MSAA", 4.0f, COLOR_WHITE);
         drawString(
             frame_buffer, 240.0f, 80.0f,
-            Singleton<Global>::get().multisample_antialias ? "ON" : "OFF", 4.0f, COLOR_RED);
+            sample_option_names[Singleton<Global>::get().sample_option], 4.0f, COLOR_RED);
         drawString(
             frame_buffer, 10.0f, 90.0f,
             "KEY P        --------- SCREEN SHOT", 4.0f, COLOR_WHITE);
@@ -245,11 +249,11 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
                 }
                 if (current_shader == 1)
                 {
-                    LURDR_WIREFRAME_MODE(true);
+                    LUGL_WIREFRAME_MODE(true);
                 }
                 else
                 {
-                    LURDR_WIREFRAME_MODE(false);
+                    LUGL_WIREFRAME_MODE(false);
                 }
 #endif
 #if 0
@@ -265,7 +269,8 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
             case KEY_I:
                 break;
             case KEY_O:
-                LURDR_MSAA(!Singleton<Global>::get().multisample_antialias);
+                LUGL_SAMPLE_OPTION((Singleton<Global>::get().sample_option + 1) % LUGL_SAMPLE_OPTION_NUM);
+                frame_buffer.setupSamplingOption();
                 break;
             case KEY_P: // save screenshot
                 {

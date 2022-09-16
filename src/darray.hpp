@@ -48,6 +48,7 @@ public:
 
     void push_back(const T element);
     void pop_back();
+    void reserve(size_t size);
     T back() const;
     T front() const;
     T at(const size_t & pos) const;
@@ -113,6 +114,20 @@ void DynamicArray<T>::push_back(const T element)
     {
         m_array[m_size++] = element;
     }
+}
+
+template<typename T>
+void DynamicArray<T>::reserve(size_t size) {
+    if (m_capacity >= size) return;
+
+    m_capacity = size;
+    T *new_array = new T[m_capacity];
+    for (size_t i = 0; i < m_size; i++)
+    {
+        new_array[i] = m_array[i];
+    }
+    delete[] m_array;
+    m_array = new_array;
 }
 
 template<typename T>

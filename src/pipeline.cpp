@@ -14,7 +14,7 @@ static inline float edgeFunction(const vec3 & a, const vec3 & b, const vec3 & c)
     return (c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x);
 }
 
-static inline bool outsideTest(v2f const& v0, v2f const& v1, v2f const& v2, vec3 const& pos, float* w0, float* w1, float* w2)
+static inline bool outsideTest(v2f const& v0, v2f const& v1, v2f const& v2, vec4 const& pos, float* w0, float* w1, float* w2)
 {
     *w0 = edgeFunction(v1.position, v2.position, pos);
     *w1 = edgeFunction(v2.position, v0.position, pos);
@@ -23,6 +23,52 @@ static inline bool outsideTest(v2f const& v0, v2f const& v1, v2f const& v2, vec3
     bool has_neg = *w0 < 0 || *w1 < 0 || *w2 < 0;
     bool has_pos = *w0 > 0 || *w1 > 0 || *w2 > 0;
     return has_neg && has_pos;
+}
+
+static inline void getMSAAMask(unsigned short* mask, v2f const& v0, v2f const& v1, v2f const& v2, vec4 const& pos)
+{
+    *mask = 0;
+    float tp0, tp1, tp2;
+
+    DynamicArray<vec4> samples;
+    switch (Singleton<Global>::get().sample_option)
+    {
+        case LUGL_SAMPLE_2xMSAA:
+            {
+                samples.reserve(2);
+                for (int i = 0; i < 2; i++) {
+                    samples.push_back(vec4(
+                        pos.x + LUGL_2xMSAA_PATTERN[i][0],
+                        pos.y + LUGL_2xMSAA_PATTERN[i][1], 1.0f, 0.0f));
+                }
+            }
+            break;
+        case LUGL_SAMPLE_4xMSAA:
+            {
+                samples.reserve(4);
+                for (int i = 0; i < 4; i++) {
+                    samples.push_back(vec4(
+                        pos.x + LUGL_4xMSAA_PATTERN[i][0],
+                        pos.y + LUGL_4xMSAA_PATTERN[i][1], 1.0f, 0.0f));
+                }
+            }
+            break;
+        case LUGL_SAMPLE_8xMSAA:
+            {
+                samples.reserve(8);
+                for (int i = 0; i < 8; i++) {
+                    samples.push_back(vec4(
+                        pos.x + LUGL_8xMSAA_PATTERN[i][0],
+                        pos.y + LUGL_8xMSAA_PATTERN[i][1], 1.0f, 0.0f));
+                }
+            }
+            break;
+    }
+
+    for (int i = 0; i < samples.size(); i++)
+    {
+        if (!outsideTest(v0, v1, v2, samples[i], &tp0, &tp1, &tp2)) *mask |= (1 << i);
+    }
 }
 
 void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const Shader * shader)
@@ -199,26 +245,22 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
                     vec4 pos(DTOF(x), DTOF(y), 1.0f, 0.0f);
 
                     float w0, w1, w2;
-                    if (Singleton<Global>::get().multisample_antialias) {
-                        float tp0, tp1, tp2;
-                        /*  4X MSAA pattern
-                         *      *               (-0.1,  0.4)
-                         *           *          ( 0.4,  0.1)
-                         *    *                 (-0.4, -0.1)
-                         *         *            ( 0.1, -0.4)
-                         */
-                        vec4 pos0(pos.x - 0.1f, pos.y + 0.4f, 1.0f, 0.0f);
-                        vec4 pos1(pos.x + 0.4f, pos.y + 0.1f, 1.0f, 0.0f);
-                        vec4 pos2(pos.x - 0.4f, pos.y - 0.1f, 1.0f, 0.0f);
-                        vec4 pos3(pos.x + 0.1f, pos.y - 0.4f, 1.0f, 0.0f);
+                    if (Singleton<Global>::get().sample_option > LUGL_SAMPLE_DEFAULT) {
+                        // float tp0, tp1, tp2;
 
-                        mask = 0;
+                        // vec4 pos0(pos.x - 0.1f, pos.y + 0.4f, 1.0f, 0.0f);
+                        // vec4 pos1(pos.x + 0.4f, pos.y + 0.1f, 1.0f, 0.0f);
+                        // vec4 pos2(pos.x - 0.4f, pos.y - 0.1f, 1.0f, 0.0f);
+                        // vec4 pos3(pos.x + 0.1f, pos.y - 0.4f, 1.0f, 0.0f);
 
-                        if (!outsideTest(v0, v1, v2, pos0, &tp0, &tp1, &tp2)) mask |= 1;
-                        if (!outsideTest(v0, v1, v2, pos1, &tp0, &tp1, &tp2)) mask |= 2;
-                        if (!outsideTest(v0, v1, v2, pos2, &tp0, &tp1, &tp2)) mask |= 4;
-                        if (!outsideTest(v0, v1, v2, pos3, &tp0, &tp1, &tp2)) mask |= 8;
+                        // mask = 0;
 
+                        // if (!outsideTest(v0, v1, v2, pos0, &tp0, &tp1, &tp2)) mask |= 1;
+                        // if (!outsideTest(v0, v1, v2, pos1, &tp0, &tp1, &tp2)) mask |= 2;
+                        // if (!outsideTest(v0, v1, v2, pos2, &tp0, &tp1, &tp2)) mask |= 4;
+                        // if (!outsideTest(v0, v1, v2, pos3, &tp0, &tp1, &tp2)) mask |= 8;
+
+                        getMSAAMask(&mask, v0, v1, v2, pos);
                         if (mask == 0) continue;
 
                         outsideTest(v0, v1, v2, pos, &w0, &w1, &w2);
@@ -466,31 +508,39 @@ void Pipeline::pixelShaderBarycentric(
         return;
     }
 
-    if (Singleton<Global>::get().multisample_antialias)
+    if (Singleton<Global>::get().sample_option > LUGL_SAMPLE_DEFAULT)
     {
+        int full_mask = 0;
+        int sample_count = 0;
+        switch (Singleton<Global>::get().sample_option)
+        {
+            case LUGL_SAMPLE_2xMSAA: sample_count = 2; full_mask = 3; break;
+            case LUGL_SAMPLE_4xMSAA: sample_count = 4; full_mask = 15; break;
+            case LUGL_SAMPLE_8xMSAA: sample_count = 8; full_mask = 255; break;
+        }
         if (Singleton<Global>::get().depth_test)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < sample_count; i++)
             {
-                long msaa_depth_buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 4 + i;
+                long msaa_depth_buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * sample_count + i;
                 if ((frame_buffer.depthBufferMSAA()[msaa_depth_buffer_pos] <= v.position.z))
                 {
-                    mask &= (~(1 << i) & 15);
+                    mask &= (~(1 << i) & full_mask);
                 }
             }
         }
-        if ((mask & 15) == 0) return;
+        if ((mask & full_mask) == 0) return;
 
         rgba color = shader->frag(v, entity, scene);
 
         long rgb_sum[3] = { 0, 0, 0 };
-        float depth_sum;
+        float depth_sum = 0.0f;
 
         byte_t *msaa_color_buffer = frame_buffer.colorBufferMSAA();
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < sample_count; i++)
         {
-            long msaa_depth_buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 4 + i;
-            long msaa_color_buffer_pos = ((frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 4 + i) * 3;
+            long msaa_depth_buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * sample_count + i;
+            long msaa_color_buffer_pos = ((frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * sample_count + i) * 3;
             if (mask & (1 << i))
             {
                 frame_buffer.depthBufferMSAA()[msaa_depth_buffer_pos] = v.position.z;
@@ -499,7 +549,7 @@ void Pipeline::pixelShaderBarycentric(
                 msaa_color_buffer[msaa_color_buffer_pos]   = FLOAT2BYTECOLOR(color.b);
             }
 
-            msaa_color_buffer_pos = ((frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 4 + i) * 3;
+            msaa_color_buffer_pos = ((frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * sample_count + i) * 3;
             rgb_sum[0] += msaa_color_buffer[msaa_color_buffer_pos++];
             rgb_sum[1] += msaa_color_buffer[msaa_color_buffer_pos++];
             rgb_sum[2] += msaa_color_buffer[msaa_color_buffer_pos];
@@ -507,13 +557,13 @@ void Pipeline::pixelShaderBarycentric(
         }
 
         long depth_buffer_pos = frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x;
-        frame_buffer.depthBuffer()[depth_buffer_pos] = depth_sum / 4;
+        frame_buffer.depthBuffer()[depth_buffer_pos] = depth_sum / sample_count;
 
         byte_t *color_buffer = frame_buffer.colorBuffer();
         long color_buffer_pos = (frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x) * 3;
-        color_buffer[color_buffer_pos++] = rgb_sum[0] / 4;
-        color_buffer[color_buffer_pos++] = rgb_sum[1] / 4;
-        color_buffer[color_buffer_pos]   = rgb_sum[2] / 4;
+        color_buffer[color_buffer_pos++] = rgb_sum[0] / sample_count;
+        color_buffer[color_buffer_pos++] = rgb_sum[1] / sample_count;
+        color_buffer[color_buffer_pos]   = rgb_sum[2] / sample_count;
     }
     else
     {

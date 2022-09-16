@@ -23,6 +23,8 @@ private:
     float  *m_depth_buffer;
     byte_t *m_msaa_color_buffer;
     float  *m_msaa_depth_buffer;
+    unsigned short m_sample_option = LUGL_SAMPLE_DEFAULT;
+
 public:
     FrameBuffer();
     FrameBuffer(long width, long height);
@@ -36,6 +38,7 @@ public:
     byte_t* colorBufferMSAA() const;
     float* depthBufferMSAA() const;
 
+    void setupSamplingOption();
     void clearColorBuffer(const RGBCOLOR & color) const;
     void clearColorBuffer(const rgb & color) const;
     void clearDepthBuffer(const float & depth) const;
