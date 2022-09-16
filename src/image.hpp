@@ -26,7 +26,7 @@ typedef unsigned short COLOR_SPACE;
 typedef unsigned long long __uint128_t;
 #endif
 
-namespace Lurdr
+namespace LuGL
 {
 
 // BMP File Format
@@ -79,7 +79,7 @@ private:
     BMPFileHeader m_file_header;
     BMPInfoHeader m_info_header;
     BMPColorTable *m_color_tables;
-    byte_t *m_buffer;              // color is arranged in RGB order
+    byte_t *m_buffer;               // color is arranged in RGB order
                                     // rows are arranged from bottom to top
     bool          m_is_loaded;
     bool          m_use_color_table;

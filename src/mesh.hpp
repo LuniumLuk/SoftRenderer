@@ -9,7 +9,7 @@
 #include "maths.hpp"
 #include "darray.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 #define MAX_OBJ_LINE 256

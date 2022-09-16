@@ -1,6 +1,6 @@
 #include "test.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 #define V2THETA(v) (2.0f * acosf(sqrtf(1 - (v))))
 #define U2PHI(u) (2.0f * PI * (u))

@@ -1,8 +1,8 @@
 #include "colormap.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
-RGBCOLOR Lurdr::getColorFromScheme(float percentage, const Vector3 * colormap, long map_size)
+RGBCOLOR LuGL::getColorFromScheme(float percentage, const Vector3 * colormap, long map_size)
 {
     Vector3 color;
     float s = 1.0f / (map_size - 1);
@@ -14,7 +14,7 @@ RGBCOLOR Lurdr::getColorFromScheme(float percentage, const Vector3 * colormap, l
     return RGBCOLOR(color.x, color.y, color.z);
 }
 
-RGBCOLOR Lurdr::getColorMap(float value, float lower, float upper, COLORMAP_TYPE type)
+RGBCOLOR LuGL::getColorMap(float value, float lower, float upper, COLORMAP_TYPE type)
 {
     float range = upper - lower;
     ASSERT_NON_ZERO(range);

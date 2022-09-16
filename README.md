@@ -21,6 +21,9 @@ I intend to implement a shader-based renderer that runs on CPU from scratch usin
 
 A simple example for creating a shader
 ```c++
+#include "src/api.hpp"
+using namespace LuGL;
+
 class ExampleShader : public Shader
 {
 public:
@@ -89,6 +92,10 @@ Triangle Normal Shading    |  Vertex Normal Shading
 - [ ] PostProcessing Pass
 - [ ] Alpha Test + Alpha Blending
 - [ ] Multi-thread
+
+## Bug Report
+
+- MacOS screenshot produce error BMP file
 
 ## Current Features
 

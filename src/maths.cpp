@@ -1,6 +1,6 @@
 #include "maths.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 /**
  * TODOs :
@@ -39,7 +39,7 @@ Vector2 Vector2::operator- (const Vector2 & other) const
     Vector2 vec(x - other.x, y - other.y);
     return vec;
 }
-Vector2 Lurdr::operator* (float multiplier, const Vector2 & multiplicand)
+Vector2 LuGL::operator* (float multiplier, const Vector2 & multiplicand)
 {
     Vector2 vec(
         multiplier * multiplicand.x,
@@ -173,7 +173,7 @@ Vector3 Vector3::operator- (const Vector3 & other) const
     Vector3 vec(x - other.x, y - other.y, z - other.z);
     return vec;
 }
-Vector3 Lurdr::operator* (float multiplier, const Vector3 & multiplicand)
+Vector3 LuGL::operator* (float multiplier, const Vector3 & multiplicand)
 {
     Vector3 vec(
         multiplier * multiplicand.x,
@@ -182,7 +182,7 @@ Vector3 Lurdr::operator* (float multiplier, const Vector3 & multiplicand)
     );
     return vec;
 }
-void Lurdr::swap(Vector3 & a, Vector3 & b)
+void LuGL::swap(Vector3 & a, Vector3 & b)
 {
     std::swap(a.x, b.x);
     std::swap(a.y, b.y);
@@ -380,7 +380,7 @@ Vector4 Vector4::operator- (const Vector4 & other) const
     Vector4 vec(x - other.x, y - other.y, z - other.z, w - other.w);
     return vec;
 }
-Vector4 Lurdr::operator* (float multiplier, const Vector4 & multiplicand)
+Vector4 LuGL::operator* (float multiplier, const Vector4 & multiplicand)
 {
     Vector4 vec(
         multiplier * multiplicand.x,

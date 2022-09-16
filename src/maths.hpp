@@ -9,7 +9,7 @@
 #include <utility>
 #include "global.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 #define FTOD(a) (floor(a))

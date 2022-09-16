@@ -1,6 +1,6 @@
 #include "ray.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 // reference : https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates
 bool Ray::intersectWithTriangle(

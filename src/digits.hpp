@@ -7,7 +7,7 @@
 #include "global.hpp"
 #include "maths.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 // TODO: add alphabet digits -> DIGIT_A

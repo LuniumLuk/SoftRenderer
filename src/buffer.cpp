@@ -1,6 +1,6 @@
 #include "buffer.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 FrameBuffer::FrameBuffer(): m_width(0), m_height(0), m_size(0)
 {

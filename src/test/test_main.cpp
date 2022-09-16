@@ -1,6 +1,6 @@
 #include "test.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 static void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed);
 static void mouseButtonEventCallback(AppWindow *window, MOUSE_BUTTON button, bool pressed);

@@ -1,6 +1,6 @@
 #include "entity.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 EntityConfig::EntityConfig(const char * filename):
     mesh_filename(nullptr),

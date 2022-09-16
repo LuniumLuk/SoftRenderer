@@ -6,7 +6,7 @@
 #include <time.h>
 #include <string.h>
 
-namespace Lurdr
+namespace LuGL
 {
 
 #ifdef __OVERRIDE_NEW__

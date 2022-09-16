@@ -10,7 +10,7 @@
 #include "colormap.hpp"
 #include "digits.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 /**

@@ -51,7 +51,7 @@
 #define COLORMAP_YLORRD_SIZE    8
 #define COLORMAP_YLRD_SIZE      4
 
-namespace Lurdr
+namespace LuGL
 {
 
 enum COLORMAP_TYPE

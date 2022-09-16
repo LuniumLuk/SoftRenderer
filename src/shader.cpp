@@ -1,6 +1,6 @@
 #include "shader.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 v2f UnlitShader::vert(const vdata in, const Entity * entity, const Scene & scene) const
 {

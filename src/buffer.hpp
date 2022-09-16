@@ -8,7 +8,7 @@
 #include "global.hpp"
 #include "darray.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 // a discussion over size_t & long

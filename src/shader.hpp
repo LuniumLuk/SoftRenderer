@@ -14,7 +14,7 @@
 #include "light.hpp"
 #include "colormap.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 #define SAMPLER_2D(tex,coord) (Texture::sampler(tex,coord))

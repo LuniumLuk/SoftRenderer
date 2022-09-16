@@ -1,6 +1,6 @@
 #include "scene.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 Model::Model(): m_mesh(nullptr),
                 m_transform(Matrix4::IDENTITY),

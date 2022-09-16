@@ -1,6 +1,6 @@
 #include "test.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 static void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed);
 static void mouseButtonEventCallback(AppWindow *window, MOUSE_BUTTON button, bool pressed);
@@ -71,6 +71,9 @@ public:
 };
 
 int test_pipeline() {
+
+    BMPImage test_img("assets/textures/lenna.bmp");
+    test_img.writeImage("test.bmp");
 
     entityConf config("assets/spot.txt");
     Entity ent = Entity(config);
@@ -152,7 +155,7 @@ int test_pipeline() {
             "KEY A D      --------- ROTATE MODEL", 4.0f, COLOR_WHITE);
         drawString(
             frame_buffer, 10.0f, 30.0f,
-            "KEY S W      --------- SCALE MODEL", 4.0f, COLOR_WHITE);
+            "KEY S W      --------- MOVE POINT LIGHT", 4.0f, COLOR_WHITE);
         drawString(
             frame_buffer, 10.0f, 40.0f,
             "MOUSE DRAG   --------- ROTATE CAMERA", 4.0f, COLOR_WHITE);
@@ -160,13 +163,13 @@ int test_pipeline() {
             frame_buffer, 10.0f, 50.0f,
             "MOUSE SCROLL --------- CAMERA FOV", 4.0f, COLOR_WHITE);
         drawInteger(
-            frame_buffer, 350.0f, 50.0f, 
+            frame_buffer, 240.0f, 50.0f, 
             (int)camera_fov, 4.0f, COLOR_RED);
         drawString(
             frame_buffer, 10.0f, 60.0f,
             "KEY SPACE    --------- SWITCH SHADER", 4.0f, COLOR_WHITE);
         drawString(
-            frame_buffer, 350.0f, 60.0f,
+            frame_buffer, 240.0f, 60.0f,
             shader_names[current_shader], 4.0f, COLOR_RED);
         drawString(
             frame_buffer, 10.0f, 70.0f,
@@ -174,6 +177,9 @@ int test_pipeline() {
         drawString(
             frame_buffer, 10.0f, 80.0f,
             "KEY O        --------- TOGGLE MSAA", 4.0f, COLOR_WHITE);
+        drawString(
+            frame_buffer, 240.0f, 80.0f,
+            Singleton<Global>::get().multisample_antialias ? "ON" : "OFF", 4.0f, COLOR_RED);
         drawString(
             frame_buffer, 10.0f, 90.0f,
             "KEY P        --------- SCREEN SHOT", 4.0f, COLOR_WHITE);
@@ -261,7 +267,7 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
             case KEY_O:
                 LURDR_MSAA(!Singleton<Global>::get().multisample_antialias);
                 break;
-            case KEY_P:
+            case KEY_P: // save screenshot
                 {
                     size_t img_size = frame_buffer.getWidth() * frame_buffer.getHeight() * 3;
                     UniformImage ss_uni_img(frame_buffer.getWidth(), frame_buffer.getHeight());

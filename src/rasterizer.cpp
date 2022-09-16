@@ -1,9 +1,9 @@
 #include "rasterizer.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 // note : https://stackoverflow.com/questions/31884589/linker-cant-find-function-definition-in-a-namespace
-void Lurdr::drawPoint(const FrameBuffer & frame_buffer, Vector2 position, RGBColor color)
+void LuGL::drawPoint(const FrameBuffer & frame_buffer, Vector2 position, RGBColor color)
 {
     long pos_x = position.x;
     long pos_y = position.y;
@@ -13,7 +13,7 @@ void Lurdr::drawPoint(const FrameBuffer & frame_buffer, Vector2 position, RGBCol
     drawPixel(frame_buffer, pos_x, pos_y, color, -1.0f);
 }
 
-void Lurdr::drawPixel(const FrameBuffer & frame_buffer, const long & x, const long & y, const RGBColor & color, const float & depth)
+void LuGL::drawPixel(const FrameBuffer & frame_buffer, const long & x, const long & y, const RGBColor & color, const float & depth)
 {
     long depth_buffer_pos = frame_buffer.getSize() - frame_buffer.getWidth() * (y + 1) + x;
     float d = clamp(depth, -1.0f, 1.0f);
@@ -30,7 +30,7 @@ void Lurdr::drawPixel(const FrameBuffer & frame_buffer, const long & x, const lo
 }
 
 // reference : https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
-void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RGBColor color)
+void LuGL::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RGBColor color)
 {
     long x1 = FTOD(v1.x);
     long y1 = FTOD(v1.y);
@@ -73,7 +73,7 @@ void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, R
     }
 }
 
-void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RGBColor color1, RGBColor color2, float z1, float z2)
+void LuGL::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RGBColor color1, RGBColor color2, float z1, float z2)
 {
     long x1 = FTOD(v1.x);
     long y1 = FTOD(v1.y);
@@ -140,7 +140,7 @@ void Lurdr::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, R
     }
 }
 
-void Lurdr::drawScanLine(
+void LuGL::drawScanLine(
     const FrameBuffer & frame_buffer,
     const long & x1,
     const long & x2,
@@ -157,7 +157,7 @@ void Lurdr::drawScanLine(
     }
 }
 
-void Lurdr::drawScanLine(
+void LuGL::drawScanLine(
     const FrameBuffer & frame_buffer,
     const long & x1,
     const long & x2,
@@ -185,7 +185,7 @@ void Lurdr::drawScanLine(
 }
 
 // reference : https://joshbeam.com/articles/triangle_rasterization/
-void Lurdr::drawTriangle(
+void LuGL::drawTriangle(
     const FrameBuffer & frame_buffer,
     const Vector2 & v1,
     const Vector2 & v2,
@@ -201,7 +201,7 @@ void Lurdr::drawTriangle(
     // 1000 ~= 120ms
     improvedBresenhamTriangleRasterization(frame_buffer, v1, v2, v3, color);
 }
-void Lurdr::drawTriangle(
+void LuGL::drawTriangle(
     const FrameBuffer & frame_buffer,
     const Vector2 & v1,
     const Vector2 & v2,
@@ -214,7 +214,7 @@ void Lurdr::drawTriangle(
     standardTriangleRasterization(frame_buffer, v1, v2, v3, color1, color2, color3);
 }
 
-void Lurdr::standardTriangleRasterization(
+void LuGL::standardTriangleRasterization(
     const FrameBuffer & frame_buffer,
     const Vector2 & v1,
     const Vector2 & v2,
@@ -251,7 +251,7 @@ void Lurdr::standardTriangleRasterization(
     }
 }
 
-void Lurdr::standardTriangleRasterization(
+void LuGL::standardTriangleRasterization(
     const FrameBuffer & frame_buffer,
     const Vector2 & v1,
     const Vector2 & v2,
@@ -312,7 +312,7 @@ void Lurdr::standardTriangleRasterization(
  * 
  * note : x1 and x2 accept float input for accuracy
  */
-void Lurdr::standardFillFlatTriangle(
+void LuGL::standardFillFlatTriangle(
     const FrameBuffer & frame_buffer,
     const long & y12,
     long  y3,
@@ -348,7 +348,7 @@ void Lurdr::standardFillFlatTriangle(
     }
 }
 
-void Lurdr::standardFillFlatTriangle(
+void LuGL::standardFillFlatTriangle(
     const FrameBuffer & frame_buffer,
     const long & y12,
     long  y3,
@@ -397,7 +397,7 @@ void Lurdr::standardFillFlatTriangle(
 
 // reference : http://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html#algo3
 // quote : "Unfortunately, the simplicity of this algorithm comes at the price of low execution speed compared to the other two approaches."
-void Lurdr::barycentricTriangleRasterization(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, Vector2 v3, RGBColor color)
+void LuGL::barycentricTriangleRasterization(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, Vector2 v3, RGBColor color)
 {
     long x_max = max(v1.x, max(v2.x, v3.x));
     long x_min = min(v1.x, min(v2.x, v3.x));
@@ -425,7 +425,7 @@ void Lurdr::barycentricTriangleRasterization(const FrameBuffer & frame_buffer, V
     }
 }
 
-void Lurdr::sortVerticesByY(long & x1, long & y1, long & x2, long & y2, long & x3, long & y3)
+void LuGL::sortVerticesByY(long & x1, long & y1, long & x2, long & y2, long & x3, long & y3)
 {
     if (y1 > y2)
     {
@@ -444,7 +444,7 @@ void Lurdr::sortVerticesByY(long & x1, long & y1, long & x2, long & y2, long & x
     }
 }
 
-void Lurdr::bresenhamTriangleRasterization(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, Vector2 v3, RGBColor color)
+void LuGL::bresenhamTriangleRasterization(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, Vector2 v3, RGBColor color)
 {
     long x1 = FTOD(v1.x);
     long y1 = FTOD(v1.y);
@@ -476,7 +476,7 @@ void Lurdr::bresenhamTriangleRasterization(const FrameBuffer & frame_buffer, Vec
     }
 }
 
-void Lurdr::bresenhamFillFlatTriangle(const FrameBuffer & frame_buffer, long y12, long y3, long x1, long x2, long x3, RGBColor color)
+void LuGL::bresenhamFillFlatTriangle(const FrameBuffer & frame_buffer, long y12, long y3, long x1, long x2, long x3, RGBColor color)
 {
     assert(x1 >= 0 && x1 <= frame_buffer.getWidth());
     assert(x2 >= 0 && x2 <= frame_buffer.getWidth());
@@ -532,7 +532,7 @@ void Lurdr::bresenhamFillFlatTriangle(const FrameBuffer & frame_buffer, long y12
     }
 }
 
-void Lurdr::improvedBresenhamTriangleRasterization(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, Vector2 v3, RGBColor color)
+void LuGL::improvedBresenhamTriangleRasterization(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, Vector2 v3, RGBColor color)
 {
     long x1 = FTOD(v1.x);
     long y1 = FTOD(v1.y);
@@ -564,7 +564,7 @@ void Lurdr::improvedBresenhamTriangleRasterization(const FrameBuffer & frame_buf
     delete[] x_right;
 }
 
-void Lurdr::fillTriangleTable(long * x_left, long * x_right, long x1, long y1, long x2, long y2, long y_min)
+void LuGL::fillTriangleTable(long * x_left, long * x_right, long x1, long y1, long x2, long y2, long y_min)
 {
     y1 -= y_min;
     y2 -= y_min;
@@ -626,7 +626,7 @@ void Lurdr::fillTriangleTable(long * x_left, long * x_right, long x1, long y1, l
  * ▼
  * v
  */
-void Lurdr::drawDigit(
+void LuGL::drawDigit(
     const FrameBuffer & frame_buffer, 
     const float & x, const float & y, 
     const DIGIT_CHARACTER & character, 
@@ -656,7 +656,7 @@ void Lurdr::drawDigit(
  * draw integer
  * (sign) <-size * gap(pixel)-> digit0 <-size * gap(pixel)-> digit1
  */
-void Lurdr::drawInteger(
+void LuGL::drawInteger(
     const FrameBuffer & frame_buffer, 
     const float & x, const float & y, 
     long number, 
@@ -706,7 +706,7 @@ void Lurdr::drawInteger(
  * draw integer
  * (sign) <-size * gap(pixel)-> digit0 <-size * gap(pixel)-> digit1
  */
-void Lurdr::drawString(
+void LuGL::drawString(
     const FrameBuffer & frame_buffer, 
     const float & x, const float & y, 
     const char * string,

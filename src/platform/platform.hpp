@@ -5,7 +5,7 @@
 #include <string.h>
 #include "../global.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
     typedef struct APPWINDOW AppWindow;
     typedef enum {KEY_A, KEY_D, KEY_S, KEY_W, KEY_SPACE, KEY_ESCAPE, KEY_I, KEY_O, KEY_P, KEY_NUM} KEY_CODE;

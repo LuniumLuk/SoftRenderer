@@ -1,6 +1,6 @@
 #include "material.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 Texture::Texture(const char * filename): Texture()
 {

@@ -1,7 +1,7 @@
 #ifndef __GLOBAL_HPP__
 #define __GLOBAL_HPP__
 
-namespace Lurdr
+namespace LuGL
 {
 
 #define min(a,b) ((a)<(b)?(a):(b))

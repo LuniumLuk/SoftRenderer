@@ -8,7 +8,7 @@
 #include "image.hpp"
 #include "maths.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 class Texture

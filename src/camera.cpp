@@ -1,6 +1,6 @@
 #include "camera.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 Camera::Camera()
 {

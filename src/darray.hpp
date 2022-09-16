@@ -8,7 +8,7 @@
 #include <utility>
 #include "global.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 // Array implement basic functionalities as STL std::array

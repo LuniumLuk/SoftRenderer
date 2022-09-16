@@ -6,7 +6,7 @@
 #include <assert.h>
 #include "maths.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 #define DRAG_SPEED 0.02f

@@ -1,6 +1,6 @@
 #include "light.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 #define _BLINN_PHONG_
 

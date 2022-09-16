@@ -10,7 +10,7 @@
 #include "buffer.hpp"
 #include "entity.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 #define MAX_UNIFORM_COUNT 64

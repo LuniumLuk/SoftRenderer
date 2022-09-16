@@ -1,6 +1,6 @@
 #include "image.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 /**
  * TODOs :
@@ -117,7 +117,8 @@ void BMPImage::setReverseY(bool val)
 }
 void BMPImage::clean() 
 {
-    delete[] m_color_tables;
+    if (m_color_tables)
+        delete[] m_color_tables;
     delete[] m_buffer;
     delete[] m_filename;
     m_color_tables = nullptr;
@@ -155,6 +156,11 @@ BMPImage::BMPImage(const char* filename): m_color_tables(nullptr),
     loadImage();
 }
 BMPImage::BMPImage(const size_t & width, const size_t & height)
+    : m_color_tables(nullptr)
+    , m_buffer(nullptr)
+    , m_is_loaded(false)
+    , m_use_color_table(false)
+    , m_filename(nullptr)
 {
     const char default_filename[] = "none";
     size_t f_len = strlen(default_filename);

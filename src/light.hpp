@@ -7,7 +7,7 @@
 #include "global.hpp"
 #include "maths.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 struct LightingComponent

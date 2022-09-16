@@ -8,7 +8,7 @@
 #include "image.hpp"
 #include "light.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 class Envmap

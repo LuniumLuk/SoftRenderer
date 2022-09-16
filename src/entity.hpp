@@ -10,7 +10,7 @@
 #include "mesh.hpp"
 #include "material.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 #define MAX_CONF_LINE 256

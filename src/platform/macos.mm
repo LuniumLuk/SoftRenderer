@@ -4,14 +4,14 @@
 #include <unistd.h>
 #include "platform.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 #define PATH_SIZE 256
 
 // window and IO interfaces for MacOS
 // reference : http://glampert.com/2012/11-29/osx-window-without-xcode-and-ib/
 // & https://github.com/zauonlok/renderer/blob/master/renderer/platforms/macos.m
-struct Lurdr::APPWINDOW
+struct LuGL::APPWINDOW
 {
     NSWindow    *handle;
     byte_t      *surface;
@@ -59,7 +59,7 @@ static void initializeWorkingDirectory()
     chdir(path);
 }
 
-void Lurdr::initializeApplication()
+void LuGL::initializeApplication()
 {
     if (NSApp == nil) {
         // Autorelease Pool:
@@ -77,14 +77,14 @@ void Lurdr::initializeApplication()
     }
 }
 
-void Lurdr::terminateApplication()
+void LuGL::terminateApplication()
 {
     assert(g_auto_release_pool != NULL);
     [g_auto_release_pool drain];
     g_auto_release_pool = [[NSAutoreleasePool alloc] init];
 }
 
-void Lurdr::swapBuffer(AppWindow *window)
+void LuGL::swapBuffer(AppWindow *window)
 {
     [[window->handle contentView] setNeedsDisplay:YES];  // invoke drawRect
 }
@@ -100,9 +100,9 @@ void handleKeyEvent(AppWindow *window, long virtual_key, bool pressed)
         case 0x0D: key = KEY_W;      break;
         case 0x31: key = KEY_SPACE;  break;
         case 0x35: key = KEY_ESCAPE; break;
-        case 0x0C: key = KEY_I;      break;
-        case 0x12: key = KEY_O;      break;
-        case 0x13: key = KEY_P;      break;
+        case 0x22: key = KEY_I;      break;
+        case 0x1F: key = KEY_O;      break;
+        case 0x23: key = KEY_P;      break;
         default:   key = KEY_NUM;    break;
     }
     if (key < KEY_NUM)
@@ -115,7 +115,7 @@ void handleKeyEvent(AppWindow *window, long virtual_key, bool pressed)
     }
 }
 
-void handleMouseButton(AppWindow *window, Lurdr::MOUSE_BUTTON button, bool pressed)
+void handleMouseButton(AppWindow *window, LuGL::MOUSE_BUTTON button, bool pressed)
 {
     window->buttons[button] = pressed;
     if (window->mouseButtonCallback)
@@ -190,19 +190,19 @@ void handleMouseScroll(AppWindow *window, float delta)
 }
 
 - (void)mouseDown:(NSEvent *)event {
-    handleMouseButton(_window, Lurdr::BUTTON_L, true);
+    handleMouseButton(_window, LuGL::BUTTON_L, true);
 }
 
 - (void)mouseUp:(NSEvent *)event {
-    handleMouseButton(_window, Lurdr::BUTTON_L, false);
+    handleMouseButton(_window, LuGL::BUTTON_L, false);
 }
 
 - (void)rightMouseDown:(NSEvent *)event {
-    handleMouseButton(_window, Lurdr::BUTTON_R, true);
+    handleMouseButton(_window, LuGL::BUTTON_R, true);
 }
 
 - (void)rightMouseUp:(NSEvent *)event {
-    handleMouseButton(_window, Lurdr::BUTTON_R, false);
+    handleMouseButton(_window, LuGL::BUTTON_R, false);
 }
 
 - (void)mouseDragged:(NSEvent *)event {
@@ -243,7 +243,7 @@ void handleMouseScroll(AppWindow *window, float delta)
 
 ContentView *g_view;
 
-AppWindow* Lurdr::createWindow(const char *title, long width, long height, unsigned char *surface_buffer)
+AppWindow* LuGL::createWindow(const char *title, long width, long height, unsigned char *surface_buffer)
 {
     NSUInteger windowStyle = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable;
 
@@ -276,12 +276,12 @@ AppWindow* Lurdr::createWindow(const char *title, long width, long height, unsig
     return window;
 }
 
-void Lurdr::destroyWindow(AppWindow *window)
+void LuGL::destroyWindow(AppWindow *window)
 {
     window->should_close = true;
 }
 
-void Lurdr::runApplication()
+void LuGL::runApplication()
 {
     // block
     [NSApp run];
@@ -294,7 +294,7 @@ void Lurdr::runApplication()
 }
 
 // reference : https://github.com/zauonlok/renderer/blob/master/renderer/platforms/macos.m
-void Lurdr::pollEvent()
+void LuGL::pollEvent()
 {
     while (true)
     {
@@ -311,7 +311,7 @@ void Lurdr::pollEvent()
     terminateApplication();
 }
 
-bool Lurdr::windowShouldClose(AppWindow *window)
+bool LuGL::windowShouldClose(AppWindow *window)
 {
     return window->should_close;
 }
@@ -319,44 +319,44 @@ bool Lurdr::windowShouldClose(AppWindow *window)
 /**
  * input & callback registrations
  */
-void Lurdr::setKeyboardCallback(AppWindow *window, void(*callback)(AppWindow*, KEY_CODE, bool))
+void LuGL::setKeyboardCallback(AppWindow *window, void(*callback)(AppWindow*, KEY_CODE, bool))
 {
     window->keyboardCallback = callback;
 }
 
-void Lurdr::setMouseButtonCallback(AppWindow *window, void(*callback)(AppWindow*, MOUSE_BUTTON, bool))
+void LuGL::setMouseButtonCallback(AppWindow *window, void(*callback)(AppWindow*, MOUSE_BUTTON, bool))
 {
     window->mouseButtonCallback = callback;
 }
 
-void Lurdr::setMouseScrollCallback(AppWindow *window, void(*callback)(AppWindow*, float))
+void LuGL::setMouseScrollCallback(AppWindow *window, void(*callback)(AppWindow*, float))
 {
     window->mouseScrollCallback = callback;
 }
 
-void Lurdr::setMouseDragCallback(AppWindow *window, void(*callback)(AppWindow*, float, float))
+void LuGL::setMouseDragCallback(AppWindow *window, void(*callback)(AppWindow*, float, float))
 {
     window->mouseDragCallback = callback;
 }
 
-bool Lurdr::isKeyDown(AppWindow *window, Lurdr::KEY_CODE key)
+bool LuGL::isKeyDown(AppWindow *window, LuGL::KEY_CODE key)
 {
     return window->keys[key];
 }
 
-bool Lurdr::isMouseButtonDown(AppWindow *window, Lurdr::MOUSE_BUTTON button)
+bool LuGL::isMouseButtonDown(AppWindow *window, LuGL::MOUSE_BUTTON button)
 {
     return window->buttons[button];
 }
 
-Lurdr::Time Lurdr::getSystemTime()
+LuGL::Time LuGL::getSystemTime()
 {
     NSDateComponents *components = [[NSCalendar currentCalendar] 
         components: NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitWeekday | NSCalendarUnitDay |
                     NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond | NSCalendarUnitNanosecond
           fromDate:[NSDate date]];
     
-    Lurdr::Time time;
+    LuGL::Time time;
     time.year = components.year;
     time.month = components.month;
     time.day_of_week = components.weekday - 1; // 0 - 6 where 0 is Sunday

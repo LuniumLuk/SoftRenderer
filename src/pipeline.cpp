@@ -1,6 +1,6 @@
 #include "pipeline.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 // #define _FLAT_FILL_TRIANGLE_RASTERIZATION_
 // #define _BARYCENTRIC_TRIANGLE_RASTERIZATION_0_
@@ -201,10 +201,16 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
                     float w0, w1, w2;
                     if (Singleton<Global>::get().multisample_antialias) {
                         float tp0, tp1, tp2;
-                        vec4 pos0(x + 0.0f, y + 0.0f, 1.0f, 0.0f);
-                        vec4 pos1(x + 1.0f, y + 0.0f, 1.0f, 0.0f);
-                        vec4 pos2(x + 0.0f, y + 1.0f, 1.0f, 0.0f);
-                        vec4 pos3(x + 1.0f, y + 1.0f, 1.0f, 0.0f);
+                        /*  4X MSAA pattern
+                         *      *               (-0.1,  0.4)
+                         *           *          ( 0.4,  0.1)
+                         *    *                 (-0.4, -0.1)
+                         *         *            ( 0.1, -0.4)
+                         */
+                        vec4 pos0(pos.x - 0.1f, pos.y + 0.4f, 1.0f, 0.0f);
+                        vec4 pos1(pos.x + 0.4f, pos.y + 0.1f, 1.0f, 0.0f);
+                        vec4 pos2(pos.x - 0.4f, pos.y - 0.1f, 1.0f, 0.0f);
+                        vec4 pos3(pos.x + 0.1f, pos.y - 0.4f, 1.0f, 0.0f);
 
                         mask = 0;
 
@@ -216,7 +222,6 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
                         if (mask == 0) continue;
 
                         outsideTest(v0, v1, v2, pos, &w0, &w1, &w2);
-
                     } else {
                         if (outsideTest(v0, v1, v2, pos, &w0, &w1, &w2))
                         {
@@ -587,7 +592,7 @@ void Pipeline::sortVerticesByY(v2f & v0, v2f & v1, v2f & v2)
 }
 
 
-void Lurdr::drawTriangles(
+void LuGL::drawTriangles(
     const FrameBuffer & frame_buffer,
     const VertexArray & vertex_array,
     const Program & program )

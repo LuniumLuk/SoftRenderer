@@ -1,6 +1,6 @@
 #include "mesh.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 void OBJMesh::init()
 {

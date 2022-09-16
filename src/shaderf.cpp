@@ -1,8 +1,8 @@
 #include "shaderf.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
-void * Lurdr::allocateOutBuffer(const size_t & size, size_t * allocated_sizes, const long & pos, void ** buffer)
+void * LuGL::allocateOutBuffer(const size_t & size, size_t * allocated_sizes, const long & pos, void ** buffer)
 {
     if (allocated_sizes[pos] == size)
     {
@@ -66,7 +66,7 @@ void Program::setUniform(long idx, void* uniform)
     m_uniform[idx] = uniform;
 }
 
-void Lurdr::simpleVertexShader(SHADER_PARAM)
+void LuGL::simpleVertexShader(SHADER_PARAM)
 {
     Vector3 *a_pos = layout_in(Vector3, 0);
 
@@ -79,7 +79,7 @@ void Lurdr::simpleVertexShader(SHADER_PARAM)
     *position = (*projection) * (*view) * (*model) * Vector4(*a_pos, 1.0f);
 }
 
-void Lurdr::simpleFragmentShader(SHADER_PARAM)
+void LuGL::simpleFragmentShader(SHADER_PARAM)
 {
     unused_in;
     

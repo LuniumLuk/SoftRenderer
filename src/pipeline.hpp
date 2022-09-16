@@ -12,7 +12,7 @@
 #include "entity.hpp"
 #include "scene.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 #define PERSPECTIVE_DIVIDE(v) v.w = 1.0f / v.w; \

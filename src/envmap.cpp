@@ -1,6 +1,6 @@
 #include "envmap.hpp"
 
-using namespace Lurdr;
+using namespace LuGL;
 
 // #define V2THETA(v) (2.0f * acosf(sqrtf(1 - (v))))
 #define V2THETA(v) (PI * (v))

@@ -17,7 +17,7 @@
 #include "shader.hpp"
 #include "envmap.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 class Model

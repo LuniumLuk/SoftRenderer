@@ -7,7 +7,7 @@
 #include "maths.hpp"
 #include "scene.hpp"
 
-namespace Lurdr
+namespace LuGL
 {
 
 class Ray
