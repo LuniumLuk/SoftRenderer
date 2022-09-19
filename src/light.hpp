@@ -40,7 +40,7 @@ public:
         m_diffuse(diffuse),
         m_specular(specular) {}
 
-    virtual LightComp getLight(vec3 normal, vec3 frag_pos, vec3 view_dir) = 0;
+    virtual LightComp calcLight(vec3 normal, vec3 frag_pos, vec3 view_dir) = 0;
 
     void setPosition(const vec3 & position) { m_position = position; }
     void setDirection(const vec3 & direction) { m_direction = direction.normalized(); }
@@ -68,7 +68,7 @@ public:
         diffuse,
         specular) {}
     
-    LightComp getLight(vec3 normal, vec3 frag_pos, vec3 view_dir);
+    LightComp calcLight(vec3 normal, vec3 frag_pos, vec3 view_dir);
 };
 
 class PointLight : public Light
@@ -93,7 +93,7 @@ public:
         m_linear(0.1f),
         m_quadratic(0.01f) {}
         
-    LightComp getLight(vec3 normal, vec3 frag_pos, vec3 view_dir);
+    LightComp calcLight(vec3 normal, vec3 frag_pos, vec3 view_dir);
 };
 
 

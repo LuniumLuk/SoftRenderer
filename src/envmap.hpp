@@ -45,7 +45,7 @@ public:
 //     EnvLight() = delete;
 //     EnvLight(const char * filename);
 
-//     virtual LightComp getLight(vec3 normal, vec3 frag_pos, vec3 view_dir);
+//     virtual LightComp calcLight(vec3 normal, vec3 frag_pos, vec3 view_dir);
 // };
 
 }

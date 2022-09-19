@@ -86,7 +86,8 @@ struct Vertex
     vec3 position;
     vec2 texture;
     vec3 normal;
-    vec4 tangent;
+    vec3 tangent;
+    vec3 bitangent;
     vec4 joint;     // for animation
     vec4 weight;    // for blend skinning
 };
@@ -129,6 +130,8 @@ private:
     vec3i   *m_face_texcoords;
     vec3i   *m_face_normals;
     vec3    m_mesh_center;
+    vec3    *m_tangent;
+    vec3    *m_bitangent;
 
     size_t   m_vertex_count;
     size_t   m_face_count;
@@ -136,6 +139,7 @@ private:
     bool     m_has_vertex_normals;
     bool     m_has_triangle_normals;
     bool     m_has_texture_coords;
+    bool     m_has_tangent;
 public:
     TriangleMesh();
     TriangleMesh(const char * filename);
@@ -147,6 +151,7 @@ public:
     void computeVertexNormals();
     void computeTriangleNormals();
     void computeMeshCenter();
+    void computeTangentVectors();
 
     BoundingBox getAxisAlignBoundingBox() const;
     vec3 getMaxBound() const;
@@ -155,6 +160,7 @@ public:
     bool hasVertexNormals() const { return m_has_vertex_normals; }
     bool hasTriangleNormals() const { return m_has_triangle_normals; }
     bool hasTextureCoords() const { return m_has_texture_coords; }
+    bool hasTangents() const { return m_has_tangent; }
 
     size_t vertexCount() const { return m_vertex_count; }
     size_t faceCount() const { return m_face_count; }
@@ -166,6 +172,8 @@ public:
     vec3i* getFaceTexcoords() const { return m_face_texcoords; }
     vec3i* getFaceNormals() const { return m_face_normals; }
     vec2* getTextureCoords() const { return m_texture_coords; }
+    vec3* getTangents() const { return m_tangent; }
+    vec3* getBitangents() const { return m_bitangent; }
     vec3 getMeshCenter() const { return m_mesh_center; }
 
     void printMeshInfo() const;

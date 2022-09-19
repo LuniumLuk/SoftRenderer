@@ -20,5 +20,6 @@
 int main_demo();
 int blank_demo();
 int colormap_demo();
+int normal_mapping_demo();
 
 #endif

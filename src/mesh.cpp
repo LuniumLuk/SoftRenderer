@@ -334,11 +334,14 @@ TriangleMesh::TriangleMesh():
     m_face_texcoords(nullptr),
     m_face_normals(nullptr),
     m_mesh_center(vec3::ZERO),
+    m_tangent(nullptr),
+    m_bitangent(nullptr),
     m_vertex_count(0),
     m_face_count(0),
     m_has_vertex_normals(false),
     m_has_triangle_normals(false),
-    m_has_texture_coords(false) {}
+    m_has_texture_coords(false),
+    m_has_tangent(false) {}
 
 TriangleMesh::TriangleMesh(const char * filename):
     TriangleMesh()
@@ -513,6 +516,7 @@ TriangleMesh::TriangleMesh(const TriangleMesh & tri_mesh):
     m_has_vertex_normals = tri_mesh.m_has_vertex_normals;
     m_has_triangle_normals = tri_mesh.m_has_triangle_normals;
     m_has_texture_coords = tri_mesh.m_has_texture_coords;
+    m_has_tangent = tri_mesh.m_has_tangent;
 
     if (m_vertex_count > 0)
     {
@@ -564,6 +568,16 @@ TriangleMesh::TriangleMesh(const TriangleMesh & tri_mesh):
         for (size_t i = 0; i < m_face_count; i++)
         {
             m_face_texcoords[i] = tri_mesh.m_face_texcoords[i];
+        }
+    }
+    if (m_has_tangent)
+    {
+        m_tangent = new vec3[m_face_count * 3];
+        m_bitangent = new vec3[m_face_count * 3];
+        for (size_t i = 0; i < m_face_count; i++)
+        {
+            m_tangent[i] = tri_mesh.m_tangent[i];
+            m_bitangent[i] = tri_mesh.m_bitangent[i];
         }
     }
     computeMeshCenter();
@@ -576,12 +590,15 @@ TriangleMesh & TriangleMesh::operator= (const TriangleMesh & tri_mesh)
     if (m_triangle_normals) delete[] m_triangle_normals;
     if (m_faces)            delete[] m_faces;
     if (m_texture_coords)   delete[] m_texture_coords;
+    if (m_tangent)          delete[] m_tangent;
+    if (m_bitangent)        delete[] m_bitangent;
 
     m_vertex_count = tri_mesh.m_vertex_count;
     m_face_count = tri_mesh.m_face_count;
     m_has_vertex_normals = tri_mesh.m_has_vertex_normals;
     m_has_triangle_normals = tri_mesh.m_has_triangle_normals;
     m_has_texture_coords = tri_mesh.m_has_texture_coords;
+    m_has_tangent = tri_mesh.m_has_tangent;
 
     if (m_vertex_count > 0)
     {
@@ -633,6 +650,16 @@ TriangleMesh & TriangleMesh::operator= (const TriangleMesh & tri_mesh)
         for (size_t i = 0; i < m_face_count; i++)
         {
             m_face_texcoords[i] = tri_mesh.m_face_texcoords[i];
+        }
+    }
+    if (m_has_tangent)
+    {
+        m_tangent = new vec3[m_face_count * 3];
+        m_bitangent = new vec3[m_face_count * 3];
+        for (size_t i = 0; i < m_face_count; i++)
+        {
+            m_tangent[i] = tri_mesh.m_tangent[i];
+            m_bitangent[i] = tri_mesh.m_bitangent[i];
         }
     }
     computeMeshCenter();
@@ -649,6 +676,8 @@ TriangleMesh::~TriangleMesh()
     if (m_face_texcoords)   delete[] m_face_texcoords;
     if (m_face_normals)     delete[] m_face_normals;
     if (m_texture_coords)   delete[] m_texture_coords;
+    if (m_tangent)          delete[] m_tangent;
+    if (m_bitangent)        delete[] m_bitangent;
 }
 
 void TriangleMesh::printMeshInfo() const
@@ -670,6 +699,10 @@ void TriangleMesh::printMeshInfo() const
             printf("  texture coords : True\n");
         else
             printf("  texture coords : False\n");
+        if (m_has_tangent)
+            printf("  tangent vector : True\n");
+        else
+            printf("  tangent vector : False\n");
         
         printf("----------------------------------------------\n");
     }
@@ -754,6 +787,39 @@ void TriangleMesh::computeMeshCenter()
     }
 
     m_mesh_center = center * (1.0f / m_vertex_count);
+}
+
+void TriangleMesh::computeTangentVectors()
+{
+    if (m_tangent) delete[] m_tangent;
+    if (m_bitangent) delete[] m_bitangent;
+    if (m_has_texture_coords)
+    {
+        m_tangent = new vec3[m_face_count];
+        m_bitangent = new vec3[m_face_count];
+
+        for (size_t fidx = 0; fidx < m_face_count; fidx++) {
+            vec3 e0 = m_vertices[m_faces[fidx][1]] - m_vertices[m_faces[fidx][0]];
+            vec3 e1 = m_vertices[m_faces[fidx][2]] - m_vertices[m_faces[fidx][0]];
+            vec2 uv0 = m_texture_coords[m_face_texcoords[fidx][1]] - m_texture_coords[m_face_texcoords[fidx][0]];
+            vec2 uv1 = m_texture_coords[m_face_texcoords[fidx][2]] - m_texture_coords[m_face_texcoords[fidx][0]];
+
+            float f = 1.0f / (uv0.x * uv1.y - uv1.x * uv0.y);
+
+            vec3 tangent(
+                f * (uv1.y * e0.x - uv0.y * e1.x),
+                f * (uv1.y * e0.y - uv0.y * e1.y),
+                f * (uv1.y * e0.z - uv0.y * e1.z) );
+            vec3 bitangent(
+                f * (-uv1.x * e0.x + uv0.x * e1.x),
+                f * (-uv1.x * e0.y + uv0.x * e1.y),
+                f * (-uv1.x * e0.z + uv0.x * e1.z) );
+            
+            m_tangent[fidx] = tangent;
+            m_bitangent[fidx] = bitangent;
+        }
+    }
+    m_has_tangent = true;
 }
 
 BoundingBox TriangleMesh::getAxisAlignBoundingBox() const

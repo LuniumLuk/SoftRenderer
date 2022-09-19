@@ -265,7 +265,7 @@ rgb Envmap::getPixel(float theta, float phi) const
     return color / 255.0f;
 }
 
-// LightComp EnvLight::getLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
+// LightComp EnvLight::calcLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
 // {
 //     __unused_variable(frag_pos);
 //     __unused_variable(view_dir);

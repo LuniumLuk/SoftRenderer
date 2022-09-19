@@ -96,11 +96,12 @@ public:
     void setBackground(const vec3 & color);
 
     const DynamicArray<Entity*> * getEntities() const { return &m_entities; }
+    const DynamicArray<Light*> *  getLights() const { return &m_lights; }
 
     const Camera& getCamera() const { return m_camera; }
     const Envmap* getEnvmap() const { return m_envmap; }
 
-    LightComp getLight(vec3 normal, vec3 frag_pos, vec3 view_dir) const;
+    LightComp calcLight(vec3 normal, vec3 frag_pos, vec3 view_dir) const;
 };
 
 

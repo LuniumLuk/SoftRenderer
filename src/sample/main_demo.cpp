@@ -17,26 +17,26 @@ static float mouse_x = -1.0f;
 static float mouse_y = -1.0f;
 
 static float camera_fov = 60.0f;
-static const int SHADER_COUNT = 7;
+static const int SHADER_COUNT = 8;
 static int current_shader = 0;
 
 static float view_distance = 3.0f;
 
-DirectionalLight dir_light(
+static DirectionalLight dir_light(
     vec3(0.0f, 0.0f, 0.0f),
     vec3(1.0f, -1.0f, 1.0f),
     vec3(1.0f, 1.0f, 1.0f) * 1.0f,
     vec3(1.0f, 1.0f, 1.0f) 
 );
 
-PointLight point_light1(
+static PointLight point_light1(
     vec3(-2.0f, -2.0f, -2.0f),
     vec3(1.0f, 1.0f, 1.0f).normalized(),
     vec3(1.0f, 0.0f, 0.5f) * 1.0f,
     vec3(1.0f, 0.0f, 0.5f)
 );
 
-PointLight point_light2(
+static PointLight point_light2(
     vec3(-2.0f, 0.0f, 4.0f),
     vec3(2.0f, 0.0f, -4.0f).normalized(),
     vec3(0.0f, 0.5f, 1.0f) * 1.0f,
@@ -58,12 +58,11 @@ public:
         const float diffuse_strength = 1.0f;
         const float specular_strength = 0.8f;
 
-        vec3 normal = in.normal;
-        // vec3 tex_normal = vec3(SAMPLER_2D(TEXTURE_NORMAL, in.texcoord)) * 2.0f - vec3(1.0f, 1.0f, 1.0f);
-        // vec3 normal = (in.normal + tex_normal).normalized();
+        vec3 normal = vec3(SAMPLER_2D(TEXTURE_NORMAL, in.texcoord)) * 2.0f - vec3(1.0f, 1.0f, 1.0f);
+        normal = (TBN_MATRIX * normal).normalized();
 
         vec3 view_dir = (scene.getCamera().getPosition() - in.frag_pos).normalized();
-        LightComp light_comp = scene.getLight(normal, in.frag_pos, view_dir);
+        LightComp light_comp = scene.calcLight(normal, in.frag_pos, view_dir);
         vec3 color = diffuse_strength * light_comp.diffuse + specular_strength * light_comp.specular;
 
         return vec4(color, 1.0f);
@@ -72,7 +71,7 @@ public:
 
 int main_demo() {
 
-    entityConf config("assets/spot.txt");
+    entityConf config("assets/teapot_low.txt");
     Entity ent = Entity(config);
     entity_ptr = &ent;
     // ent.getMaterial()->albedo.setBaseColor(base_color);
@@ -81,6 +80,7 @@ int main_demo() {
 
     ent.getTriangleMesh()->computeTriangleNormals();
     ent.getTriangleMesh()->computeVertexNormals();
+    ent.getTriangleMesh()->computeTangentVectors();
     ent.getTriangleMesh()->printMeshInfo();
     // ent.setTransform(mat4::fromAxisAngle(vec3::UNIT_X, -PI / 2));
 
@@ -102,6 +102,7 @@ int main_demo() {
         (Shader*)new BlinnPhongShader(),
         (Shader*)new TriangleNormalShader(),
         (Shader*)new VertexNormalShader(),
+        (Shader*)new NormalMappingShader(),
         (Shader*)new DepthShader()
     };
 
@@ -112,6 +113,7 @@ int main_demo() {
         "LIGHT",
         "TRIANGLE NORMAL",
         "VERTEX NORMAL",
+        "NORMAL MAPPING",
         "DEPTH"
     };
     char sample_option_names[LUGL_SAMPLE_OPTION_NUM][64] = {

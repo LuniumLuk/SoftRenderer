@@ -85,7 +85,7 @@ Triangle Normal Shading    |  Vertex Normal Shading
 - [x] Implement Barycentric Triangle Rastrization with Perspective Correction Interpolation
 - [x] Wireframe Display
 - [x] Multisample anti-aliasing (2X/4X/8X)
-- [ ] Normal Mapping
+- [x] Normal Mapping
 - [ ] Read .mtl for Material
 - [x] Basic Lighting + Phong, Blinn Shaders
 - [ ] Mipmapping

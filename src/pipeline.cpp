@@ -37,9 +37,9 @@ static inline void getMSAAMask(unsigned short* mask, v2f const& v0, v2f const& v
             {
                 samples.reserve(2);
                 for (int i = 0; i < 2; i++) {
-                    samples.push_back(vec4(
+                    samples[i] = vec4(
                         pos.x + LUGL_2xMSAA_PATTERN[i][0],
-                        pos.y + LUGL_2xMSAA_PATTERN[i][1], 1.0f, 0.0f));
+                        pos.y + LUGL_2xMSAA_PATTERN[i][1], 1.0f, 0.0f);
                 }
             }
             break;
@@ -47,9 +47,9 @@ static inline void getMSAAMask(unsigned short* mask, v2f const& v0, v2f const& v
             {
                 samples.reserve(4);
                 for (int i = 0; i < 4; i++) {
-                    samples.push_back(vec4(
+                    samples[i] = vec4(
                         pos.x + LUGL_4xMSAA_PATTERN[i][0],
-                        pos.y + LUGL_4xMSAA_PATTERN[i][1], 1.0f, 0.0f));
+                        pos.y + LUGL_4xMSAA_PATTERN[i][1], 1.0f, 0.0f);
                 }
             }
             break;
@@ -57,9 +57,9 @@ static inline void getMSAAMask(unsigned short* mask, v2f const& v0, v2f const& v
             {
                 samples.reserve(8);
                 for (int i = 0; i < 8; i++) {
-                    samples.push_back(vec4(
+                    samples[i] = vec4(
                         pos.x + LUGL_8xMSAA_PATTERN[i][0],
-                        pos.y + LUGL_8xMSAA_PATTERN[i][1], 1.0f, 0.0f));
+                        pos.y + LUGL_8xMSAA_PATTERN[i][1], 1.0f, 0.0f);
                 }
             }
             break;
@@ -304,7 +304,9 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
                               v0.t_normal.y, v1.t_normal.y, v2.t_normal.y,
                               v0.t_normal.z, v1.t_normal.z, v2.t_normal.z ) * barycentric,
                         vec2( vec3(v0.texcoord.u, v1.texcoord.u, v2.texcoord.u).dot(barycentric),
-                              vec3(v0.texcoord.v, v1.texcoord.v, v2.texcoord.v).dot(barycentric) )
+                              vec3(v0.texcoord.v, v1.texcoord.v, v2.texcoord.v).dot(barycentric)),
+                        v0.tangent,
+                        v0.bitangent
                     );
 
                     pixelShaderBarycentric(frame_buffer, v, shader, entity, scene, mask);

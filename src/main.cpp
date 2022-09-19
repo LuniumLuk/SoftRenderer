@@ -19,6 +19,9 @@ int main(int argc, char * argv[]) {
             case 2:     
                 return_value = colormap_demo();
                 break;
+            case 3:
+                return_value = normal_mapping_demo();
+                break;
         }
     }
     return return_value;

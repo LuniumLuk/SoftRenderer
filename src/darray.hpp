@@ -128,6 +128,7 @@ void DynamicArray<T>::reserve(size_t size) {
     }
     delete[] m_array;
     m_array = new_array;
+    m_size = size;
 }
 
 template<typename T>

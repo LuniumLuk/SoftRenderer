@@ -118,15 +118,15 @@ Entity::Entity(const entityConf & config):
     }
     if (config.diffuse_map)
     {
-        m_material->diffuse.loadTextureSurface(config.albedo_map);
+        m_material->diffuse.loadTextureSurface(config.diffuse_map);
     }
     if (config.specular_map)
     {
-        m_material->specular.loadTextureSurface(config.albedo_map);
+        m_material->specular.loadTextureSurface(config.specular_map);
     }
     if (config.normal_map)
     {
-        m_material->normal.loadTextureSurface(config.albedo_map);
+        m_material->normal.loadTextureSurface(config.normal_map);
     }
 }
 

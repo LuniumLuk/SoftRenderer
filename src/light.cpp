@@ -4,7 +4,7 @@ using namespace LuGL;
 
 #define _BLINN_PHONG_
 
-LightComp DirectionalLight::getLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
+LightComp DirectionalLight::calcLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
 {
     __unused_variable(frag_pos);
 
@@ -26,7 +26,7 @@ LightComp DirectionalLight::getLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
     return comp;
 }
 
-LightComp PointLight::getLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
+LightComp PointLight::calcLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
 {
     normal.normalize();
 

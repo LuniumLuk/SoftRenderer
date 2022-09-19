@@ -222,12 +222,12 @@ void Scene::setBackground(const vec3 & color)
     m_background = color;
 }
 
-LightComp Scene::getLight(vec3 normal, vec3 frag_pos, vec3 view_dir) const
+LightComp Scene::calcLight(vec3 normal, vec3 frag_pos, vec3 view_dir) const
 {
     LightComp result;
     for (size_t i = 0; i < m_lights.size(); i++)
     {
-        LightComp light = m_lights[i]->getLight(normal, frag_pos, view_dir);
+        LightComp light = m_lights[i]->calcLight(normal, frag_pos, view_dir);
         result.diffuse += light.diffuse;
         result.specular += light.specular;
     }
