@@ -96,7 +96,7 @@ Triangle Normal Shading    |  Vertex Normal Shading
 - [ ] SSAO
 - [ ] SS Reflection
 - [ ] Alpha Test + Alpha Blending
-- [ ] Multi-threading
+- [x] Multi-threading using openmp
 
 ## Bug Report
 

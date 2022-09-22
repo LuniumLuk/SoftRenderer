@@ -37,6 +37,7 @@ ifeq ($(OS),Windows_NT)
 	RM 		:= del /s /q
 	RMDIR 	:= rmdir /s /q
 	TARGET 	:= viewer.exe
+    CFLAGS  += -fopenmp
     ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
         CFLAGS += -D AMD64
     else

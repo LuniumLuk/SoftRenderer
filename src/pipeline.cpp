@@ -1,4 +1,7 @@
 #include "pipeline.hpp"
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 using namespace LuGL;
 
@@ -84,6 +87,9 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
         const mat3 model_inv_transpose = mat3(entity->getTransform().inversed().transposed());
 
         const TriangleMesh *mesh = entity->getTriangleMesh();
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
         for (size_t fidx = 0; fidx < mesh->faceCount(); fidx++)
         {
 #if 0
