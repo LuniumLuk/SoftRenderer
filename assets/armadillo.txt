@@ -1,0 +1,6 @@
+mesh assets/meshes/armadillo.obj
+albedo
+diffuse 
+specular
+normal
+scale 0.5 0.5 0.5

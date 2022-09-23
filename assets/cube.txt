@@ -3,3 +3,4 @@ albedo assets/textures/brickwall.bmp
 diffuse assets/textures/brickwall.bmp
 specular assets/textures/brickwall.bmp
 normal assets/textures/brickwall_normal.bmp
+scale 0.5 0.5 0.5

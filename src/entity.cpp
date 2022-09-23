@@ -7,7 +7,8 @@ EntityConfig::EntityConfig(const char * filename):
     albedo_map(nullptr),
     diffuse_map(nullptr),
     specular_map(nullptr),
-    normal_map(nullptr)
+    normal_map(nullptr),
+    scale(vec3(1.0f, 1.0f, 1.0f))
 {
     loadFromFile(filename);
 }
@@ -75,6 +76,17 @@ void EntityConfig::loadFromFile(const char * filename)
                 strcpy(normal_map, filename_buffer);
             }
         }
+        else if (strncmp(line_buffer, "scale ", 6) == 0)
+        {
+            float x, y, z;
+            scanned_items = sscanf(line_buffer, "scale %f %f %f", &x, &y, &z);
+            if (scanned_items == 3)
+            {
+                scale.x = x;
+                scale.y = y;
+                scale.z = z;
+            }
+        }
     }
 }
 
@@ -128,6 +140,9 @@ Entity::Entity(const entityConf & config):
     {
         m_material->normal.loadTextureSurface(config.normal_map);
     }
+    vec3 center = m_mesh->getMeshCenter();
+    m_transform = mat4::fromTRS(-center, Quaternion::IDENTITY, vec3(1.0f, 1.0f, 1.0f));
+    m_transform.scale(config.scale);
 }
 
 Entity::~Entity()

@@ -3,3 +3,4 @@ albedo assets/textures/sweater_specular.bmp
 diffuse assets/textures/sweater_specular.bmp
 specular assets/textures/sweater_specular.bmp
 normal assets/textures/sweater_normal.bmp
+scale 1.5 1.5 1.5

@@ -29,7 +29,8 @@ Texture::Texture(const BMPImage & bmp_image): Texture()
 
 Texture::~Texture()
 {
-    delete[] m_buffer;
+    if (m_buffer)
+        delete[] m_buffer;
 }
 
 void Texture::loadTextureSurface(const BMPImage & bmp_image)
@@ -79,6 +80,7 @@ vec4 Texture::sampleAt(const vec2 & texcoord) const
 
 vec4 Texture::colorAt(long x, long y) const
 {
+    if (!m_buffer) return m_base_color;
     assert(x >= 0);
     assert(y >= 0);
     if (x >= m_width)
@@ -96,6 +98,8 @@ vec4 Texture::colorAt(long x, long y) const
 
 vec4 Texture::sampler(const Texture & texture, const vec2 & texcoord)
 {
+    if (!texture.m_buffer) return texture.m_base_color;
+
     if (Singleton<Global>::get().texture_filtering_linear)
     {
         float xf = (float)texture.m_width * clamp(texcoord.u, 0.0f, 1.0f);

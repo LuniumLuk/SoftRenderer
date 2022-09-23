@@ -3,3 +3,4 @@ albedo
 diffuse 
 specular
 normal
+scale 0.4 0.4 0.4

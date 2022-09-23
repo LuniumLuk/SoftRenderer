@@ -818,8 +818,8 @@ void TriangleMesh::computeTangentVectors()
             m_tangent[fidx] = tangent;
             m_bitangent[fidx] = bitangent;
         }
+        m_has_tangent = true;
     }
-    m_has_tangent = true;
 }
 
 BoundingBox TriangleMesh::getAxisAlignBoundingBox() const

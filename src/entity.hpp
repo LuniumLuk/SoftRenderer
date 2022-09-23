@@ -23,6 +23,7 @@ public:
     char *diffuse_map;
     char *specular_map;
     char *normal_map;
+    vec3 scale;
 
     EntityConfig() = delete;
     EntityConfig(const char * filename);

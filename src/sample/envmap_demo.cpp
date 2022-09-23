@@ -61,10 +61,11 @@ int envmap_demo() {
     setMouseDragCallback(window, mouseDragEventCallback);
 
     long _fps = 0;
+    float _delta = 0;
     FPS_SETUP();
     while (!windowShouldClose(window))
     {
-        FPS_UPDATE(_fps);
+        FPS_UPDATE(_fps, _delta);
 
         frame_buffer.clearColorBuffer(rgb(0.0f, 0.0f, 0.0f));
         // Pipeline::draw(frame_buffer, scene, shader);

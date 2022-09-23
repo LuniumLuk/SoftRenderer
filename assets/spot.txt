@@ -3,3 +3,4 @@ albedo assets/textures/spot.bmp
 diffuse assets/textures/spot.bmp
 specular assets/textures/flake_specular.bmp
 normal assets/textures/flake_normal.bmp
+scale 1.0 1.0 1.0

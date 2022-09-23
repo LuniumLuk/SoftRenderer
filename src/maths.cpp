@@ -1344,10 +1344,9 @@ void Matrix4::scale(const Vector3 & scale)
     ASSERT_NON_ZERO(scale.y);
     ASSERT_NON_ZERO(scale.z);
 
-    m[0]  *= scale.x; m[1]  *= scale.y; m[2]  *= scale.z;
-    m[4]  *= scale.x; m[5]  *= scale.y; m[6]  *= scale.z;
-    m[8]  *= scale.x; m[9]  *= scale.y; m[10] *= scale.z;
-    m[12] *= scale.x; m[13] *= scale.y; m[14] *= scale.z;
+    m[0]  *= scale.x; m[1]  *= scale.x; m[2]  *= scale.x; m[3]  *= scale.x;
+    m[4]  *= scale.y; m[5]  *= scale.y; m[6]  *= scale.y; m[7]  *= scale.y;
+    m[8]  *= scale.z; m[9]  *= scale.z; m[10] *= scale.z; m[11] *= scale.z;
 }
 void Matrix4::rotate(const Vector3 & axis, const float & angle)
 {

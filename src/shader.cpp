@@ -45,10 +45,11 @@ vec4 TriangleNormalShader::frag(const v2f in, const Entity * entity, const Scene
     __unused_variable(entity);
     __unused_variable(scene);
 
+    vec3 normal = in.t_normal.normalized();
     rgb color = rgb(
-        in.t_normal.x * 0.5f + 0.5f,
-        in.t_normal.y * 0.5f + 0.5f,
-        in.t_normal.z * 0.5f + 0.5f
+        normal.x * 0.5f + 0.5f,
+        normal.y * 0.5f + 0.5f,
+        normal.z * 0.5f + 0.5f
     );
     
     return vec4(color, 1.0f);
@@ -59,10 +60,11 @@ vec4 VertexNormalShader::frag(const v2f in, const Entity * entity, const Scene &
     __unused_variable(entity);
     __unused_variable(scene);
 
+    vec3 normal = in.normal.normalized();
     rgb color = rgb(
-        in.normal.x * 0.5f + 0.5f,
-        in.normal.y * 0.5f + 0.5f,
-        in.normal.z * 0.5f + 0.5f
+        normal.x * 0.5f + 0.5f,
+        normal.y * 0.5f + 0.5f,
+        normal.z * 0.5f + 0.5f
     );
     
     return vec4(color, 1.0f);

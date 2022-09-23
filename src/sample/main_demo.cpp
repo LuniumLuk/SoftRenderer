@@ -20,6 +20,11 @@ static float camera_fov = 60.0f;
 static const int SHADER_COUNT = 8;
 static int current_shader = 0;
 
+static bool blue_light_rotate = false;
+static bool red_light_rotate = false;
+static float blue_light_angle = PI;
+static float red_light_angle = 0.0f;
+
 static float view_distance = 3.0f;
 
 static DirectionalLight dir_light(
@@ -30,14 +35,14 @@ static DirectionalLight dir_light(
 );
 
 static PointLight point_light1(
-    vec3(-2.0f, -2.0f, -2.0f),
+    vec3(2.0 * cosf(red_light_angle), -2.0f, 2.0 * sinf(red_light_angle)),
     vec3(1.0f, 1.0f, 1.0f).normalized(),
     vec3(1.0f, 0.0f, 0.5f) * 1.0f,
     vec3(1.0f, 0.0f, 0.5f)
 );
 
 static PointLight point_light2(
-    vec3(-2.0f, 0.0f, 4.0f),
+    vec3(3.0 * cosf(blue_light_angle), 2.0f, 3.0 * sinf(blue_light_angle)),
     vec3(2.0f, 0.0f, -4.0f).normalized(),
     vec3(0.0f, 0.5f, 1.0f) * 1.0f,
     vec3(0.0f, 0.5f, 1.0f)
@@ -69,9 +74,11 @@ public:
     }
 };
 
-int main_demo() {
-
-    entityConf config("assets/teapot_low.txt");
+int main_demo(const char* model)
+{
+    char model_filename[256] = { 0 };
+    sprintf(model_filename, "assets/%s.txt", model);
+    entityConf config(model_filename);
     Entity ent = Entity(config);
     entity_ptr = &ent;
     // ent.getMaterial()->albedo.setBaseColor(base_color);
@@ -84,16 +91,18 @@ int main_demo() {
     ent.getTriangleMesh()->printMeshInfo();
     // ent.setTransform(mat4::fromAxisAngle(vec3::UNIT_X, -PI / 2));
 
-    Envmap envmap("assets/envmaps/env01.bmp");
+    // Envmap envmap("assets/envmaps/env01.bmp");
 
     scene.addEntity(&ent);
     scene.addLight((Light*)&dir_light);
     scene.addLight((Light*)&point_light1);
     scene.addLight((Light*)&point_light2);
-    scene.setEnvmap(&envmap);
+    // scene.setEnvmap(&envmap);
 
-    vec3 mesh_center = ent.getTriangleMesh()->getMeshCenter();
-    scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -view_distance), mesh_center);
+    // vec3 mesh_center = ent.getTriangleMesh()->getMeshCenter();
+    // scene.getCamera().setTransform(mesh_center + vec3(0.0f, 0.0f, -view_distance), mesh_center);
+    scene.getCamera().setTransform(vec3(0.0f, 0.0f, -view_distance), vec3(0.0f, 0.0f, 0.0f));
+
 
     Shader* shaders[SHADER_COUNT] = {
         (Shader*)new UnlitShader(),
@@ -141,10 +150,22 @@ int main_demo() {
     setMouseDragCallback(window, mouseDragEventCallback);
 
     long _fps = 0;
+    float _delta = 0;
     FPS_SETUP();
     while (!windowShouldClose(window))
     {
-        FPS_UPDATE(_fps);
+        FPS_UPDATE(_fps, _delta);
+
+        if (red_light_rotate)
+        {
+            red_light_angle += 1.0f * _delta;
+            scene.getLights()->at(1)->setPosition(vec3(2.0 * cosf(red_light_angle), -2.0f, 2.0 * sinf(red_light_angle)));
+        }
+        if (blue_light_rotate)
+        {
+            blue_light_angle += 2.0f * _delta;
+            scene.getLights()->at(2)->setPosition(vec3(3.0 * cosf(blue_light_angle), 3.0f, 3.0 * sinf(blue_light_angle)));
+        }
 
         frame_buffer.clearColorBuffer(rgb(0.0f, 0.0f, 0.0f));
         Pipeline::draw(frame_buffer, scene, shaders[current_shader]);
@@ -161,7 +182,7 @@ int main_demo() {
             "KEY A D      --------- ROTATE MODEL", 4.0f, COLOR_WHITE);
         drawString(
             frame_buffer, 10.0f, 30.0f,
-            "KEY S W      --------- MOVE POINT LIGHT", 4.0f, COLOR_WHITE);
+            "KEY S W      --------- TOGGLE LIGHT ROTATE", 4.0f, COLOR_WHITE);
         drawString(
             frame_buffer, 10.0f, 40.0f,
             "MOUSE DRAG   --------- ROTATE CAMERA", 4.0f, COLOR_WHITE);
@@ -218,24 +239,26 @@ void keyboardEventCallback(AppWindow *window, KEY_CODE key, bool pressed)
                 transformModel(-0.1f, 1.0f);
                 break;
             case KEY_S:
-                {
-                    vec3 pos = point_light1.getPosition();
-                    pos.y -= 0.4f;
-                    if (pos.y < -4.0f) pos.y = -4.0f;
-                    point_light1.setPosition(pos);
-                }
+                // {
+                //     vec3 pos = point_light1.getPosition();
+                //     pos.y -= 0.4f;
+                //     if (pos.y < -4.0f) pos.y = -4.0f;
+                //     point_light1.setPosition(pos);
+                // }
+                blue_light_rotate = !blue_light_rotate;
                 // transformModel(0.0f, 0.9f);
                 break;
             case KEY_D:
                 transformModel(0.1f, 1.0f);
                 break;
             case KEY_W:
-                {
-                    vec3 pos = point_light1.getPosition();
-                    pos.y += 0.4f;
-                    if (pos.y > 4.0f) pos.y = 4.0f;
-                    point_light1.setPosition(pos);
-                }
+                // {
+                //     vec3 pos = point_light1.getPosition();
+                //     pos.y += 0.4f;
+                //     if (pos.y > 4.0f) pos.y = 4.0f;
+                //     point_light1.setPosition(pos);
+                // }
+                red_light_rotate = !red_light_rotate;
                 // transformModel(0.0f, 1.1f);
                 break;
             case KEY_ESCAPE:
