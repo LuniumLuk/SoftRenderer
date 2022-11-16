@@ -1,25 +1,21 @@
 # Soft Renderer
 
-This is a Tiny Renderer on CPU with single-thread built from scratch, using OpenGL-like API design.
+This is a Tiny Renderer on CPU built from scratch, using OpenGL-similar API design. this project served as learning project and took quite a lot reference from project https://github.com/zauonlok/renderer for multi-platform depolying.
 
-- Meanwhile, this project also serve as practice while learning the book 'Real-Time Rendering' :book: https://www.realtimerendering.com/
+## Features
 
-- This project took a lot reference from project https://github.com/zauonlok/renderer for platform deploying.
+I intend to implement a shader-based renderer that runs on CPU from scratch using c++ with minimum dependencies, with the following features:
 
-## Planned Features
-
-I intend to implement a shader-based renderer that runs on CPU from scratch using c++ with minimum dependencies. It's APIs are similar to OpenGL, with the following features:
-
-- Pipeline that runs on CPU (maybe GPU later, but more limited platforms)
-- Programable and Extendable Shaders
-- Flexible and Fast to Access Buffers
-- API similar to OpenGL
-- Support Cross Platform (MacOS, Windows)
-- Image and Geometry Process Functionalities
+- CPU rasterization
+- Shading via shaders
+- Similar to OpenGL API
+- Cross Platform (MacOS, Windows)
+- Image and Geometry Processing
 
 ### Shader-based pipeline
 
-A simple example for creating a shader
+A simple example for creating a shader, simply inherit class Shader, you are able to access lighting, scene, mvp matrix, interpolated attributes and so on.
+
 ```c++
 #include "src/api.hpp"
 using namespace LuGL;
