@@ -1,5 +1,7 @@
 # Soft Renderer
 
+![](images/teaser.png)
+
 This is a Tiny Renderer on CPU built from scratch, using OpenGL-similar API design. this project served as learning project and took quite a lot reference from project https://github.com/zauonlok/renderer for multi-platform depolying.
 
 ## Features
