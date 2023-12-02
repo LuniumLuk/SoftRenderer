@@ -55,8 +55,11 @@ public:
         albedo(Texture()),
         diffuse(Texture()),
         specular(Texture()),
-        normal(Texture()) {}
-    
+        normal(Texture()) {
+
+        normal.setBaseColor(vec4(0.5f, 0.5f, 1.0f, 1.0f));
+    }
+
 };
 
 }
