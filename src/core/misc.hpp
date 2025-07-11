@@ -19,12 +19,12 @@ private:
 public:
     MemoryCounter(): m_newed_size(0),
                      m_deleted_size(0) {}
-    
+
     void newed(size_t size)
     {
         m_newed_size += size;
     }
-    void deleted(size_t size) 
+    void deleted(size_t size)
     {
         m_deleted_size += deleted;
     }
@@ -55,10 +55,21 @@ void* operator new(size_t size)
 
 #endif
 
+#if defined(_WIN32) || defined(_WIN64)
+#include <windows.h>
+#else
+#include <sys/time.h>
+#endif
+
 class Timer
 {
 private:
+#if defined(_WIN32) || defined(_WIN64)
+    LARGE_INTEGER m_timer_start;
+    double m_frequency;
+#else
     timespec    m_timer_start;
+#endif
     char*       m_timer_name;
 
 public:
@@ -67,14 +78,28 @@ public:
         m_timer_name = new char[8];
         strcpy(m_timer_name, "Default");
 
-        clock_gettime(CLOCK_REALTIME, &m_timer_start);
+#if defined(_WIN32) || defined(_WIN64)
+        LARGE_INTEGER freq;
+        QueryPerformanceFrequency(&freq);
+        m_frequency = double(freq.QuadPart);
+        QueryPerformanceCounter(&m_timer_start);
+#else
+        clock_gettime(CLOCK_MONOTONIC, &m_timer_start);
+#endif
     }
     Timer(const char* name)
     {
         m_timer_name = new char[strlen(name) + 1];
         strcpy(m_timer_name, name);
 
-        clock_gettime(CLOCK_REALTIME, &m_timer_start);
+#if defined(_WIN32) || defined(_WIN64)
+        LARGE_INTEGER freq;
+        QueryPerformanceFrequency(&freq);
+        m_frequency = double(freq.QuadPart);
+        QueryPerformanceCounter(&m_timer_start);
+#else
+        clock_gettime(CLOCK_MONOTONIC, &m_timer_start);
+#endif
     }
 
     ~Timer()
@@ -84,11 +109,16 @@ public:
     }
 
     void tick() {
+#if defined(_WIN32) || defined(_WIN64)
+        LARGE_INTEGER timer_end;
+        QueryPerformanceCounter(&timer_end);
+        double duration = double(timer_end.QuadPart - m_timer_start.QuadPart) / m_frequency;
+#else
         timespec timer_end;
-        clock_gettime(CLOCK_REALTIME, &timer_end);
+        clock_gettime(CLOCK_MONOTONIC, &timer_end);
 
         double duration;
-        if (timer_end.tv_nsec > m_timer_start.tv_nsec)
+        if (timer_end.tv_nsec < m_timer_start.tv_nsec)
         {
             duration = (timer_end.tv_sec - m_timer_start.tv_sec - 1) + (double)(1e9 + timer_end.tv_nsec - m_timer_start.tv_nsec) / 1e9;
         }
@@ -96,10 +126,11 @@ public:
         {
             duration = (timer_end.tv_sec - m_timer_start.tv_sec) + (double)(timer_end.tv_nsec - m_timer_start.tv_nsec) / 1e9;
         }
+#endif
         printf("Timer (%s) : %.6fs (%.4fms)\n", m_timer_name, duration, duration * 1e3);
     }
 };
-    
+
 }
 
 #endif

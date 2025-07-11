@@ -10,7 +10,7 @@ Texture::Texture(const char * filename): Texture()
 }
 
 // delegated constructor : c++11 feature
-Texture::Texture(const vec4 & base_color, const char * filename): 
+Texture::Texture(const vec4 & base_color, const char * filename):
     Texture(filename)
 {
     m_base_color = base_color;
@@ -68,7 +68,7 @@ vec4 Texture::sampleAt(const vec2 & texcoord) const
     if (m_buffer)
     {
         vec4 surface_color = sampler(*this, texcoord);
-        vec4 result_color = m_base_color.multiply(surface_color); 
+        vec4 result_color = m_base_color.multiply(surface_color);
 
         return result_color;
     }

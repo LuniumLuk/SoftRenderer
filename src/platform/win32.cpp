@@ -4,7 +4,7 @@
 #include <windows.h>
 #include <utility>
 #include "platform.hpp"
-#include "../misc.hpp"
+#include "misc.hpp"
 
 // reference : http://www.winprog.org/tutorial/simple_window.html
 
@@ -150,7 +150,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_MOUSEMOVE:
             if (wParam & MK_LBUTTON) // left mouse drag
             {
-                g_mouse_pts = MAKEPOINTS(lParam); 
+                g_mouse_pts = MAKEPOINTS(lParam);
                 handleMouseDrag(g_mouse_pts.x, g_mouse_pts.y);
             }
             break;

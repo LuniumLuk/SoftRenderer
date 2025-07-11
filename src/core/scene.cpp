@@ -77,7 +77,7 @@ void Model::drawByFixedPipeline(const FrameBuffer & frame_buffer, const Camera &
 
     COLORMAP_TYPE type = COLORMAP_RDYLGN;
 
-    // draw wireframe  
+    // draw wireframe
     for (size_t i = 0; i < m_mesh->getVertexCount(); i += 3)
     {
         Vector4 v1 = object_to_projection_matrix * Vector4(mesh_vertices[i].position, 1.0f);
@@ -112,13 +112,13 @@ void Model::draw(const FrameBuffer & frame_buffer, const Program & program)
     // vertex shader
     Vertex *mesh_vertices = m_mesh->getVertices();
     Vector4 *position_buffer = new Vector4[m_mesh->getVertexCount()];
-    
+
     __unused_variable(mesh_vertices);
     __unused_variable(position_buffer);
 
     for (size_t i = 0; i < m_mesh->getVertexCount(); i += 3)
     {
-        // 
+        //
         // program.run(VERTEX_SHADER, 2)
         // mesh_vertices[i].position
     }

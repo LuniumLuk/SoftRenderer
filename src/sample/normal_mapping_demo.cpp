@@ -13,7 +13,7 @@ static FrameBuffer frame_buffer(512, 512);
 static Scene scene;
 static Entity* entity_ptr;
 
-static float mouse_x = -1.0f; 
+static float mouse_x = -1.0f;
 static float mouse_y = -1.0f;
 
 static float camera_fov = 60.0f;
@@ -27,7 +27,7 @@ static DirectionalLight dir_light(
     vec3(0.0f, 0.0f, 0.0f),
     vec3(cos(light_angle), -1.0f, sin(light_angle)),
     vec3(1.0f, 1.0f, 1.0f) * 1.0f,
-    vec3(1.0f, 1.0f, 1.0f) 
+    vec3(1.0f, 1.0f, 1.0f)
 );
 
 static int current_shader = 0;
@@ -54,7 +54,7 @@ public:
 
 int normal_mapping_demo() {
 
-    entityConf config("assets/teapot_low.txt");
+    entityConf config(SOURCE_DIR "assets/teapot_low.txt");
     Entity ent = Entity(config);
     entity_ptr = &ent;
 
@@ -65,7 +65,7 @@ int normal_mapping_demo() {
     mesh_center = ent.getTriangleMesh()->getMeshCenter();
     // ent.setTransform(mat4::fromAxisAngle(vec3::UNIT_X, -PI / 2));
 
-    Envmap envmap("assets/envmaps/env01.bmp");
+    Envmap envmap(SOURCE_DIR "assets/envmaps/env01.bmp");
 
     scene.addEntity(&ent);
     scene.addLight((Light*)&dir_light);
@@ -114,7 +114,7 @@ int normal_mapping_demo() {
             frame_buffer, 10.0f, 5.0f,
             "FPS", 4.0f, COLOR_WHITE);
         drawInteger(
-            frame_buffer, 40.0f, 5.0f, 
+            frame_buffer, 40.0f, 5.0f,
             _fps, 4.0f, COLOR_RED);
 
         swapBuffer(window);
@@ -191,7 +191,7 @@ void mouseScrollEventCallback(AppWindow *window, float offset)
 void mouseDragEventCallback(AppWindow *window, float x, float y)
 {
     __unused_variable(window);
-    
+
     if (mouse_x > 0.0f && mouse_y > 0.0f)
     {
         scene.getCamera().rotateByDrag(x - mouse_x, y - mouse_y, 0.015f);

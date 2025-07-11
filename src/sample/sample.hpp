@@ -6,8 +6,8 @@
 #include <string.h>
 #include <time.h>
 #include <utility>
-#include "../api.hpp"
-#include "../platform/platform.hpp"
+#include "api.hpp"
+#include "platform/platform.hpp"
 
 #define FPS_SETUP() long _frame_count_since_last_update = 0; \
                     clock_t _last_update = clock()
@@ -22,5 +22,6 @@ int main_demo(const char* model);
 int blank_demo();
 int colormap_demo();
 int normal_mapping_demo();
+int shadow_mapping_demo(const char* model);
 
 #endif

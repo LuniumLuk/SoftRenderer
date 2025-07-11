@@ -36,7 +36,7 @@ v2f LitShader::vert(const vdata in, const Entity * entity, const Scene & scene) 
 vec4 UnlitShader::frag(const v2f in, const Entity * entity, const Scene & scene) const
 {
     __unused_variable(scene);
-    
+
     return SAMPLER_2D(TEXTURE_ALBEDO, in.texcoord);
 }
 
@@ -51,7 +51,7 @@ vec4 TriangleNormalShader::frag(const v2f in, const Entity * entity, const Scene
         normal.y * 0.5f + 0.5f,
         normal.z * 0.5f + 0.5f
     );
-    
+
     return vec4(color, 1.0f);
 }
 
@@ -66,7 +66,7 @@ vec4 VertexNormalShader::frag(const v2f in, const Entity * entity, const Scene &
         normal.y * 0.5f + 0.5f,
         normal.z * 0.5f + 0.5f
     );
-    
+
     return vec4(color, 1.0f);
 }
 
@@ -81,7 +81,7 @@ vec4 DepthShader::frag(const v2f in, const Entity * entity, const Scene & scene)
         (float)rgb_color.G / 255.0f,
         (float)rgb_color.B / 255.0f
     );
-    
+
     return vec4(color, 1.0f);
 }
 

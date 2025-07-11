@@ -46,7 +46,7 @@ public:
 };
 
 /**
- * A scene is a collection of models comprising everything that is included in the environment to be rendered. 
+ * A scene is a collection of models comprising everything that is included in the environment to be rendered.
  * A scene can also include material descriptions, lighting, and viewing specifications.
  *  -- Real Time Rendering 4th Edition --
  */

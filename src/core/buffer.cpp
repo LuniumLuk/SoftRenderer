@@ -95,8 +95,8 @@ void FrameBuffer::setupSamplingOption()
 void FrameBuffer::clearColorBuffer(const rgb & color) const
 {
     size_t temp_buffer_size = 3 * sizeof(byte_t);
-    byte_t temp_buffer[3] = { 
-        (byte_t)FTOD(color.r * 255), 
+    byte_t temp_buffer[3] = {
+        (byte_t)FTOD(color.r * 255),
         (byte_t)FTOD(color.g * 255),
         (byte_t)FTOD(color.b * 255) };
     byte_t *color_buffer_ptr = m_color_buffer;

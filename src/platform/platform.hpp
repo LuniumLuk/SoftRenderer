@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../global.hpp"
+#include "global.hpp"
 
 namespace LuGL
 {

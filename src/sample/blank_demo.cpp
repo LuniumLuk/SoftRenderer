@@ -31,7 +31,7 @@ int blank_demo() {
         frame_buffer.clearColorBuffer(rgb(0.0f, 0.0f, 0.0f));
 
         // it is possible that nothing can be seen if frame rate is too high
-        // maybe due to buffer swapping in some platform is not that smooth 
+        // maybe due to buffer swapping in some platform is not that smooth
         drawString(
             frame_buffer, 10.0f, 10.0f,
             "FPS", 6.0f, COLOR_WHITE);

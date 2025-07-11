@@ -36,32 +36,32 @@ namespace LuGL
 // BitMapFileHeader :
 // in x86,    sizeof(BITMAPFILEHEADER) = 14, use fread to load this struct (not implemented yet)
 // in x86_64, sizeof(BITMAPFILEHEADER) = 16, use loadFileHeaderx64() to load this struct
-typedef struct BITMAPFILEHEADER
+typedef struct __BITMAPFILEHEADER__
 {
-	UINT16  signature;
-	UINT32  file_size;
-	UINT32  reserved;
-	UINT32  data_offset;
+    UINT16  signature;
+    UINT32  file_size;
+    UINT32  reserved;
+    UINT32  data_offset;
 } BMPFileHeader;
 
-typedef struct BITMAPINFOHEADER
+typedef struct __BITMAPINFOHEADER__
 {
-	UINT32      size;           // info header size
-	INT32       width;
- 	INT32       height;         // negative height indicate upside-down data buffer
- 	UINT16      planes;
-	UINT16      bits_per_pixel;
-                                // 1 = monochrome palette.  NumColors = 1  
-                                // 4 = 4bit palletized.     NumColors = 16  
-                                // 8 = 8bit palletized.     NumColors = 256 
+    UINT32      size;           // info header size
+    INT32       width;
+    INT32       height;         // negative height indicate upside-down data buffer
+    UINT16      planes;
+    UINT16      bits_per_pixel;
+                                // 1 = monochrome palette.  NumColors = 1
+                                // 4 = 4bit palletized.     NumColors = 16
+                                // 8 = 8bit palletized.     NumColors = 256
                                 // 16 = 16bit RGB.          NumColors = 65536
                                 // 24 = 24bit RGB.          NumColors = 16M
-	UINT32      compression;
-	UINT32      image_size;     // compressed size of image, 0 if compression == 0
- 	INT32       X_pixels_per_M;
-	INT32       Y_pixels_per_M;
-	UINT32      colors_used;
-	UINT32      important_colors;
+    UINT32      compression;
+    UINT32      image_size;     // compressed size of image, 0 if compression == 0
+    INT32       X_pixels_per_M;
+    INT32       Y_pixels_per_M;
+    UINT32      colors_used;
+    UINT32      important_colors;
 } BMPInfoHeader;
 
 // used when bits_per_pixel <= 8

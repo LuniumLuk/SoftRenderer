@@ -50,7 +50,7 @@ void LuGL::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RG
     long dy = -fabs(y2 - y1);
     long sx = x1 < x2 ? 1 : -1;
     long sy = y1 < y2 ? 1 : -1;
-    long err = dx + dy; 
+    long err = dx + dy;
     long e2;
 
     while (true)
@@ -93,7 +93,7 @@ void LuGL::drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RG
     long dy = -fabs(y2 - y1);
     long sx = x1 < x2 ? 1 : -1;
     long sy = y1 < y2 ? 1 : -1;
-    long err = dx + dy; 
+    long err = dx + dy;
     long e2;
 
     float dR = 0.0f;
@@ -191,7 +191,7 @@ void LuGL::drawTriangle(
     const Vector2 & v2,
     const Vector2 & v3,
     const RGBColor & color )
-{   
+{
     // 1000 ~= 114ms
     // standardTriangleRasterization(frame_buffer, v1, v2, v3, color);
     // 1000 ~= 1620ms
@@ -227,7 +227,7 @@ void LuGL::standardTriangleRasterization(
     long y2 = FTOD(v2.y);
     long x3 = FTOD(v3.x);
     long y3 = FTOD(v3.y);
-    
+
     sortVerticesByY(x1, y1, x2, y2, x3, y3);
     if (y1 == y2)
     {
@@ -266,9 +266,9 @@ void LuGL::standardTriangleRasterization(
     long y2 = FTOD(v2.y);
     long x3 = FTOD(v3.x);
     long y3 = FTOD(v3.y);
-    Vector3 color_v1(color1.R, color1.G, color1.B); 
-    Vector3 color_v2(color2.R, color2.G, color2.B); 
-    Vector3 color_v3(color3.R, color3.G, color3.B); 
+    Vector3 color_v1(color1.R, color1.G, color1.B);
+    Vector3 color_v2(color2.R, color2.G, color2.B);
+    Vector3 color_v3(color3.R, color3.G, color3.B);
     if (y1 > y2)
     {
         std::swap(x1, x2);
@@ -287,7 +287,7 @@ void LuGL::standardTriangleRasterization(
             swap(color_v1, color_v2);
         }
     }
-    
+
     if (y1 == y2)
     {
         standardFillFlatTriangle(frame_buffer, y1, y3, x1, x2, x3, color_v1, color_v2, color_v3);
@@ -309,7 +309,7 @@ void LuGL::standardTriangleRasterization(
  * triangle vertices:
  *       [x3,y3]
  * [x1,y12]   [x2,y12]
- * 
+ *
  * note : x1 and x2 accept float input for accuracy
  */
 void LuGL::standardFillFlatTriangle(
@@ -494,8 +494,8 @@ void LuGL::bresenhamFillFlatTriangle(const FrameBuffer & frame_buffer, long y12,
     long sx1 = x1 < x3 ? 1 : -1;
     long sx2 = x2 < x3 ? 1 : -1;
     long sy = y12 < y3 ? 1 : -1;
-    long err1 = dx1 + dy; 
-    long err2 = dx2 + dy; 
+    long err1 = dx1 + dy;
+    long err2 = dx2 + dy;
     long e21;
     long e22;
 
@@ -577,7 +577,7 @@ void LuGL::fillTriangleTable(long * x_left, long * x_right, long x1, long y1, lo
     long dy = -fabs(y2 - y1);
     long sx = x1 < x2 ? 1 : -1;
     long sy = y1 < y2 ? 1 : -1;
-    long err = dx + dy; 
+    long err = dx + dy;
     long e2;
     bool need_to_draw = true;
 
@@ -627,12 +627,12 @@ void LuGL::fillTriangleTable(long * x_left, long * x_right, long x1, long y1, lo
  * v
  */
 void LuGL::drawDigit(
-    const FrameBuffer & frame_buffer, 
-    const float & x, const float & y, 
-    const DIGIT_CHARACTER & character, 
-    const float & size, 
+    const FrameBuffer & frame_buffer,
+    const float & x, const float & y,
+    const DIGIT_CHARACTER & character,
+    const float & size,
     const RGBCOLOR & color,
-    const float & ratio, 
+    const float & ratio,
     const long & segment )
 {
     assert(character < DIGIT_NUM);
@@ -657,13 +657,13 @@ void LuGL::drawDigit(
  * (sign) <-size * gap(pixel)-> digit0 <-size * gap(pixel)-> digit1
  */
 void LuGL::drawInteger(
-    const FrameBuffer & frame_buffer, 
-    const float & x, const float & y, 
-    long number, 
-    const float & size, 
+    const FrameBuffer & frame_buffer,
+    const float & x, const float & y,
+    long number,
+    const float & size,
     const RGBCOLOR & color,
     const float & gap,
-    const float & ratio, 
+    const float & ratio,
     const long & segment )
 {
     bool is_negative = false;
@@ -685,7 +685,7 @@ void LuGL::drawInteger(
     {
         drawLine(
             frame_buffer,
-            Vector2(offset_x, frame_buffer.getHeight() - y - size * ratio * 0.5f),  
+            Vector2(offset_x, frame_buffer.getHeight() - y - size * ratio * 0.5f),
             Vector2(offset_x + size, frame_buffer.getHeight() - y - size * ratio * 0.5f),
             color
         );
@@ -707,13 +707,13 @@ void LuGL::drawInteger(
  * (sign) <-size * gap(pixel)-> digit0 <-size * gap(pixel)-> digit1
  */
 void LuGL::drawString(
-    const FrameBuffer & frame_buffer, 
-    const float & x, const float & y, 
+    const FrameBuffer & frame_buffer,
+    const float & x, const float & y,
     const char * string,
     const float & size,
     const RGBCOLOR & color,
     const float & gap,
-    const float & ratio, 
+    const float & ratio,
     const long & segment )
 {
     size_t length = strlen(string);

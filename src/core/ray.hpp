@@ -29,7 +29,7 @@ public:
     bool intersectWithTriangle(
         const Vector3 & v1,
         const Vector3 & v2,
-        const Vector3 & v3, 
+        const Vector3 & v3,
         float * u,
         float * v ) const;
     bool intersectWithModel(

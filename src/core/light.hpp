@@ -63,11 +63,11 @@ public:
         const vec3 & diffuse,
         const vec3 & specular
     ): Light(
-        position, 
+        position,
         direction,
         diffuse,
         specular) {}
-    
+
     LightComp calcLight(vec3 normal, vec3 frag_pos, vec3 view_dir);
 };
 
@@ -85,14 +85,14 @@ public:
         const vec3 & diffuse,
         const vec3 & specular
     ): Light(
-        position, 
+        position,
         direction,
         diffuse,
         specular),
         m_constant(1.0f),
         m_linear(0.1f),
         m_quadratic(0.01f) {}
-        
+
     LightComp calcLight(vec3 normal, vec3 frag_pos, vec3 view_dir);
 };
 

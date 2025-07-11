@@ -6,7 +6,7 @@ using namespace LuGL;
 bool Ray::intersectWithTriangle(
     const vec3 & v1,
     const vec3 & v2,
-    const vec3 & v3, 
+    const vec3 & v3,
     float * u,
     float * v ) const
 {
@@ -63,6 +63,6 @@ bool Ray::intersectWithTriangle(
     // 5. calculate UV coords(barycentric coord) for P in v1, v2 ,v3
     *u /= denom;
     *v /= denom;
-    
+
     return true;
 }

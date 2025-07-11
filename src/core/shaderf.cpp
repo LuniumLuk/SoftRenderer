@@ -82,7 +82,7 @@ void LuGL::simpleVertexShader(SHADER_PARAM)
 void LuGL::simpleFragmentShader(SHADER_PARAM)
 {
     unused_in;
-    
+
     unused_uniform;
 
     Vector4 *frag_color = layout_out(Vector4, 0);

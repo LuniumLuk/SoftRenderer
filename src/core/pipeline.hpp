@@ -22,7 +22,7 @@ namespace LuGL
 
 #define FLOAT2BYTECOLOR(x) FTOD(clamp(x,0.0f,1.0f)*255)
 #define BYTE2FLOATCOLOR(x) DTOF((float)x/255.0f)
-                              
+
 
 #define TRIANGLE_VERTEX(fidx,vidx) (mesh->getVertices()[mesh->getFaces()[fidx][vidx]])
 #define TRIANGLE_NORMAL(fidx,vidx) (mesh->hasVertexNormals()?mesh->getVertexNormals()[mesh->getFaceNormals()[fidx][vidx]]:vec3::ZERO)
@@ -31,15 +31,15 @@ namespace LuGL
 #define TRIANGLE_TANGENT(fidx) (mesh->hasTangents()?mesh->getTangents()[fidx]:vec3::ZERO)
 #define TRIANGLE_BITANGENT(fidx) (mesh->hasTangents()?mesh->getBitangents()[fidx]:vec3::ZERO)
 
-#define TRIANGLE_VDATA(fidx,vidx) { .model_mat = entity->getTransform(),       \
-                                    .model_inv_transpose = model_inv_transpose,\
-                                    .mvp_mat = mvp_matrix,                     \
-                                    .position = TRIANGLE_VERTEX(fidx, vidx),   \
-                                    .normal = TRIANGLE_NORMAL(fidx, vidx),     \
-                                    .texcoord = TRIANGLE_TEXCOORD(fidx, vidx), \
-                                    .color = vec4::ZERO,                       \
-                                    .tangent = TRIANGLE_TANGENT(fidx),         \
-                                    .bitangent = TRIANGLE_BITANGENT(fidx) }
+#define TRIANGLE_VDATA(fidx,vidx) { entity->getTransform(),       \
+                                    model_inv_transpose,\
+                                    mvp_matrix,                     \
+                                    TRIANGLE_VERTEX(fidx, vidx),   \
+                                    TRIANGLE_NORMAL(fidx, vidx),     \
+                                    TRIANGLE_TEXCOORD(fidx, vidx), \
+                                    vec4::ZERO,                       \
+                                    TRIANGLE_TANGENT(fidx),         \
+                                    TRIANGLE_BITANGENT(fidx) }
 
 #define SCREEN_MAPPING_X(x,frame_buffer) FTOD((x * 0.5f + 0.5f) * frame_buffer.getWidth())
 #define SCREEN_MAPPING_Y(y,frame_buffer) FTOD((y * 0.5f + 0.5f) * frame_buffer.getHeight())

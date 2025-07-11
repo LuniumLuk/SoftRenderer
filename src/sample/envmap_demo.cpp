@@ -13,7 +13,7 @@ static FrameBuffer frame_buffer(512, 512);
 static Scene scene;
 static Entity* entity_ptr;
 
-static float mouse_x = -1.0f; 
+static float mouse_x = -1.0f;
 static float mouse_y = -1.0f;
 
 static float camera_fov = 60.0f;
@@ -24,7 +24,7 @@ static float view_distance = 3.0f;
 
 int envmap_demo() {
 
-    entityConf config("assets/sphere.txt");
+    entityConf config(SOURCE_DIR "assets/sphere.txt");
     Entity ent = Entity(config);
     entity_ptr = &ent;
 
@@ -32,7 +32,7 @@ int envmap_demo() {
     ent.getTriangleMesh()->computeVertexNormals();
     ent.getTriangleMesh()->printMeshInfo();
 
-    Envmap envmap("assets/envmaps/env01.bmp");
+    Envmap envmap(SOURCE_DIR "assets/envmaps/env01.bmp");
 
     scene.addEntity(&ent);
     // scene.addLight((Light*)&dir_light);
@@ -74,7 +74,7 @@ int envmap_demo() {
             frame_buffer, 10.0f, 10.0f,
             "FPS", 6.0f, COLOR_WHITE);
         drawInteger(
-            frame_buffer, 40.0f, 10.0f, 
+            frame_buffer, 40.0f, 10.0f,
             _fps, 6.0f, COLOR_RED);
 
         swapBuffer(window);
@@ -144,7 +144,7 @@ void mouseScrollEventCallback(AppWindow *window, float offset)
 void mouseDragEventCallback(AppWindow *window, float x, float y)
 {
     __unused_variable(window);
-    
+
     if (mouse_x > 0.0f && mouse_y > 0.0f)
     {
         scene.getCamera().rotateByDrag(x - mouse_x, y - mouse_y, 0.015f);

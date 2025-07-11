@@ -12,7 +12,7 @@ int main(int argc, char * argv[]) {
         switch (launch_case)
         {
             case 0:
-                if (argc > 2) 
+                if (argc > 2)
                     return_value = main_demo(argv[2]);
                 else
                     return_value = main_demo(default_model);
@@ -20,7 +20,7 @@ int main(int argc, char * argv[]) {
             case 1:
                 return_value = blank_demo();
                 break;
-            case 2:     
+            case 2:
                 return_value = colormap_demo();
                 break;
             case 3:

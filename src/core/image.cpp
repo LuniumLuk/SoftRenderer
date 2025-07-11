@@ -105,7 +105,7 @@ void BMPImage::loadImage()
         fread(temp_buffer, sizeof(byte_t), scan_line, fp);
         memcpy(m_buffer + i * data_line, temp_buffer, data_line);
     }
-    
+
     delete[] temp_buffer;
 
     m_is_loaded = true;
@@ -115,7 +115,7 @@ void BMPImage::setReverseY(bool val)
 {
     m_info_header.height = val ? copysign(m_info_header.height, -1) : copysign(m_info_header.height, 1);
 }
-void BMPImage::clean() 
+void BMPImage::clean()
 {
     if (m_color_tables)
         delete[] m_color_tables;
@@ -133,7 +133,7 @@ size_t BMPImage::getDataLine() const
     if (channel_num < 0)
     {
         return (width + (-channel_num - 1)) / (-channel_num);
-    } 
+    }
     else if (channel_num > 0)
     {
         return width * channel_num;
@@ -218,7 +218,7 @@ BMPImage::BMPImage(const BMPImage & image): m_color_tables(nullptr),
     size_t f_len = strlen(image.m_filename);
     m_filename = new char[f_len + 1];
     strcpy(m_filename, image.m_filename);
-    
+
     m_is_loaded = true;
 }
 size_t BMPImage::getChannelNum() const
@@ -231,7 +231,7 @@ size_t BMPImage::getChannelNum() const
         case 8:  return 1;
         case 24: return 3;
         case 32: return 4;
-        default: 
+        default:
             printf("BMPImage : image unloaded or unsupported channel num");
             return 0;
     }
@@ -353,7 +353,7 @@ void UniformImage::RGB2BGR()
 }
 // SIMD method to convert RGB to BGR
 // __uint128_t may not supported in some system, need to switch to other sturcture or type
-void UniformImage::RGB2BGR_SIMD() 
+void UniformImage::RGB2BGR_SIMD()
 {
     // SIMD structure to do byte_t operations in image
     // a more readable way to initialize a uint128
@@ -361,7 +361,14 @@ void UniformImage::RGB2BGR_SIMD()
     {
         __uint128_t i;
         byte_t     c[16];
-    } mask = { .c = { 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00 }};
+    } mask = {};
+    mask.i = 0;
+    mask.c[0] = 0xFF;
+    mask.c[3] = 0xFF;
+    mask.c[6] = 0xFF;
+    mask.c[9] = 0xFF;
+    mask.c[12] = 0xFF;
+
     __uint128_t s0, sr, sg, sb;
 
     byte_t *buffer_ptr = m_buffer;
@@ -498,9 +505,9 @@ void UniformImage::convertColorSpace(const unsigned short mode)
     {
         return;
     }
-    
+
     if (mode == COLOR_RGB && m_color_space == COLOR_BGR)
-    { 
+    {
 #ifdef __SIZEOF_INT128__
         BGR2RGB_SIMD();
 #else
@@ -509,7 +516,7 @@ void UniformImage::convertColorSpace(const unsigned short mode)
         m_color_space = COLOR_RGB;
     }
     if (mode == COLOR_BGR && m_color_space == COLOR_RGB)
-    { 
+    {
 #ifdef __SIZEOF_INT128__
         RGB2BGR_SIMD();
 #else
@@ -532,12 +539,12 @@ byte_t* UniformImage::getImageBufferConst() const
 // reference : https://stackoverflow.com/questions/1001307/detecting-endianness-programmatically-in-a-c-program
 bool UniformImage::isBigEndian()
 {
-    union 
+    union
     {
         UINT32 i;
         byte_t c[4];
     } bint = { 0x01020304 };
-    return bint.c[0] == 1; 
+    return bint.c[0] == 1;
 }
 void UniformImage::printImageInfo() const
 {

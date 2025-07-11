@@ -296,7 +296,7 @@ void Vector3::rotate(const Quaternion & quat)
 {
     Vector3 u(quat.x, quat.y, quat.z);
     float s = quat.w;
-    
+
     *this = 2.0f * u.dot(*this) * u
           + (s * s - u.dot(u)) * (*this)
           + 2.0f * s * u.cross(*this);
@@ -679,7 +679,7 @@ Quaternion Quaternion::slerp(const Quaternion & from, const Quaternion & to, flo
         // float new_angle = alpha * a;
         // float factor = sinf(new_angle) / sinf(a);
         // Quaternion q = from.inversed() * target;
-        
+
         // Quaternion quat(
         //     q.x * factor,
         //     q.y * factor,
@@ -757,7 +757,7 @@ Quaternion Quaternion::fromAxisAngle(const Vector3 & axis, float angle)
  * Matrix3 : functionalities and utilities
  */
 
-Matrix3 Matrix3::IDENTITY = Matrix3( 1.0f, 0.0f, 0.0f, 
+Matrix3 Matrix3::IDENTITY = Matrix3( 1.0f, 0.0f, 0.0f,
                                      0.0f, 1.0f, 0.0f,
                                      0.0f, 0.0f, 1.0f );
 
@@ -800,7 +800,7 @@ float& Matrix3::operator() (const size_t & row, const size_t & col)
     return m[row * 3 + col];
 }
 Matrix3 Matrix3::operator+ (const Matrix3 & other) const
-{   
+{
     Matrix3 mat(
         m[0] + other.m[0], m[1] + other.m[1], m[2] + other.m[2],
         m[3] + other.m[3], m[4] + other.m[4], m[5] + other.m[5],
@@ -859,11 +859,11 @@ bool Matrix3::operator== (const Matrix3 & other) const
     if ( fabs(m[0] - other.m[0]) <= EPSILON * max(max(fabs(m[0]), fabs(other.m[0])), 1.0f)
       && fabs(m[1] - other.m[1]) <= EPSILON * max(max(fabs(m[1]), fabs(other.m[1])), 1.0f)
       && fabs(m[2] - other.m[2]) <= EPSILON * max(max(fabs(m[2]), fabs(other.m[2])), 1.0f)
-      && fabs(m[3] - other.m[3]) <= EPSILON * max(max(fabs(m[3]), fabs(other.m[3])), 1.0f) 
-      && fabs(m[4] - other.m[4]) <= EPSILON * max(max(fabs(m[4]), fabs(other.m[4])), 1.0f) 
-      && fabs(m[5] - other.m[5]) <= EPSILON * max(max(fabs(m[5]), fabs(other.m[5])), 1.0f) 
-      && fabs(m[6] - other.m[6]) <= EPSILON * max(max(fabs(m[6]), fabs(other.m[6])), 1.0f) 
-      && fabs(m[7] - other.m[7]) <= EPSILON * max(max(fabs(m[7]), fabs(other.m[7])), 1.0f) 
+      && fabs(m[3] - other.m[3]) <= EPSILON * max(max(fabs(m[3]), fabs(other.m[3])), 1.0f)
+      && fabs(m[4] - other.m[4]) <= EPSILON * max(max(fabs(m[4]), fabs(other.m[4])), 1.0f)
+      && fabs(m[5] - other.m[5]) <= EPSILON * max(max(fabs(m[5]), fabs(other.m[5])), 1.0f)
+      && fabs(m[6] - other.m[6]) <= EPSILON * max(max(fabs(m[6]), fabs(other.m[6])), 1.0f)
+      && fabs(m[7] - other.m[7]) <= EPSILON * max(max(fabs(m[7]), fabs(other.m[7])), 1.0f)
       && fabs(m[8] - other.m[8]) <= EPSILON * max(max(fabs(m[8]), fabs(other.m[8])), 1.0f) )
     {
         return true;
@@ -952,10 +952,10 @@ Matrix4 Matrix4::IDENTITY = Matrix4(
 
 Matrix4::Matrix4()
 {
-    m[0]  = 1.0f; m[1]  = 0.0f; m[2]  = 0.0f; m[3]  = 0.0f; 
-    m[4]  = 0.0f; m[5]  = 1.0f; m[6]  = 0.0f; m[7]  = 0.0f; 
-    m[8]  = 0.0f; m[9]  = 0.0f; m[10] = 1.0f; m[11] = 0.0f; 
-    m[12] = 0.0f; m[13] = 0.0f; m[14] = 0.0f; m[15] = 1.0f; 
+    m[0]  = 1.0f; m[1]  = 0.0f; m[2]  = 0.0f; m[3]  = 0.0f;
+    m[4]  = 0.0f; m[5]  = 1.0f; m[6]  = 0.0f; m[7]  = 0.0f;
+    m[8]  = 0.0f; m[9]  = 0.0f; m[10] = 1.0f; m[11] = 0.0f;
+    m[12] = 0.0f; m[13] = 0.0f; m[14] = 0.0f; m[15] = 1.0f;
 }
 Matrix4::Matrix4(
     const float & m1,  const float & m2,  const float & m3,  const float & m4,
@@ -963,10 +963,10 @@ Matrix4::Matrix4(
     const float & m9,  const float & m10, const float & m11, const float & m12,
     const float & m13, const float & m14, const float & m15, const float & m16 )
 {
-    m[0]  = m1;  m[1]  = m2;  m[2]  = m3;  m[3]  = m4; 
-    m[4]  = m5;  m[5]  = m6;  m[6]  = m7;  m[7]  = m8; 
-    m[8]  = m9;  m[9]  = m10; m[10] = m11; m[11] = m12; 
-    m[12] = m13; m[13] = m14; m[14] = m15; m[15] = m16; 
+    m[0]  = m1;  m[1]  = m2;  m[2]  = m3;  m[3]  = m4;
+    m[4]  = m5;  m[5]  = m6;  m[6]  = m7;  m[7]  = m8;
+    m[8]  = m9;  m[9]  = m10; m[10] = m11; m[11] = m12;
+    m[12] = m13; m[13] = m14; m[14] = m15; m[15] = m16;
 }
 Matrix4::Matrix4(const Matrix4 & other)
 {
@@ -1054,18 +1054,18 @@ bool Matrix4::operator== (const Matrix4 & other) const
     if ( fabs(m[0] - other.m[0]) <= EPSILON * max(max(fabs(m[0]), fabs(other.m[0])), 1.0f)
       && fabs(m[1] - other.m[1]) <= EPSILON * max(max(fabs(m[1]), fabs(other.m[1])), 1.0f)
       && fabs(m[2] - other.m[2]) <= EPSILON * max(max(fabs(m[2]), fabs(other.m[2])), 1.0f)
-      && fabs(m[3] - other.m[3]) <= EPSILON * max(max(fabs(m[3]), fabs(other.m[3])), 1.0f) 
-      && fabs(m[4] - other.m[4]) <= EPSILON * max(max(fabs(m[4]), fabs(other.m[4])), 1.0f) 
-      && fabs(m[5] - other.m[5]) <= EPSILON * max(max(fabs(m[5]), fabs(other.m[5])), 1.0f) 
-      && fabs(m[6] - other.m[6]) <= EPSILON * max(max(fabs(m[6]), fabs(other.m[6])), 1.0f) 
-      && fabs(m[7] - other.m[7]) <= EPSILON * max(max(fabs(m[7]), fabs(other.m[7])), 1.0f) 
+      && fabs(m[3] - other.m[3]) <= EPSILON * max(max(fabs(m[3]), fabs(other.m[3])), 1.0f)
+      && fabs(m[4] - other.m[4]) <= EPSILON * max(max(fabs(m[4]), fabs(other.m[4])), 1.0f)
+      && fabs(m[5] - other.m[5]) <= EPSILON * max(max(fabs(m[5]), fabs(other.m[5])), 1.0f)
+      && fabs(m[6] - other.m[6]) <= EPSILON * max(max(fabs(m[6]), fabs(other.m[6])), 1.0f)
+      && fabs(m[7] - other.m[7]) <= EPSILON * max(max(fabs(m[7]), fabs(other.m[7])), 1.0f)
       && fabs(m[8] - other.m[8]) <= EPSILON * max(max(fabs(m[8]), fabs(other.m[8])), 1.0f)
       && fabs(m[9] - other.m[9]) <= EPSILON * max(max(fabs(m[9]), fabs(other.m[9])), 1.0f)
       && fabs(m[10] - other.m[10]) <= EPSILON * max(max(fabs(m[10]), fabs(other.m[10])), 1.0f)
       && fabs(m[11] - other.m[11]) <= EPSILON * max(max(fabs(m[11]), fabs(other.m[11])), 1.0f)
-      && fabs(m[12] - other.m[12]) <= EPSILON * max(max(fabs(m[12]), fabs(other.m[12])), 1.0f) 
-      && fabs(m[13] - other.m[13]) <= EPSILON * max(max(fabs(m[13]), fabs(other.m[13])), 1.0f) 
-      && fabs(m[14] - other.m[14]) <= EPSILON * max(max(fabs(m[14]), fabs(other.m[14])), 1.0f) 
+      && fabs(m[12] - other.m[12]) <= EPSILON * max(max(fabs(m[12]), fabs(other.m[12])), 1.0f)
+      && fabs(m[13] - other.m[13]) <= EPSILON * max(max(fabs(m[13]), fabs(other.m[13])), 1.0f)
+      && fabs(m[14] - other.m[14]) <= EPSILON * max(max(fabs(m[14]), fabs(other.m[14])), 1.0f)
       && fabs(m[15] - other.m[15]) <= EPSILON * max(max(fabs(m[15]), fabs(other.m[15])), 1.0f) )
     {
         return true;
@@ -1102,76 +1102,76 @@ Matrix4 Matrix4::inversed() const
     float det = (*this).det();
     ASSERT_NON_ZERO(det);
     float factor = 1.0f / det;
-    float m11 = Matrix3(m[5],  m[6],  m[7], 
-                        m[9],  m[10], m[11], 
+    float m11 = Matrix3(m[5],  m[6],  m[7],
+                        m[9],  m[10], m[11],
                         m[13], m[14], m[15]).det();
-    float m12 = Matrix3(m[4],  m[6],  m[7], 
-                        m[8],  m[10], m[11], 
+    float m12 = Matrix3(m[4],  m[6],  m[7],
+                        m[8],  m[10], m[11],
                         m[12], m[14], m[15]).det();
-    float m13 = Matrix3(m[4],  m[5],  m[7], 
-                        m[8],  m[9],  m[11], 
+    float m13 = Matrix3(m[4],  m[5],  m[7],
+                        m[8],  m[9],  m[11],
                         m[12], m[13], m[15]).det();
-    float m14 = Matrix3(m[4],  m[5],  m[6], 
-                        m[8],  m[9],  m[10], 
+    float m14 = Matrix3(m[4],  m[5],  m[6],
+                        m[8],  m[9],  m[10],
                         m[12], m[13], m[14]).det();
-    float m21 = Matrix3(m[1],  m[2],  m[3], 
-                        m[9],  m[10], m[11], 
+    float m21 = Matrix3(m[1],  m[2],  m[3],
+                        m[9],  m[10], m[11],
                         m[13], m[14], m[15]).det();
-    float m22 = Matrix3(m[0],  m[2],  m[3], 
-                        m[8],  m[10], m[11], 
+    float m22 = Matrix3(m[0],  m[2],  m[3],
+                        m[8],  m[10], m[11],
                         m[12], m[14], m[15]).det();
-    float m23 = Matrix3(m[0],  m[1],  m[3], 
-                        m[8],  m[9],  m[11], 
+    float m23 = Matrix3(m[0],  m[1],  m[3],
+                        m[8],  m[9],  m[11],
                         m[12], m[13], m[15]).det();
-    float m24 = Matrix3(m[0],  m[1],  m[2], 
-                        m[8],  m[9],  m[10], 
+    float m24 = Matrix3(m[0],  m[1],  m[2],
+                        m[8],  m[9],  m[10],
                         m[12], m[13], m[14]).det();
-    float m31 = Matrix3(m[1],  m[2],  m[3], 
-                        m[5],  m[6],  m[7], 
+    float m31 = Matrix3(m[1],  m[2],  m[3],
+                        m[5],  m[6],  m[7],
                         m[13], m[14], m[15]).det();
-    float m32 = Matrix3(m[0],  m[2],  m[3], 
-                        m[4],  m[6],  m[7], 
+    float m32 = Matrix3(m[0],  m[2],  m[3],
+                        m[4],  m[6],  m[7],
                         m[12], m[14], m[15]).det();
-    float m33 = Matrix3(m[0],  m[1],  m[3], 
-                        m[4],  m[5],  m[7], 
+    float m33 = Matrix3(m[0],  m[1],  m[3],
+                        m[4],  m[5],  m[7],
                         m[12], m[13], m[15]).det();
-    float m34 = Matrix3(m[0],  m[1],  m[2], 
-                        m[4],  m[5],  m[6], 
+    float m34 = Matrix3(m[0],  m[1],  m[2],
+                        m[4],  m[5],  m[6],
                         m[12], m[13], m[14]).det();
-    float m41 = Matrix3(m[1],  m[2],  m[3], 
-                        m[5],  m[6],  m[7], 
+    float m41 = Matrix3(m[1],  m[2],  m[3],
+                        m[5],  m[6],  m[7],
                         m[9],  m[10], m[11]).det();
-    float m42 = Matrix3(m[0],  m[2],  m[3], 
-                        m[4],  m[6],  m[7], 
+    float m42 = Matrix3(m[0],  m[2],  m[3],
+                        m[4],  m[6],  m[7],
                         m[8],  m[10], m[11]).det();
-    float m43 = Matrix3(m[0],  m[1],  m[3], 
-                        m[4],  m[5],  m[7], 
+    float m43 = Matrix3(m[0],  m[1],  m[3],
+                        m[4],  m[5],  m[7],
                         m[8],  m[9],  m[11]).det();
-    float m44 = Matrix3(m[0],  m[1],  m[2], 
-                        m[4],  m[5],  m[6], 
+    float m44 = Matrix3(m[0],  m[1],  m[2],
+                        m[4],  m[5],  m[6],
                         m[8],  m[9],  m[10]).det();
     Matrix4 mat(
-         m11 * factor, -m21 * factor,  m31 * factor, -m41 * factor, 
-        -m12 * factor,  m22 * factor, -m32 * factor,  m42 * factor, 
-         m13 * factor, -m23 * factor,  m33 * factor, -m43 * factor, 
+         m11 * factor, -m21 * factor,  m31 * factor, -m41 * factor,
+        -m12 * factor,  m22 * factor, -m32 * factor,  m42 * factor,
+         m13 * factor, -m23 * factor,  m33 * factor, -m43 * factor,
         -m14 * factor,  m24 * factor, -m34 * factor,  m44 * factor
     );
     return mat;
 }
 float Matrix4::det() const
 {
-    return 
-        m[0] * Matrix3(m[5],  m[6],  m[7], 
-                       m[9],  m[10], m[11], 
+    return
+        m[0] * Matrix3(m[5],  m[6],  m[7],
+                       m[9],  m[10], m[11],
                        m[13], m[14], m[15]).det()
-      - m[1] * Matrix3(m[4],  m[6],  m[7], 
-                       m[8],  m[10], m[11], 
+      - m[1] * Matrix3(m[4],  m[6],  m[7],
+                       m[8],  m[10], m[11],
                        m[12], m[14], m[15]).det()
-      + m[2] * Matrix3(m[4],  m[5],  m[7], 
-                       m[8],  m[9],  m[11], 
+      + m[2] * Matrix3(m[4],  m[5],  m[7],
+                       m[8],  m[9],  m[11],
                        m[12], m[13], m[15]).det()
-      - m[3] * Matrix3(m[4],  m[5],  m[6], 
-                       m[8],  m[9],  m[10], 
+      - m[3] * Matrix3(m[4],  m[5],  m[6],
+                       m[8],  m[9],  m[10],
                        m[12], m[13], m[14]).det();
 }
 Matrix4 Matrix4::transposed() const
@@ -1264,7 +1264,7 @@ Matrix4 Matrix4::fromAxisAngle(const Vector3 & axis, const float & angle)
         cos + xx * (1.0f - cos), xy * (1.0f - cos) - axis.z * sin, xz * (1.0f - cos) + axis.y * sin, 0.0f,
         xy * (1.0f - cos) + axis.z * sin, cos + yy * (1.0f - cos), yz * (1.0f - cos) - axis.x * sin, 0.0f,
         xz * (1.0f - cos) - axis.y * sin, yz * (1.0f - cos) + axis.x * sin, cos + zz * (1.0f - cos), 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f 
+        0.0f, 0.0f, 0.0f, 1.0f
     );
     return mat;
 }

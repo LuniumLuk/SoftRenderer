@@ -351,11 +351,11 @@ bool LuGL::isMouseButtonDown(AppWindow *window, LuGL::MOUSE_BUTTON button)
 
 LuGL::Time LuGL::getSystemTime()
 {
-    NSDateComponents *components = [[NSCalendar currentCalendar] 
+    NSDateComponents *components = [[NSCalendar currentCalendar]
         components: NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitWeekday | NSCalendarUnitDay |
                     NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond | NSCalendarUnitNanosecond
           fromDate:[NSDate date]];
-    
+
     LuGL::Time time;
     time.year = components.year;
     time.month = components.month;

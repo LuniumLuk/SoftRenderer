@@ -119,7 +119,7 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
             PERSPECTIVE_DIVIDE(v0.position);
             PERSPECTIVE_DIVIDE(v1.position);
             PERSPECTIVE_DIVIDE(v2.position);
-            
+
             // Triangle Screen Clipping
             if ((v0.position.x < -1.0f && v1.position.x < -1.0f && v2.position.x < -1.0f) ||
                 (v0.position.x >  1.0f && v1.position.x >  1.0f && v2.position.x >  1.0f) ||
@@ -164,7 +164,7 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
                 v2.position.x * v0.position.y - v0.position.x * v2.position.y,
                 v0.position.x * v1.position.y - v1.position.x * v0.position.y
             );
-            
+
             // AABB Bounding Box of Triangle
             long x_min = min(v0.position.x, min(v1.position.x, v2.position.x));
             long x_max = max(v0.position.x, max(v1.position.x, v2.position.x));
@@ -185,7 +185,7 @@ void Pipeline::draw(const FrameBuffer & frame_buffer, const Scene & scene, const
 
                     pos.z = barycentric.dot(vec3(v0.position.z, v1.position.z, v2.position.z));
                     pos.w = barycentric.dot(vec3(v0.position.w, v1.position.w, v2.position.w));
-                    
+
                     // Near/Far Plane Clipping
                     if (pos.z < 0.0f || pos.z > 1.0f)
                     {
@@ -389,7 +389,7 @@ void Pipeline::drawLinePipeline(
     long dy = -fabs(y1 - y0);
     long sx = x0 < x1 ? 1 : -1;
     long sy = y0 < y1 ? 1 : -1;
-    long err = dx + dy; 
+    long err = dx + dy;
     long e2;
 
     while (true)
@@ -437,7 +437,7 @@ void Pipeline::pixelShaderWireframe(
 /**
  * Rasterize a flat triangle as below
  * v0      v1
- * 
+ *
  *     v2
  */
 void Pipeline::rasterizeFlatTriangle(
@@ -479,7 +479,7 @@ void Pipeline::rasterizeScanLine(
     {
         return;
     }
-    
+
     long dx = v1.position.x > v0.position.x ? 1 : -1;
     long x_start = SCREEN_MAPPING_X(v0.position.x, frame_buffer) - dx;
     long x_end = SCREEN_MAPPING_X(v1.position.x, frame_buffer) + dx;
@@ -584,7 +584,7 @@ void Pipeline::pixelShaderBarycentric(
         // TODO: here we ignore alpha channel
         frame_buffer.depthBuffer()[depth_buffer_pos] = v.position.z;
 
-        // Fragment Shader 
+        // Fragment Shader
         rgba color = shader->frag(v, entity, scene);
 
         byte_t *color_buffer = frame_buffer.colorBuffer();
@@ -622,7 +622,7 @@ void Pipeline::pixelShader(
     // TODO: here we ignore alpha channel
     frame_buffer.depthBuffer()[depth_buffer_pos] = v.position.z;
 
-    // Fragment Shader 
+    // Fragment Shader
     rgba color = shader->frag(v, entity, scene);
 
     byte_t *color_buffer = frame_buffer.colorBuffer();
@@ -659,7 +659,7 @@ void LuGL::drawTriangles(
     size_t data_count = vertex_array.getDataCount();
     size_t i = 0, j = 0, k = 0;
 
-    void* in_data[data_count];
+    void** in_data = (void**)malloc(data_count * sizeof(void*));
     // buffer to store shader out data of a triangle
     void* out_data[3][MAX_OUT_COUNT];
     // buffer to store shader out data sizes of a triangle
@@ -685,7 +685,7 @@ void LuGL::drawTriangles(
         {
             assert(out_sizes[j][0] == sizeof(Vector4));
         }
-        
+
         Vector2 v1 = Vector2(
             ((Vector4*)out_data[0][0])->x * frame_buffer.getWidth(),
             ((Vector4*)out_data[0][0])->y * frame_buffer.getHeight()
@@ -703,4 +703,6 @@ void LuGL::drawTriangles(
         drawLine(frame_buffer, v2, v3, COLOR_WHITE);
         drawLine(frame_buffer, v3, v1, COLOR_WHITE);
     }
+
+    free(in_data);
 }

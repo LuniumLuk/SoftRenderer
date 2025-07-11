@@ -15,7 +15,7 @@ namespace LuGL
 
 /**
  * basic buffer access api
- * 
+ *
  * “A chain is no stronger than its weakest link.”
  *  —- Anonymous --
  */
@@ -54,10 +54,10 @@ void drawLine(const FrameBuffer & frame_buffer, Vector2 v1, Vector2 v2, RGBColor
  *  - improved bresenham method
  */
 void drawTriangle(
-    const FrameBuffer & frame_buffer, 
-    const Vector2 & v1, 
-    const Vector2 & v2, 
-    const Vector2 & v3, 
+    const FrameBuffer & frame_buffer,
+    const Vector2 & v1,
+    const Vector2 & v2,
+    const Vector2 & v3,
     const RGBColor & color );
 void drawTriangle(
     const FrameBuffer & frame_buffer,
@@ -120,12 +120,12 @@ void drawTexture(const FrameBuffer & frame_buffer); // ...
  * v
  */
 void drawDigit(
-    const FrameBuffer & frame_buffer, 
-    const float & x, const float & y, 
-    const DIGIT_CHARACTER & character, 
-    const float & size, 
+    const FrameBuffer & frame_buffer,
+    const float & x, const float & y,
+    const DIGIT_CHARACTER & character,
+    const float & size,
     const RGBCOLOR & color,
-    const float & ratio = 1.5f, 
+    const float & ratio = 1.5f,
     const long & segment = 16 );
 
 /**
@@ -133,13 +133,13 @@ void drawDigit(
  * (sign) <-size * gap(pixel)-> digit0 <-size * gap(pixel)-> digit1
  */
 void drawInteger(
-    const FrameBuffer & frame_buffer, 
-    const float & x, const float & y, 
-    long number, 
-    const float & size, 
+    const FrameBuffer & frame_buffer,
+    const float & x, const float & y,
+    long number,
+    const float & size,
     const RGBCOLOR & color,
     const float & gap = 0.5f,
-    const float & ratio = 1.5f, 
+    const float & ratio = 1.5f,
     const long & segment = 16 );
 
 /**
@@ -147,13 +147,13 @@ void drawInteger(
  * (sign) <-size * gap(pixel)-> digit0 <-size * gap(pixel)-> digit1
  */
 void drawString(
-    const FrameBuffer & frame_buffer, 
-    const float & x, const float & y, 
+    const FrameBuffer & frame_buffer,
+    const float & x, const float & y,
     const char * string,
     const float & size,
     const RGBCOLOR & color,
     const float & gap = 0.5f,
-    const float & ratio = 1.5f, 
+    const float & ratio = 1.5f,
     const long & segment = 16 );
 
 }

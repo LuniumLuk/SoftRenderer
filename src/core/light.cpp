@@ -19,10 +19,9 @@ LightComp DirectionalLight::calcLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
     float spec = powf(max(view_dir.dot(reflect_dir), 0.0f), 32.0f);
 #endif
 
-    LightComp comp = {
-        .diffuse = m_diffuse * lambertian,
-        .specular = m_specular * spec
-    };
+    LightComp comp = {};
+    comp.diffuse = m_diffuse * lambertian;
+    comp.specular = m_specular * spec;
     return comp;
 }
 
@@ -44,11 +43,8 @@ LightComp PointLight::calcLight(vec3 normal, vec3 frag_pos, vec3 view_dir)
     // attenuation
     float attenuation = 1.0f / (m_constant + m_linear * distance + m_quadratic * distance * distance);
 
-    LightComp comp = {
-        .diffuse = m_diffuse * lambertian * attenuation,
-        .specular = m_specular * spec * attenuation
-    };
+    LightComp comp = {};
+    comp.diffuse = m_diffuse * lambertian * attenuation;
+    comp.specular = m_specular * spec * attenuation;
     return comp;
 }
-
-

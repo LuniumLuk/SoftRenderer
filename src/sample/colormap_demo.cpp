@@ -84,8 +84,8 @@ int colormap_demo() {
             for (long j = 100; j < 412; j++)
             {
                 drawPixel(
-                    frame_buffer, 
-                    i, j, 
+                    frame_buffer,
+                    i, j,
                     getColorMap((float)(i - 100) / 312, 0.0f, 1.0f, (COLORMAP_TYPE)current_colormap),
                     0.0f
                 );
@@ -96,7 +96,7 @@ int colormap_demo() {
             frame_buffer, 10.0f, 10.0f,
             "FPS", 6.0f, COLOR_WHITE);
         drawInteger(
-            frame_buffer, 40.0f, 10.0f, 
+            frame_buffer, 40.0f, 10.0f,
             _fps, 6.0f, COLOR_RED);
 
         drawString(

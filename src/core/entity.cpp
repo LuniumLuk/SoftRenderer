@@ -36,8 +36,9 @@ void EntityConfig::loadFromFile(const char * filename)
             scanned_items = sscanf(line_buffer, "mesh %s", filename_buffer);
             if (scanned_items == 1)
             {
-                mesh_filename = new char[strlen(filename_buffer) + 1];
-                strcpy(mesh_filename, filename_buffer);
+                mesh_filename = new char[strlen(SOURCE_DIR) + strlen(filename_buffer) + 1];
+                strcpy(mesh_filename, SOURCE_DIR);
+                strcat(mesh_filename, filename_buffer);
             }
         }
         else if (strncmp(line_buffer, "albedo ", 7) == 0)
@@ -45,8 +46,9 @@ void EntityConfig::loadFromFile(const char * filename)
             scanned_items = sscanf(line_buffer, "albedo %s", filename_buffer);
             if (scanned_items == 1)
             {
-                albedo_map = new char[strlen(filename_buffer) + 1];
-                strcpy(albedo_map, filename_buffer);
+                albedo_map = new char[strlen(SOURCE_DIR) + strlen(filename_buffer) + 1];
+                strcpy(albedo_map, SOURCE_DIR);
+                strcat(albedo_map, filename_buffer);
             }
         }
         else if (strncmp(line_buffer, "diffuse ", 8) == 0)
@@ -54,8 +56,9 @@ void EntityConfig::loadFromFile(const char * filename)
             scanned_items = sscanf(line_buffer, "diffuse %s", filename_buffer);
             if (scanned_items == 1)
             {
-                diffuse_map = new char[strlen(filename_buffer) + 1];
-                strcpy(diffuse_map, filename_buffer);
+                diffuse_map = new char[strlen(SOURCE_DIR) + strlen(filename_buffer) + 1];
+                strcpy(diffuse_map, SOURCE_DIR);
+                strcat(diffuse_map, filename_buffer);
             }
         }
         else if (strncmp(line_buffer, "specular ", 9) == 0)
@@ -63,8 +66,9 @@ void EntityConfig::loadFromFile(const char * filename)
             scanned_items = sscanf(line_buffer, "specular %s", filename_buffer);
             if (scanned_items == 1)
             {
-                specular_map = new char[strlen(filename_buffer) + 1];
-                strcpy(specular_map, filename_buffer);
+                specular_map = new char[strlen(SOURCE_DIR) + strlen(filename_buffer) + 1];
+                strcpy(specular_map, SOURCE_DIR);
+                strcat(specular_map, filename_buffer);
             }
         }
         else if (strncmp(line_buffer, "normal ", 7) == 0)
@@ -72,8 +76,9 @@ void EntityConfig::loadFromFile(const char * filename)
             scanned_items = sscanf(line_buffer, "normal %s", filename_buffer);
             if (scanned_items == 1)
             {
-                normal_map = new char[strlen(filename_buffer) + 1];
-                strcpy(normal_map, filename_buffer);
+                normal_map = new char[strlen(SOURCE_DIR) + strlen(filename_buffer) + 1];
+                strcpy(normal_map, SOURCE_DIR);
+                strcat(normal_map, filename_buffer);
             }
         }
         else if (strncmp(line_buffer, "scale ", 6) == 0)

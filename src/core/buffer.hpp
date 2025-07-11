@@ -11,6 +11,7 @@
 namespace LuGL
 {
 
+
 // a discussion over size_t & long
 // http://cplusplus.com/forum/beginner/87153/
 class FrameBuffer
@@ -67,9 +68,9 @@ public:
     }
 
     void setDataPointers(
-        const size_t & index, 
+        const size_t & index,
         const size_t & batch_size,
-        const size_t & batch_step, 
+        const size_t & batch_step,
         const size_t & offset )
     {
         m_data_pointers[index] = DynamicArray<float*>();

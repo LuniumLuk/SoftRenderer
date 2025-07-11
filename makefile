@@ -3,28 +3,46 @@ CLANG = clang++
 CFLAGS = -g -std=c++11 -std=c++0x -Wall -Wextra
 OBJCFLAGS  := -framework Cocoa
 
-MAIN	   := main
+MAIN       := main
 
 SOURCEDIR  := src
+COREDIR    := $(SOURCEDIR)/core
+PLATDIR    := $(SOURCEDIR)/platform
+SAMPLEDIR  := $(SOURCEDIR)/sample
 INCLUDEDIR := src
 BUILDDIR   := build
-DLLDIR	   := bin
-SAMPLEDIR  := $(SOURCEDIR)/sample
+DLLDIR     := bin
+
+# Core sources (moved from src/ to src/core/)
+CORESRCS   := $(wildcard $(addprefix $(COREDIR)/, *.cpp))
+COREOBJS   := $(addprefix $(BUILDDIR)/core/, $(notdir $(CORESRCS:.cpp=.o)))
+
+# Platform sources
+PLATSRCS   := $(wildcard $(addprefix $(PLATDIR)/, *.cpp))
+PLATOBJS   := $(addprefix $(BUILDDIR)/platform/, $(notdir $(PLATSRCS:.cpp=.o)))
+
+# Sample sources
 SAMPLESRCS := $(wildcard $(addprefix $(SAMPLEDIR)/, *.cpp))
-SAMPLEOBJS := $(addprefix $(BUILDDIR)/, $(notdir $(SAMPLESRCS:.cpp=.o)))
-PLATDIR    := $(SOURCEDIR)/platform
-SOURCES    := $(wildcard $(addprefix $(SOURCEDIR)/, *.cpp))
-OBJECTS    := $(addprefix $(BUILDDIR)/, $(notdir $(SOURCES:.cpp=.o))) $(SAMPLEOBJS)
-INCLUDES   := -I$(INCLUDEDIR)
-HEADERS    := $(wildcard $(addprefix $(INCLUDEDIR)/, *.hpp)) $(PLATDIR)/platform.hpp $(SAMPLEDIR)/sample.hpp
+SAMPLEOBJS := $(addprefix $(BUILDDIR)/sample/, $(notdir $(SAMPLESRCS:.cpp=.o)))
+
+# All objects
+OBJECTS    := $(COREOBJS) $(PLATOBJS) $(SAMPLEOBJS)
+
+# Include directories
+INCLUDES   := -I$(INCLUDEDIR) -I$(COREDIR) -I$(PLATDIR) -I$(SAMPLEDIR)
+
+# Headers
+HEADERS    := $(wildcard $(addprefix $(COREDIR)/, *.hpp)) $(wildcard $(addprefix $(PLATDIR)/, *.hpp)) $(wildcard $(addprefix $(SAMPLEDIR)/, *.hpp))
+
 # MacOS Compile
-MACSOURCES := $(SOURCEDIR)/macos.mm
-MACOBJECTS := $(filter-out build/$(MAIN).o, $(OBJECTS))
+MACSOURCES := $(PLATDIR)/macos.mm
+MACOBJECTS := $(filter-out build/sample/$(MAIN).o, $(OBJECTS))
+
 # DLL Compile
-DLLOBJECTS := $(filter-out build/$(MAIN).o, $(OBJECTS))
+DLLOBJECTS := $(filter-out build/sample/$(MAIN).o, $(OBJECTS))
 
 TARGET     = viewer
-SAMPLE 	   = sample
+SAMPLE        = sample
 DLLTARGET  = $(DLLDIR)/lurdr.dll
 
 RM         := rm -f
@@ -33,10 +51,10 @@ MD         := mkdir -p
 
 # reference : https://stackoverflow.com/questions/714100/os-detecting-makefile
 ifeq ($(OS),Windows_NT)
-	MD 		:= mkdir
-	RM 		:= del /s /q
-	RMDIR 	:= rmdir /s /q
-	TARGET 	:= viewer.exe
+    MD         := mkdir
+    RM         := del /s /q
+    RMDIR      := rmdir /s /q
+    TARGET     := viewer.exe
     CFLAGS  += -fopenmp
     ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
         CFLAGS += -D AMD64
@@ -72,58 +90,77 @@ endif
 all: macos
 
 win32_prepare:
-	@if not exist $(BUILDDIR) $(MD) $(BUILDDIR)
+    @if not exist $(BUILDDIR) $(MD) $(BUILDDIR)
+    @if not exist $(BUILDDIR)\core $(MD) $(BUILDDIR)\core
+    @if not exist $(BUILDDIR)\platform $(MD) $(BUILDDIR)\platform
+    @if not exist $(BUILDDIR)\sample $(MD) $(BUILDDIR)\sample
 
 macos_prepare:
-	@$(MD) $(BUILDDIR)
+    @$(MD) $(BUILDDIR)
+    @$(MD) $(BUILDDIR)/core
+    @$(MD) $(BUILDDIR)/platform
+    @$(MD) $(BUILDDIR)/sample
 
 $(TARGET): $(OBJECTS)
-	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
+    @$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^
 
-$(BUILDDIR)/%.o: $(SAMPLEDIR)/%.cpp $(HEADERS)
-	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
+# Core object files
+$(BUILDDIR)/core/%.o: $(COREDIR)/%.cpp $(HEADERS)
+    @$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
-$(BUILDDIR)/%.o: $(SOURCEDIR)/%.cpp $(HEADERS)
-	@$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
+# Platform object files
+$(BUILDDIR)/platform/%.o: $(PLATDIR)/%.cpp $(HEADERS)
+    @$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
+
+# Sample object files
+$(BUILDDIR)/sample/%.o: $(SAMPLEDIR)/%.cpp $(HEADERS)
+    @$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
 # Debug option
 debug: CFLAGS += -DDEBUG
 
 # help option
 help:
-	@echo --- MAKEFILE OPTIONS -----------
-	@echo "macos : compile for MacOS App"
-	@echo "win32 : compile for Win32 App"
-	@echo "  dll : compile for DLL"
-	@echo " sample : compile for sample script $(SAMPLESOURCE)"
-	@echo " help : show makefile options"
-	@echo "debug : add '#define DEBUG'"
-	@echo "clean : clean target, bin/ and build/"
+    @echo --- MAKEFILE OPTIONS -----------
+    @echo "macos : compile for MacOS App"
+    @echo "win32 : compile for Win32 App"
+    @echo "  dll : compile for DLL"
+    @echo " sample : compile for sample script $(SAMPLESOURCE)"
+    @echo "shadow : compile shadow mapping demo"
+    @echo " help : show makefile options"
+    @echo "debug : add '#define DEBUG'"
+    @echo "clean : clean target, bin/ and build/"
 
 show:
-	@echo $(SAMPLESRCS)
-	@echo $(SAMPLEOBJS)
+    @echo $(SAMPLESRCS)
+    @echo $(SAMPLEOBJS)
 
 .PHONY: clean
 clean:
-	@if exist $(TARGET) $(RM) $(TARGET)
-	@if exist $(BUILDDIR) $(RMDIR) $(BUILDDIR)
-	@echo --- CLEAN COMPLETE -------------
+    @if exist $(TARGET) $(RM) $(TARGET)
+    @if exist $(BUILDDIR) $(RMDIR) $(BUILDDIR)
+    @echo --- CLEAN COMPLETE -------------
+
+# Shadow mapping demo
+shadow: win32_prepare shadow_compile
+
+shadow_compile: $(OBJECTS)
+    @$(CC) -o shadow_demo.exe $(CFLAGS) $(PLATDIR)/win32.cpp $(OBJECTS) -lgdi32
 
 # MacOS compile options
 macos: macos_prepare macos_compile
 
 macos_compile: $(OBJECTS)
-	@$(CLANG) -o $(TARGET) $(OBJCFLAGS) $(CFLAGS) $(PLATDIR)/macos.mm $(OBJECTS)
+    @$(CLANG) -o $(TARGET) $(OBJCFLAGS) $(CFLAGS) $(PLATDIR)/macos.mm $(OBJECTS)
 
 # Win32 compile options
 win32: win32_prepare win32_compile
 
 win32_compile: $(OBJECTS)
-	@$(CC) -o $(TARGET) $(CFLAGS) $(PLATDIR)/win32.cpp $(OBJECTS) -lgdi32
+    @$(CC) -o $(TARGET) $(CFLAGS) $(PLATDIR)/win32.cpp $(OBJECTS) -lgdi32
 
 run:
-	@$(TARGET)
+    @$(TARGET)
 
 # DLL compile options
 dll: clean dll_compile
@@ -132,8 +169,8 @@ dll_compile: CFLAGS += -DBDLL
 dll_compile: $(DLLTARGET)
 
 $(DLLTARGET): $(DLLOBJECTS)
-	@$(MD) $(dir $@)
-	@$(CC) $(CFLAGS) $(INCLUDES) -shared -o $@ $^
+    @$(MD) $(dir $@)
+    @$(CC) $(CFLAGS) $(INCLUDES) -shared -o $@ $^
 
 sample: dll_compile
-	@$(CC) $(CFLAGS) -o $(SAMPLE) $(SAMPLESOURCE) $(DLLTARGET)
+    @$(CC) $(CFLAGS) -o $(SAMPLE) $(SAMPLESOURCE) $(DLLTARGET)

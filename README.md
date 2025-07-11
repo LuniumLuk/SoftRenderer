@@ -46,7 +46,7 @@ vec4 ExampleShader::frag(const v2f in, const Entity * entity, const Scene & scen
         in.normal.x * 0.5f + 0.5f,
         in.normal.y * 0.5f + 0.5f,
         in.normal.z * 0.5f + 0.5f );
-    
+
     return vec4(color.normalized(), 1.0f);
 }
 ```

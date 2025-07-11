@@ -18,6 +18,10 @@ namespace LuGL
 #define TF_LINEAR true
 #define TF_NEAREST false
 
+#ifndef SOURCE_DIR
+#define SOURCE_DIR "./"
+#endif
+
 enum SampleOption {
     LUGL_SAMPLE_DEFAULT,
     LUGL_SAMPLE_2xMSAA,
@@ -57,7 +61,7 @@ typedef struct RGBCOLOR
     byte_t R;
     byte_t G;
     byte_t B;
-    
+
     RGBCOLOR(byte_t r, byte_t g, byte_t b)
     {
         R = r;

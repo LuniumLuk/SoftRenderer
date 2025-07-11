@@ -55,19 +55,19 @@ enum DIGIT_CHARACTER
 
 /**
  * 16-segment digit map
- *    -0- -1- 
+ *    -0- -1-
  *   |\  |  /|
  *   2 3 4 5 6
  *   |  \|/  |
- *    -7- -8- 
+ *    -7- -8-
  *   |  /|\  |
  *   9 A B C D
  *   |/  |  \|
- *    -E- -F- 
+ *    -E- -F-
  */
 
 // 16-segment digit data
-const INT32 DIGITS_16SEG[] = 
+const INT32 DIGITS_16SEG[] =
 {
     0b1110011001100111, // 0
     0b0000001000000100, // 1
@@ -119,7 +119,7 @@ const INT32 DIGITS_16SEG[] =
  *   | /  |  \ |
  *   6 -- 7 -- 8
  */
-const float DIGITS_16SEG_COORDS[][2] = 
+const float DIGITS_16SEG_COORDS[][2] =
 {
     { 0.0f, 0.0f },
     { 0.5f, 0.0f },
@@ -132,12 +132,12 @@ const float DIGITS_16SEG_COORDS[][2] =
     { 1.0f, 1.0f },
 };
 
-const long DIGITS_16SEG_EDGES[][2] = 
+const long DIGITS_16SEG_EDGES[][2] =
 {
     { 0, 1 }, { 1, 2 }, { 0, 3 }, { 0, 4 },
     { 1, 4 }, { 2, 4 }, { 2, 5 }, { 3, 4 },
     { 4, 5 }, { 3, 6 }, { 4, 6 }, { 4, 7 },
-    { 4, 8 }, { 5, 8 }, { 6, 7 }, { 7, 8 }, 
+    { 4, 8 }, { 5, 8 }, { 6, 7 }, { 7, 8 },
 };
 
 }
